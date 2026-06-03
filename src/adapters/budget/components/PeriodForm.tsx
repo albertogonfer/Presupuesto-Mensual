@@ -85,7 +85,7 @@ export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false
         type="number"
         value={netSalary}
         onChange={(e) => setNetSalary(e.target.value)}
-        placeholder="Ej: 350000"
+        placeholder="Ej: 2.500"
         min={1}
         required
       />

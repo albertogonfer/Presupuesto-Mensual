@@ -11,7 +11,7 @@ beforeEach(() => {
 describe('BudgetPeriodPage — empty state', () => {
   it('shows an onboarding empty state when no period exists', () => {
     render(<BudgetPeriodPage />)
-    expect(screen.getByText(/configurá tu primer período/i)).toBeInTheDocument()
+    expect(screen.getByText(/configura tu primer período/i)).toBeInTheDocument()
   })
 
   it('shows a button to create the first period', () => {

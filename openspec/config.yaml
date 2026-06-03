@@ -1,0 +1,73 @@
+schema: spec-driven
+project: presupuesto-mensual
+initialized: 2026-06-03
+
+context: |
+  Project: Presupuesto Mensual — household monthly budget tracker
+  Stack: React 19 + TypeScript + Vite 6, Tailwind CSS v4 (@tailwindcss/vite plugin)
+  State: Zustand v5; Package manager: pnpm
+  Hosting: Vercel (static)
+  Testing: Vitest v3 + @testing-library/react (unit + integration) + Playwright (E2E)
+  Domains: budget-entries, categories, monthly-summary, reporting
+
+strict_tdd: true
+
+testing:
+  runner:
+    framework: vitest
+    command: "pnpm test"
+  layers:
+    unit:
+      available: true
+      tool: vitest
+    integration:
+      available: true
+      tool: "@testing-library/react + vitest"
+    e2e:
+      available: true
+      tool: playwright
+      command: "pnpm test:e2e"
+  coverage:
+    available: true
+    command: "pnpm test --coverage"
+    threshold: 80
+  quality:
+    linter:
+      available: true
+      command: "pnpm lint"
+      tool: eslint
+    type_checker:
+      available: true
+      command: "pnpm typecheck"
+      tool: typescript
+    formatter:
+      available: true
+      command: "pnpm format"
+      tool: prettier
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - State which budget domain (entries, categories, summary, reporting) is affected
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+    - Note whether a change requires server-side logic or stays fully client-side
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+    - Tag tasks with domain: entries | categories | summary | reporting
+  apply:
+    - Follow existing code patterns
+    tdd: true
+    test_command: "pnpm test"
+  verify:
+    test_command: "pnpm test"
+    build_command: "pnpm build"
+    coverage_threshold: 80
+  archive:
+    - Warn before merging destructive deltas
+    - Update openspec/specs/{domain}/spec.md after every archived change

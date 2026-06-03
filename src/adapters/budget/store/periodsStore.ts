@@ -28,7 +28,7 @@ export const usePeriodsStore = create<PeriodsState>()(
         if (duplicate) {
           return {
             success: false,
-            error: `Ya existe un período para ${payload.month}/${payload.year}. Editá el existente si querés cambiar el sueldo.`,
+            error: `Ya existe un período para ${payload.month}/${payload.year}. Edita el existente si quieres cambiar el sueldo.`,
           }
         }
         const newPeriod: BudgetPeriod = {

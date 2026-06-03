@@ -13,7 +13,7 @@ type PeriodHeaderProps = {
 
 export function PeriodHeader({ period, onEdit }: PeriodHeaderProps) {
   const monthName = MONTH_NAMES[period.month - 1]
-  const formattedSalary = period.netSalary.toLocaleString('es-AR')
+  const formattedSalary = period.netSalary.toLocaleString('es-ES')
 
   return (
     <div className="flex items-center justify-between rounded-card bg-bg-card p-6 shadow-card">
@@ -24,7 +24,7 @@ export function PeriodHeader({ period, onEdit }: PeriodHeaderProps) {
         </h2>
         <p className="mt-1 text-text-secondary">
           Sueldo neto:{' '}
-          <span className="font-medium text-text-primary">${formattedSalary}</span>
+          <span className="font-medium text-text-primary">{formattedSalary} €</span>
         </p>
       </div>
       <Button onClick={onEdit} aria-label="Editar período">
