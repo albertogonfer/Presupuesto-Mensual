@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Category } from '../../../domain/budget/model/types'
 import { useCategories } from '../hooks/useCategories'
+import { useExpensesStore } from '../store/expensesStore'
 import { CategoryCard } from '../components/CategoryCard'
 import { CategoryForm } from '../components/CategoryForm'
 import { Modal } from '../../shared/components/Modal'
@@ -11,13 +12,14 @@ type ModalMode = { type: 'add' } | { type: 'edit'; category: Category } | null
 
 export default function CategoriesPage() {
   const { categories, addCategory, updateCategory, removeCategory } = useCategories()
+  const allExpenses = useExpensesStore((s) => s.expenses)
+  const expenseCategoryIds = allExpenses.map((e) => e.categoryId)
   const [modal, setModal] = useState<ModalMode>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
   function handleDelete(id: string) {
     setDeleteError(null)
-    // For now expenses store doesn't exist — pass empty array (guard contract established)
-    const result = removeCategory(id, [])
+    const result = removeCategory(id, expenseCategoryIds)
     if (!result.success) {
       setDeleteError(result.error ?? 'No se puede eliminar esta categoría.')
     }
@@ -51,7 +53,7 @@ export default function CategoriesPage() {
 
       {categories.length === 0 ? (
         <EmptyState
-          message="Creá tu primera categoría para clasificar tus gastos."
+          message="Crea tu primera categoría para clasificar tus gastos."
         />
       ) : (
         <div className="flex flex-col gap-3">
