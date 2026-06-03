@@ -1,0 +1,61 @@
+import { describe, it, expect, beforeEach } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { useCategoriesStore } from '../store/categoriesStore'
+import { usePeriodsStore } from '../store/periodsStore'
+import { useExpensesStore } from '../store/expensesStore'
+import DashboardPage from './DashboardPage'
+
+const CAT = { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🛒', createdAt: '2026-01-01T00:00:00Z' }
+const PERIOD = { id: 'period-1', month: 6, year: 2026, netSalary: 2500, createdAt: '2026-06-01T00:00:00Z' }
+
+function resetStores() {
+  useCategoriesStore.setState({ categories: [CAT], hasHydrated: true })
+  usePeriodsStore.setState({ periods: [PERIOD], activePeriodId: 'period-1', hasHydrated: true })
+  useExpensesStore.setState({ expenses: [], hasHydrated: true })
+}
+
+beforeEach(resetStores)
+
+describe('DashboardPage', () => {
+  it('shows period header with month, year and net salary', () => {
+    render(<DashboardPage />)
+    expect(screen.getByText(/junio 2026/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/2500,00\s*€/).length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('shows empty state when no expenses', () => {
+    render(<DashboardPage />)
+    expect(screen.getByText(/aún no tienes gastos registrados/i)).toBeInTheDocument()
+  })
+
+  it('shows stat cards when expenses exist', () => {
+    useExpensesStore.setState({
+      expenses: [
+        { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 600, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
+      ],
+      hasHydrated: true,
+    })
+    render(<DashboardPage />)
+    // Total gastado label
+    expect(screen.getByText(/total gastado/i)).toBeInTheDocument()
+    // Remaining: 2500 - 600 = 1900
+    expect(screen.getByText(/1900,00\s*€/)).toBeInTheDocument()
+  })
+
+  it('shows empty state prompting to configure a period when no active period', () => {
+    usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
+    render(<DashboardPage />)
+    expect(screen.getByText(/configura un período/i)).toBeInTheDocument()
+  })
+
+  it('shows category breakdown with category name when expenses exist', () => {
+    useExpensesStore.setState({
+      expenses: [
+        { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 300, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
+      ],
+      hasHydrated: true,
+    })
+    render(<DashboardPage />)
+    expect(screen.getByText('Comida')).toBeInTheDocument()
+  })
+})
