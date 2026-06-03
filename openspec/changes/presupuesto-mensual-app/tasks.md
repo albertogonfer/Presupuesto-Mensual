@@ -65,11 +65,10 @@ Chain strategy: feature-branch-chain
 
 | ID    | Title                          | Type | Files                                                                           | AC Ref                   |
 |-------|--------------------------------|------|---------------------------------------------------------------------------------|--------------------------|
-| T3-1  | Define BudgetPeriod type       | feat | `src/domain/budget/model/types.ts`                                              | spec §Salary Input       |
-| T3-2  | Implement periodsStore         | feat | `src/adapters/budget/store/periodsStore.ts`                                     | Scenario: Create period  |
-| T3-3  | SettingsPage (salary input UI) | feat | `src/adapters/budget/pages/SettingsPage.tsx`                                    | Scenario: Create period  |
-| T3-4  | Unit tests: periodsStore       | test | `src/adapters/budget/store/periodsStore.test.ts`                                | Scenario: Create period  |
-
+| ~~T3-1~~ ✅ | Define BudgetPeriod type       | feat | `src/domain/budget/model/types.ts`                                              | spec §Salary Input       |
+| ~~T3-2~~ ✅ | Implement periodsStore         | feat | `src/adapters/budget/store/periodsStore.ts`                                     | Scenario: Create period  |
+| ~~T3-3~~ ✅ | SettingsPage (salary input UI) | feat | `src/adapters/budget/pages/BudgetPeriodPage.tsx`                                | Scenario: Create period  |
+| ~~T3-4~~ ✅ | Unit tests: periodsStore       | test | `src/adapters/budget/store/periodsStore.test.ts`                                | Scenario: Create period  |
 **Dependencies**: PR2 (Category type exists; stores pattern established)
 
 ---
