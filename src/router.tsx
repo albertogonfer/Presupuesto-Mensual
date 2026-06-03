@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from './adapters/budget/components/Layout'
 
-const DashboardPage = lazy(() => import('./adapters/budget/pages/DashboardPage'))
+const BudgetPeriodPage = lazy(() => import('./adapters/budget/pages/BudgetPeriodPage'))
 const ExpensesPage = lazy(() => import('./adapters/budget/pages/ExpensesPage'))
 const CategoriesPage = lazy(() => import('./adapters/budget/pages/CategoriesPage'))
 const SettingsPage = lazy(() => import('./adapters/budget/pages/SettingsPage'))
@@ -13,7 +13,7 @@ export type AppRoute = {
 }
 
 export const routes: AppRoute[] = [
-  { path: '/', label: 'Dashboard' },
+  { path: '/', label: 'Inicio' },
   { path: '/expenses', label: 'Gastos' },
   { path: '/categories', label: 'Categorías' },
   { path: '/settings', label: 'Configuración' },
@@ -31,7 +31,7 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      { path: '/', element: wrap(DashboardPage) },
+      { path: '/', element: wrap(BudgetPeriodPage) },
       { path: '/expenses', element: wrap(ExpensesPage) },
       { path: '/categories', element: wrap(CategoriesPage) },
       { path: '/settings', element: wrap(SettingsPage) },
