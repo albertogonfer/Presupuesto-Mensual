@@ -20,7 +20,8 @@ export type Expense = {
   categoryId: string
   description: string
   amount: number
-  date: string    // ISO date
+  date: string      // ISO date
+  createdAt: string // ISO date string
 }
 
 export type BudgetSummary = {
