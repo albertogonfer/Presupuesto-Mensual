@@ -27,6 +27,7 @@ export type Expense = {
 export type BudgetSummary = {
   totalSpent: number
   remaining: number
+  percentUsed: number
   byCategory: Array<{
     category: Category
     total: number

@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { routes } from './router'
 
 describe('router', () => {
-  it('defines a route for budget period setup at /', () => {
+  it('defines a route for the dashboard at /', () => {
     const home = routes.find((r) => r.path === '/')
     expect(home).toBeDefined()
-    expect(home?.label).toBe('Inicio')
+    expect(home?.label).toBe('Dashboard')
   })
 
   it('defines a route for expenses at /expenses', () => {
