@@ -1,9 +1,24 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { useCategoriesStore } from '../store/categoriesStore'
 import { usePeriodsStore } from '../store/periodsStore'
 import { useExpensesStore } from '../store/expensesStore'
 import DashboardPage from './DashboardPage'
+
+// Mock Recharts to avoid ResizeObserver / canvas issues in jsdom
+vi.mock('recharts', () => ({
+  PieChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Pie: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  Cell: () => null,
+  Tooltip: () => null,
+  Legend: () => null,
+  BarChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Bar: () => null,
+  XAxis: () => null,
+  YAxis: () => null,
+  CartesianGrid: () => null,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}))
 
 const CAT = { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🛒', createdAt: '2026-01-01T00:00:00Z' }
 const PERIOD = { id: 'period-1', month: 6, year: 2026, netSalary: 2500, createdAt: '2026-06-01T00:00:00Z' }
