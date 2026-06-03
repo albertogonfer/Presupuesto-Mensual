@@ -11,6 +11,7 @@ export type BudgetPeriod = {
   month: number   // 1-12
   year: number
   netSalary: number
+  createdAt: string // ISO date string
 }
 
 export type Expense = {
