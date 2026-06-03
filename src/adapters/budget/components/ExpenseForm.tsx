@@ -3,13 +3,6 @@ import type { Expense, Category } from '../../../domain/budget/model/types'
 import { Input } from '../../shared/components/Input'
 import { Button } from '../../shared/components/Button'
 
-type ExpenseFormValues = {
-  description: string
-  amount: string
-  categoryId: string
-  date: string
-}
-
 type ExpenseFormProps = {
   categories: Category[]
   onSubmit: (values: { description: string; amount: number; categoryId: string; date: string }) => void
