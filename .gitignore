@@ -1,0 +1,29 @@
+# Logs and OS
+.DS_Store
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Coverage
+coverage/
+
+# Playwright
+playwright-report/
+test-results/
+
+# TypeScript incremental
+*.tsbuildinfo
+
+# Local env
+.env.local
+.env*.local
+
+# Editors
+.vscode/
+.idea/
