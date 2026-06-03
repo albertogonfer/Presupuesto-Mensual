@@ -2,7 +2,7 @@
 
 > Personal monthly budget manager — track your salary, expenses, and where every peso goes.
 
-🔗 **[Abrir la app →](https://presupuesto-mensual.vercel.app)** *(disponible tras el primer deploy)*
+🔗 **[Abrir la app →](https://presupuesto-mensual-zeta.vercel.app/)** *(disponible tras el primer deploy)*
 
 ---
 
