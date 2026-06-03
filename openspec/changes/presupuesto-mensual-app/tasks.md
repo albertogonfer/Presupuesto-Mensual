@@ -79,13 +79,13 @@ Chain strategy: feature-branch-chain
 
 | ID    | Title                          | Type | Files                                                                                     | AC Ref                  |
 |-------|--------------------------------|------|-------------------------------------------------------------------------------------------|-------------------------|
-| T4-1  | Define Expense type            | feat | `src/domain/budget/model/types.ts`                                                        | spec §Manage Expenses   |
-| T4-2  | Implement expensesStore        | feat | `src/adapters/budget/store/expensesStore.ts`                                              | Scenario: Add expense   |
-| T4-3  | Implement validateExpense      | feat | `src/domain/budget/services/validateExpense.ts`                                           | spec §Domain Rules      |
-| T4-4  | ExpenseRow + ExpenseForm UI    | feat | `src/adapters/budget/components/ExpenseRow.tsx`, `ExpenseForm.tsx`                        | Scenario: Add expense   |
-| T4-5  | ExpensesPage container         | feat | `src/adapters/budget/pages/ExpensesPage.tsx`                                              | Scenario: Add expense   |
-| T4-6  | Unit tests: validateExpense    | test | `src/domain/budget/services/validateExpense.test.ts`                                      | spec §Domain Rules      |
-| T4-7  | Unit tests: expensesStore      | test | `src/adapters/budget/store/expensesStore.test.ts`                                         | Scenario: Add expense   |
+| ~~T4-1~~ ✅ | Define Expense type            | feat | `src/domain/budget/model/types.ts`                                                        | spec §Manage Expenses   |
+| ~~T4-2~~ ✅ | Implement expensesStore        | feat | `src/adapters/budget/store/expensesStore.ts`                                              | Scenario: Add expense   |
+| ~~T4-3~~ ✅ | Implement validateExpense      | feat | `src/domain/budget/services/validateExpense.ts`                                           | spec §Domain Rules      |
+| ~~T4-4~~ ✅ | ExpenseRow + ExpenseForm UI    | feat | `src/adapters/budget/components/ExpenseRow.tsx`, `ExpenseForm.tsx`                        | Scenario: Add expense   |
+| ~~T4-5~~ ✅ | ExpensesPage container         | feat | `src/adapters/budget/pages/ExpensesPage.tsx`                                              | Scenario: Add expense   |
+| ~~T4-6~~ ✅ | Unit tests: validateExpense    | test | `src/domain/budget/services/validateExpense.test.ts`                                      | spec §Domain Rules      |
+| ~~T4-7~~ ✅ | Unit tests: expensesStore      | test | `src/adapters/budget/store/expensesStore.test.ts`                                         | Scenario: Add expense   |
 
 **Dependencies**: PR3
 
