@@ -1,6 +1,9 @@
 import { usePeriodsStore } from '../store/periodsStore'
+import { useExpensesStore } from '../store/expensesStore'
 import { useBudgetSummary } from '../hooks/useBudgetSummary'
 import { SummaryCard } from '../components/SummaryCard'
+import { BudgetPieChart } from '../components/BudgetPieChart'
+import { BudgetBarChart } from '../components/BudgetBarChart'
 import { EmptyState } from '../../shared/components/EmptyState'
 
 const MONTH_NAMES = [
@@ -22,6 +25,7 @@ export default function DashboardPage() {
   const periods = usePeriodsStore((s) => s.periods)
   const activePeriod = periods.find((p) => p.id === activePeriodId) ?? null
   const summary = useBudgetSummary()
+  const allExpenses = useExpensesStore((s) => s.expenses)
 
   if (!activePeriod || !summary) {
     return (
@@ -108,6 +112,10 @@ export default function DashboardPage() {
           ))}
         </div>
       )}
+
+      {/* Charts section */}
+      <BudgetPieChart summary={summary} />
+      <BudgetBarChart periods={periods} expenses={allExpenses} />
     </div>
   )
 }
