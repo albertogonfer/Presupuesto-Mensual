@@ -36,9 +36,9 @@ function toRecurringExpense(row: RecurringExpenseRow): RecurringExpense {
 }
 
 async function requireUser(): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Not authenticated')
-  return user.id
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session?.user) throw new Error('Not authenticated')
+  return session!.user.id
 }
 
 export const recurringExpensesRepository: RecurringExpensesRepository = {
