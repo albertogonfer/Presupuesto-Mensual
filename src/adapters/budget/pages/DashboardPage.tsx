@@ -154,40 +154,66 @@ export default function DashboardPage() {
               + Gasto
             </button>
           </div>
-          {summary.byCategory.map(({ category, total, percentage }) => (
-            <div
-              key={category.id}
-              className="flex flex-col gap-2 rounded-card bg-bg-card p-4 shadow-card"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-sm"
-                    style={{ backgroundColor: category.color + '33' }}
-                  >
-                    {category.icon}
-                  </span>
-                  <span
-                    className="rounded px-2 py-0.5 text-xs font-medium text-white"
-                    style={{ backgroundColor: category.color }}
-                  >
-                    {category.name}
-                  </span>
+          {summary.byCategory.map(({ category, total, percentage }) => {
+            const hasLimit = category.limit !== undefined && category.limit > 0
+            const limitRatio = hasLimit ? total / category.limit! : null
+            const barWidth = hasLimit
+              ? Math.min(limitRatio! * 100, 100)
+              : Math.min(percentage, 100)
+            const isOverLimit = hasLimit && total >= category.limit!
+            const isNearLimit = hasLimit && !isOverLimit && limitRatio! >= 0.8
+            const barColorClass = isOverLimit
+              ? 'bg-danger'
+              : isNearLimit
+              ? 'bg-yellow-500'
+              : ''
+            const barStyle = barColorClass === '' ? { backgroundColor: category.color } : {}
+
+            return (
+              <div
+                key={category.id}
+                className="flex flex-col gap-2 rounded-card bg-bg-card p-4 shadow-card"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="flex h-7 w-7 items-center justify-center rounded-full text-sm"
+                      style={{ backgroundColor: category.color + '33' }}
+                    >
+                      {category.icon}
+                    </span>
+                    <div className="flex flex-col">
+                      <span
+                        className="w-fit rounded px-2 py-0.5 text-xs font-medium text-white"
+                        style={{ backgroundColor: category.color }}
+                      >
+                        {category.name}
+                      </span>
+                      {hasLimit && (
+                        <span className="mt-0.5 px-2 text-xs text-text-secondary">
+                          {formatEur(total)} / {formatEur(category.limit!)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-medium text-text-primary">{formatEur(total)}</span>
+                    <span className="ml-2 text-sm text-text-secondary">{percentage.toFixed(1)}%</span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="font-medium text-text-primary">{formatEur(total)}</span>
-                  <span className="ml-2 text-sm text-text-secondary">{percentage.toFixed(1)}%</span>
+                {/* Progress bar */}
+                <div className="h-1.5 overflow-hidden rounded-full bg-bg-input">
+                  <div
+                    className={`h-full rounded-full transition-all ${barColorClass}`}
+                    style={{ width: `${barWidth}%`, ...barStyle }}
+                  />
                 </div>
+                {isOverLimit && (
+                  <span className="text-xs font-medium text-danger">Límite superado</span>
+                )}
               </div>
-              {/* Progress bar */}
-              <div className="h-1.5 overflow-hidden rounded-full bg-bg-input">
-                <div
-                  className="h-full rounded-full transition-all"
-                  style={{ width: `${Math.min(percentage, 100)}%`, backgroundColor: category.color }}
-                />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 

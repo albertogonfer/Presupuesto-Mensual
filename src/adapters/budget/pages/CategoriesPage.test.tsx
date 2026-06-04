@@ -65,3 +65,34 @@ describe('CategoriesPage', () => {
     expect(screen.getByText('Comida')).toBeInTheDocument()
   })
 })
+
+describe('CategoriesPage — budget limit field', () => {
+  it('shows limit input in the form', async () => {
+    render(<CategoriesPage />)
+    await userEvent.click(screen.getByRole('button', { name: /nueva categoría/i }))
+    expect(screen.getByLabelText(/límite mensual/i)).toBeInTheDocument()
+  })
+
+  it('submitting with a limit saves it to the category', async () => {
+    render(<CategoriesPage />)
+    await userEvent.click(screen.getByRole('button', { name: /nueva categoría/i }))
+    await userEvent.type(screen.getByLabelText(/nombre/i), 'Transporte')
+    await userEvent.clear(screen.getByLabelText(/límite mensual/i))
+    await userEvent.type(screen.getByLabelText(/límite mensual/i), '200')
+    await userEvent.click(screen.getByRole('button', { name: /guardar/i }))
+    const cats = useCategoriesStore.getState().categories
+    const newCat = cats.find((c) => c.name === 'Transporte')
+    expect(newCat?.limit).toBe(200)
+  })
+
+  it('submitting without a limit saves category with no limit (undefined)', async () => {
+    render(<CategoriesPage />)
+    await userEvent.click(screen.getByRole('button', { name: /nueva categoría/i }))
+    await userEvent.type(screen.getByLabelText(/nombre/i), 'Ocio')
+    // leave limit blank
+    await userEvent.click(screen.getByRole('button', { name: /guardar/i }))
+    const cats = useCategoriesStore.getState().categories
+    const newCat = cats.find((c) => c.name === 'Ocio')
+    expect(newCat?.limit).toBeUndefined()
+  })
+})

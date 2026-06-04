@@ -36,7 +36,7 @@ export default function CategoriesPage() {
     }
   }
 
-  function handleSubmit(values: { name: string; color: string; icon: string }) {
+  function handleSubmit(values: { name: string; color: string; icon: string; limit?: number }) {
     if (modal?.type === 'edit') {
       updateCategory(modal.category.id, values)
     } else {
@@ -89,7 +89,7 @@ export default function CategoriesPage() {
           onCancel={() => setModal(null)}
           initialValues={
             editingCategory
-              ? { name: editingCategory.name, color: editingCategory.color, icon: editingCategory.icon }
+              ? { name: editingCategory.name, color: editingCategory.color, icon: editingCategory.icon, limit: editingCategory.limit }
               : undefined
           }
         />

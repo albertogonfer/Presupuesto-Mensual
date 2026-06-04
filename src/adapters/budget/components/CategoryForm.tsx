@@ -17,6 +17,7 @@ type CategoryFormValues = {
   name: string
   color: string
   icon: string
+  limit?: number
 }
 
 type CategoryFormProps = {
@@ -29,10 +30,14 @@ export function CategoryForm({ onSubmit, onCancel, initialValues }: CategoryForm
   const [name, setName] = useState(initialValues?.name ?? '')
   const [icon, setIcon] = useState(initialValues?.icon ?? '📦')
   const [color, setColor] = useState(initialValues?.color ?? PRESET_COLORS[0])
+  const [limit, setLimit] = useState<string>(
+    initialValues?.limit !== undefined ? String(initialValues.limit) : ''
+  )
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    onSubmit({ name: name.trim(), icon: icon.trim(), color })
+    const parsedLimit = limit.trim() !== '' ? parseFloat(limit) : undefined
+    onSubmit({ name: name.trim(), icon: icon.trim(), color, limit: parsedLimit })
   }
 
   return (
@@ -53,6 +58,15 @@ export function CategoryForm({ onSubmit, onCancel, initialValues }: CategoryForm
         placeholder="Emoji"
         maxLength={4}
         required
+      />
+      <Input
+        id="category-limit"
+        label="Límite mensual (€)"
+        type="number"
+        value={limit}
+        onChange={(e) => setLimit(e.target.value)}
+        placeholder="Sin límite"
+        min={0}
       />
       <div className="flex flex-col gap-2">
         <span className="text-sm font-medium text-text-secondary">Color</span>
