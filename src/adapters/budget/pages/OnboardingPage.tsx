@@ -6,14 +6,7 @@ import { PeriodForm } from '../components/PeriodForm'
 import { Button } from '../../shared/components/Button'
 import { Input } from '../../shared/components/Input'
 
-const PRESET_COLORS = [
-  '#6366F1',
-  '#10B981',
-  '#F59E0B',
-  '#EF4444',
-  '#8B5CF6',
-  '#0EA5E9',
-]
+import { PRESET_COLORS } from '../components/CategoryForm'
 
 const STEP_COUNT = 3
 

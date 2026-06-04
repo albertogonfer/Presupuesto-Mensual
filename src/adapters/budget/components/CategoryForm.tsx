@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Input } from '../../shared/components/Input'
 import { Button } from '../../shared/components/Button'
 
-const PRESET_COLORS = [
+export const PRESET_COLORS = [
   '#8B5CF6', // violet
   '#0EA5E9', // sky
   '#F59E0B', // amber
