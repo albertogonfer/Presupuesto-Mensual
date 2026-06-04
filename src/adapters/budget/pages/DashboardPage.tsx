@@ -1,10 +1,15 @@
+import { useState } from 'react'
 import { usePeriodsStore } from '../store/periodsStore'
 import { useExpensesStore } from '../store/expensesStore'
+import { useExpenses } from '../hooks/useExpenses'
+import { useCategories } from '../hooks/useCategories'
 import { useBudgetSummary } from '../hooks/useBudgetSummary'
 import { SummaryCard } from '../components/SummaryCard'
 import { BudgetPieChart } from '../components/BudgetPieChart'
 import { BudgetBarChart } from '../components/BudgetBarChart'
 import { PeriodSelector } from '../components/PeriodSelector'
+import { ExpenseForm } from '../components/ExpenseForm'
+import { Modal } from '../../shared/components/Modal'
 import { EmptyState } from '../../shared/components/EmptyState'
 
 const MONTH_NAMES = [
@@ -28,6 +33,9 @@ export default function DashboardPage() {
   const activePeriod = periods.find((p) => p.id === activePeriodId) ?? null
   const summary = useBudgetSummary()
   const allExpenses = useExpensesStore((s) => s.expenses)
+  const { addExpense } = useExpenses()
+  const { categories } = useCategories()
+  const [fabOpen, setFabOpen] = useState(false)
 
   if (!activePeriod || !summary) {
     return (
@@ -45,6 +53,11 @@ export default function DashboardPage() {
 
   const monthName = MONTH_NAMES[activePeriod.month - 1]
   const remainingVariant = summary.remaining >= 0 ? 'success' : 'danger'
+
+  function handleFabSubmit(values: { description: string; amount: number; categoryId: string; date: string }) {
+    addExpense({ ...values, periodId: activePeriodId! })
+    setFabOpen(false)
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -131,6 +144,24 @@ export default function DashboardPage() {
         <BudgetPieChart summary={summary} />
         <BudgetBarChart periods={periods} expenses={allExpenses} />
       </div>
+
+      {/* FAB — quick add expense */}
+      <button
+        aria-label="+ Gasto"
+        onClick={() => setFabOpen(true)}
+        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-lg transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:h-auto sm:w-auto sm:rounded-full sm:px-5 sm:py-3 sm:text-sm sm:font-medium"
+      >
+        <span className="hidden sm:inline">＋ Gasto</span>
+        <span className="text-xl sm:hidden">＋</span>
+      </button>
+
+      <Modal open={fabOpen} title="Nuevo gasto" onClose={() => setFabOpen(false)}>
+        <ExpenseForm
+          categories={categories}
+          onSubmit={handleFabSubmit}
+          onCancel={() => setFabOpen(false)}
+        />
+      </Modal>
     </div>
   )
 }
