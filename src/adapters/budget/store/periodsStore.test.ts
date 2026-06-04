@@ -101,4 +101,37 @@ describe('periodsStore — setActivePeriod', () => {
     })
     expect(getStore().activePeriodId).toBe(firstId)
   })
+
+  it('allows navigating back to a past period', () => {
+    act(() => {
+      getStore().createPeriod({ month: 1, year: 2026, netSalary: 300000 })
+      getStore().createPeriod({ month: 2, year: 2026, netSalary: 310000 })
+      getStore().createPeriod({ month: 3, year: 2026, netSalary: 320000 })
+    })
+    const periods = getStore().periods
+    // navigate back to first
+    act(() => {
+      getStore().setActivePeriod(periods[0].id)
+    })
+    expect(getStore().activePeriodId).toBe(periods[0].id)
+    // navigate forward to last
+    act(() => {
+      getStore().setActivePeriod(periods[2].id)
+    })
+    expect(getStore().activePeriodId).toBe(periods[2].id)
+  })
+
+  it('returns sorted periods newest first (derived)', () => {
+    act(() => {
+      getStore().createPeriod({ month: 3, year: 2026, netSalary: 320000 })
+      getStore().createPeriod({ month: 1, year: 2026, netSalary: 300000 })
+      getStore().createPeriod({ month: 2, year: 2026, netSalary: 310000 })
+    })
+    const { periods } = getStore()
+    const sorted = [...periods].sort((a, b) =>
+      b.year !== a.year ? b.year - a.year : b.month - a.month,
+    )
+    expect(sorted[0].month).toBe(3)
+    expect(sorted[2].month).toBe(1)
+  })
 })

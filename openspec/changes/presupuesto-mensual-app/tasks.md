@@ -143,10 +143,10 @@ Chain strategy: feature-branch-chain
 
 | ID    | Title                               | Type     | Files                                                                          | AC Ref                       |
 |-------|-------------------------------------|----------|--------------------------------------------------------------------------------|------------------------------|
-| T8-1  | Responsive layout audit             | refactor | `src/adapters/budget/components/Layout.tsx`, all pages                         | spec §Core Stack & Theme     |
-| T8-2  | Loading/hydration gate in Layout    | feat     | `src/adapters/budget/components/Layout.tsx`                                    | design.md §Hydration strategy|
-| T8-3  | Empty states & error messages       | feat     | `src/adapters/shared/components/EmptyState.tsx`, form components               | Scenario: Delete referenced cat|
-| T8-4  | E2E test: salary → expense → dashboard | test  | `e2e/full-flow.spec.ts`                                                        | design.md §Testing Strategy  |
-| T8-5  | Final build + Vercel deploy check   | config   | `vercel.json`, CI/CD if applicable                                             | design.md §Vercel Config     |
+| ~~T8-1~~ ✅ | Responsive layout audit             | refactor | `src/adapters/budget/components/Layout.tsx`, all pages                         | spec §Core Stack & Theme     |
+| ~~T8-2~~ ✅ | Loading/hydration gate in Layout    | feat     | `src/adapters/budget/components/Layout.tsx`                                    | design.md §Hydration strategy|
+| ~~T8-3~~ ✅ | Empty states & error messages       | feat     | `src/adapters/shared/components/EmptyState.tsx`, form components               | Scenario: Delete referenced cat|
+| ~~T8-4~~ ✅ | E2E test: salary → expense → dashboard | test  | `e2e/full-flow.spec.ts`                                                        | design.md §Testing Strategy  |
+| ~~T8-5~~ ✅ | Final build + Vercel deploy check   | config   | `vercel.json`, CI/CD if applicable                                             | design.md §Vercel Config     |
 
 **Dependencies**: PR7

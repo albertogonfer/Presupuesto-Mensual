@@ -21,7 +21,7 @@ export default function ExpensesPage() {
     return (
       <div className="flex flex-col gap-6">
         <h1 className="text-2xl font-semibold text-text-primary">Gastos</h1>
-        <EmptyState message="Configura un período con tu sueldo antes de registrar gastos." />
+        <EmptyState message="Configura un período con tu sueldo antes de registrar gastos." icon="⚙️" />
       </div>
     )
   }
@@ -47,10 +47,11 @@ export default function ExpensesPage() {
       {expenses.length === 0 ? (
         <EmptyState
           message="Añade tu primer gasto para empezar a controlar tu presupuesto."
+            icon="💰"
         />
       ) : (
-        <div className="flex flex-col gap-3">
-          {expenses.map((expense) => {
+        <div className="overflow-hidden rounded-card bg-bg-card shadow-card">
+          {expenses.map((expense, idx) => {
             const category = categories.find((c) => c.id === expense.categoryId)
             return (
               <ExpenseRow
@@ -59,6 +60,7 @@ export default function ExpensesPage() {
                 category={category}
                 onEdit={(e) => setModal({ type: 'edit', expense: e })}
                 onDelete={removeExpense}
+                alternate={idx % 2 === 1}
               />
             )
           })}

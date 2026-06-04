@@ -37,6 +37,7 @@ export default function DashboardPage() {
           message="Configura un período con tu sueldo antes de ver el resumen."
           actionLabel="Ir a Configuración"
           onAction={() => { window.location.href = '/settings' }}
+          icon="⚙️"
         />
       </div>
     )
@@ -66,22 +67,24 @@ export default function DashboardPage() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} />
+        <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} icon="💸" />
         <SummaryCard
           label="Dinero restante"
           value={formatEur(summary.remaining)}
           variant={remainingVariant}
+          icon={summary.remaining >= 0 ? '✅' : '⚠️'}
         />
         <SummaryCard
           label="Porcentaje utilizado"
           value={`${summary.percentUsed.toFixed(1)} %`}
           variant={summary.percentUsed > 100 ? 'danger' : 'default'}
+          icon="📊"
         />
       </div>
 
       {/* Category breakdown */}
       {summary.byCategory.length === 0 ? (
-        <EmptyState message="Aún no tienes gastos registrados" />
+        <EmptyState message="Aún no tienes gastos registrados" icon="📋" />
       ) : (
         <div className="flex flex-col gap-3">
           <h2 className="text-lg font-semibold text-text-primary">Desglose por categorías</h2>
@@ -123,8 +126,11 @@ export default function DashboardPage() {
       )}
 
       {/* Charts section */}
-      <BudgetPieChart summary={summary} />
-      <BudgetBarChart periods={periods} expenses={allExpenses} />
+      <div className="flex flex-col gap-4">
+        <h2 className="text-lg font-semibold text-text-primary">Gráficos</h2>
+        <BudgetPieChart summary={summary} />
+        <BudgetBarChart periods={periods} expenses={allExpenses} />
+      </div>
     </div>
   )
 }
