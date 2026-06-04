@@ -1,9 +1,13 @@
-import type { BudgetPeriod, Expense, Category, BudgetSummary } from '../model/types'
+import type { BudgetPeriod, Expense, Category, BudgetSummary, RecurringExpense } from '../model/types'
+import { getMonthlyBalloonReserve } from './recurringExpenseService'
 
 export function calculateSummary(
   period: BudgetPeriod,
   expenses: Expense[],
   categories: Category[],
+  activeRecurring: RecurringExpense[] = [],
+  currentMonth: number = period.month,
+  currentYear: number = period.year,
 ): BudgetSummary {
   const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0)
   const remaining = period.netSalary - totalSpent
@@ -27,5 +31,20 @@ export function calculateSummary(
   const savingsGoal = period.savingsGoal
   const savingsProgress = savingsGoal !== undefined ? remaining - savingsGoal : undefined
 
-  return { totalSpent, remaining, percentUsed, byCategory, savingsGoal, savingsProgress }
+  // Mandatory reserves (balloon payments)
+  const mandatoryReserves: BudgetSummary['mandatoryReserves'] = []
+  for (const r of activeRecurring) {
+    const reserve = getMonthlyBalloonReserve(r, currentMonth, currentYear)
+    if (reserve > 0) {
+      mandatoryReserves.push({
+        recurringId: r.id,
+        description: r.description,
+        monthlyReserve: reserve,
+      })
+    }
+  }
+  const totalMandatoryReserves = mandatoryReserves.reduce((sum, mr) => sum + mr.monthlyReserve, 0)
+  const adjustedRemaining = remaining - totalMandatoryReserves
+
+  return { totalSpent, remaining, percentUsed, byCategory, savingsGoal, savingsProgress, mandatoryReserves, totalMandatoryReserves, adjustedRemaining }
 }
