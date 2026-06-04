@@ -22,12 +22,13 @@ type PeriodFormValues = {
   month: number
   year: number
   netSalary: number
+  savingsGoal?: number
 }
 
 type PeriodFormProps = {
   onSubmit: (values: PeriodFormValues) => void
   onCancel: () => void
-  initialValues?: Pick<BudgetPeriod, 'month' | 'year' | 'netSalary'>
+  initialValues?: Pick<BudgetPeriod, 'month' | 'year' | 'netSalary' | 'savingsGoal'>
   editMode?: boolean
 }
 
@@ -36,6 +37,8 @@ export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false
   const [month, setMonth] = useState(initialValues?.month ?? now.getMonth() + 1)
   const [year, setYear] = useState(initialValues?.year ?? now.getFullYear())
   const [netSalary, setNetSalary] = useState(initialValues?.netSalary?.toString() ?? '')
+  const [hasSavingsGoal, setHasSavingsGoal] = useState(initialValues?.savingsGoal !== undefined)
+  const [savingsGoal, setSavingsGoal] = useState(initialValues?.savingsGoal?.toString() ?? '')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -43,6 +46,7 @@ export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false
       month,
       year: Number(year),
       netSalary: Number(netSalary),
+      savingsGoal: hasSavingsGoal && savingsGoal !== '' ? Number(savingsGoal) : undefined,
     })
   }
 
@@ -89,6 +93,33 @@ export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false
         min={1}
         required
       />
+
+      <div className="flex flex-col gap-3">
+        <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-text-secondary">
+          <input
+            type="checkbox"
+            checked={hasSavingsGoal}
+            onChange={(e) => {
+              setHasSavingsGoal(e.target.checked)
+              if (!e.target.checked) setSavingsGoal('')
+            }}
+            className="h-4 w-4 rounded accent-accent"
+          />
+          Establecer objetivo de ahorro
+        </label>
+        {hasSavingsGoal && (
+          <Input
+            id="period-savings-goal"
+            label="Objetivo de ahorro"
+            type="number"
+            value={savingsGoal}
+            onChange={(e) => setSavingsGoal(e.target.value)}
+            placeholder="Ej: 500"
+            min={0}
+            required
+          />
+        )}
+      </div>
 
       <div className="flex justify-end gap-3 pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>

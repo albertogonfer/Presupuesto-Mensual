@@ -13,7 +13,7 @@ export default function BudgetPeriodPage() {
   const [modal, setModal] = useState<ModalMode>(null)
   const [formError, setFormError] = useState<string | null>(null)
 
-  function handleCreate(values: { month: number; year: number; netSalary: number }) {
+  function handleCreate(values: { month: number; year: number; netSalary: number; savingsGoal?: number }) {
     setFormError(null)
     const result = createPeriod(values)
     if (!result.success) {
@@ -23,9 +23,9 @@ export default function BudgetPeriodPage() {
     setModal(null)
   }
 
-  function handleEdit(values: { month: number; year: number; netSalary: number }) {
+  function handleEdit(values: { month: number; year: number; netSalary: number; savingsGoal?: number }) {
     if (!activePeriod) return
-    updatePeriod(activePeriod.id, { netSalary: values.netSalary })
+    updatePeriod(activePeriod.id, { netSalary: values.netSalary, savingsGoal: values.savingsGoal })
     setModal(null)
   }
 
@@ -79,6 +79,7 @@ export default function BudgetPeriodPage() {
               month: activePeriod.month,
               year: activePeriod.year,
               netSalary: activePeriod.netSalary,
+              savingsGoal: activePeriod.savingsGoal,
             }}
             editMode
           />

@@ -55,6 +55,10 @@ export default function DashboardPage() {
 
   const monthName = MONTH_NAMES[activePeriod.month - 1]
   const remainingVariant = summary.remaining >= 0 ? 'success' : 'danger'
+  const savingsProgressVariant = (summary.savingsProgress ?? 0) >= 0 ? 'success' : 'danger'
+  const savingsProgressPercent = summary.savingsGoal
+    ? Math.min((summary.remaining / summary.savingsGoal) * 100, 100)
+    : 0
 
   function handleFabSubmit(values: { description: string; amount: number; categoryId: string; date: string }) {
     addExpense({ ...values, periodId: activePeriodId! })
@@ -96,6 +100,30 @@ export default function DashboardPage() {
           icon="📊"
         />
       </div>
+
+      {/* Savings goal card */}
+      {summary.savingsGoal !== undefined && (
+        <div className="flex flex-col gap-3 rounded-card bg-bg-card p-6 shadow-card">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-text-secondary">Objetivo de ahorro</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-input text-base">🎯</span>
+          </div>
+          <span className="text-2xl font-bold text-text-primary">
+            {formatEur(summary.savingsGoal)} objetivo
+          </span>
+          <p className={`text-sm font-medium ${savingsProgressVariant === 'success' ? 'text-success' : 'text-danger'}`}>
+            {(summary.savingsProgress ?? 0) >= 0
+              ? `Te quedan ${formatEur(summary.savingsProgress ?? 0)} tras el objetivo`
+              : `Faltan ${formatEur(Math.abs(summary.savingsProgress ?? 0))} para alcanzar el objetivo`}
+          </p>
+          <div className="h-2 overflow-hidden rounded-full bg-bg-input">
+            <div
+              className={`h-full rounded-full transition-all ${savingsProgressVariant === 'success' ? 'bg-success' : 'bg-danger'}`}
+              style={{ width: `${Math.max(savingsProgressPercent, 0)}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Category breakdown */}
       {summary.byCategory.length === 0 ? (
