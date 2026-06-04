@@ -13,6 +13,7 @@ const OLD_PERSIST_KEYS = [
   'budget-periods',
   'budget-expenses',
   'budget-recurring',
+  'onboarding-complete',
 ]
 
 const navLinks = [
@@ -49,6 +50,7 @@ export function Layout({ children }: LayoutProps) {
   const anyLoading = catLoading || perLoading || expLoading || recLoading
 
   const periods = usePeriodsStore((s) => s.periods)
+  const categories = useCategoriesStore((s) => s.categories)
 
   // One-time cleanup of old Zustand-persist localStorage keys
   useEffect(() => {
@@ -81,9 +83,8 @@ export function Layout({ children }: LayoutProps) {
     if (children) return children
     // Wait for all stores to load before rendering
     if (anyLoading) return <PageSpinner />
-    // Guard: redirect to onboarding if no periods and onboarding not complete
-    const onboardingDone = localStorage.getItem('onboarding-complete')
-    if (periods.length === 0 && !onboardingDone) {
+    // Guard: redirect to onboarding if no data yet (new user)
+    if (categories.length === 0 && periods.length === 0) {
       return <Navigate to="/onboarding" replace />
     }
     return <Outlet />
