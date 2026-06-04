@@ -8,7 +8,7 @@ type AuthContextValue = {
   session: Session | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error?: string }>
-  signUp: (email: string, password: string) => Promise<{ error?: string }>
+  signUp: (email: string, password: string, name: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
 }
 
@@ -31,17 +31,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(email: string, password: string): Promise<{ error?: string }> {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) return { error: 'Email o contraseña incorrectos. Inténtalo de nuevo.' }
+    if (error) {
+      if (error.code === 'invalid_credentials') return { error: 'Email o contraseña incorrectos.' }
+      return { error: error.message }
+    }
     return {}
   }
 
-  async function signUp(email: string, password: string): Promise<{ error?: string }> {
-    const { error } = await supabase.auth.signUp({ email, password })
+  async function signUp(email: string, password: string, name: string): Promise<{ error?: string }> {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: name } },
+    })
     if (error) {
-      if (error.message.toLowerCase().includes('already')) {
-        return { error: 'Ya existe una cuenta con este email.' }
-      }
-      return { error: 'No se pudo crear la cuenta. Inténtalo de nuevo.' }
+      if (error.code === 'over_email_send_rate_limit') return { error: 'Has superado el límite de envíos de correo. Espera unos minutos e inténtalo de nuevo.' }
+      if (error.code === 'user_already_exists') return { error: 'Ya existe una cuenta con este email.' }
+      return { error: error.message }
     }
     return {}
   }
