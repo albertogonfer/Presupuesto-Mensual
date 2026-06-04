@@ -15,7 +15,7 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 px-4 py-8"
     >
       <div className="w-full max-w-md rounded-card bg-bg-card p-6 shadow-card">
         <div className="mb-4 flex items-center justify-between">
