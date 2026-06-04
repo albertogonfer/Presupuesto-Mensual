@@ -6,6 +6,7 @@ const DashboardPage = lazy(() => import('./adapters/budget/pages/DashboardPage')
 const ExpensesPage = lazy(() => import('./adapters/budget/pages/ExpensesPage'))
 const CategoriesPage = lazy(() => import('./adapters/budget/pages/CategoriesPage'))
 const SettingsPage = lazy(() => import('./adapters/budget/pages/SettingsPage'))
+const HistoryPage = lazy(() => import('./adapters/budget/pages/HistoryPage'))
 
 export type AppRoute = {
   path: string
@@ -16,6 +17,7 @@ export const routes: AppRoute[] = [
   { path: '/', label: 'Dashboard' },
   { path: '/expenses', label: 'Gastos' },
   { path: '/categories', label: 'Categorías' },
+  { path: '/history', label: 'Historial' },
   { path: '/settings', label: 'Configuración' },
 ]
 
@@ -34,6 +36,7 @@ export const router = createBrowserRouter([
       { path: '/', element: wrap(DashboardPage) },
       { path: '/expenses', element: wrap(ExpensesPage) },
       { path: '/categories', element: wrap(CategoriesPage) },
+      { path: '/history', element: wrap(HistoryPage) },
       { path: '/settings', element: wrap(SettingsPage) },
     ],
   },
