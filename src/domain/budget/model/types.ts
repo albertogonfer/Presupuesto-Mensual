@@ -25,6 +25,20 @@ export type Expense = {
   createdAt: string // ISO date string
 }
 
+export interface RecurringExpense {
+  id: string
+  categoryId: string
+  description: string
+  amount: number
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  every: number
+  endsAt?: string       // ISO date — expires on this date
+  endsAfter?: number    // expires after N total occurrences
+  occurrenceCount: number
+  createdAt: string
+  active: boolean
+}
+
 export type BudgetSummary = {
   totalSpent: number
   remaining: number
