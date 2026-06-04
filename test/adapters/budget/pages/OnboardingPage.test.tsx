@@ -17,6 +17,43 @@ vi.mock('react-router-dom', async (importOriginal) => {
   }
 })
 
+vi.mock('@/infrastructure/storage/periodsRepository', () => ({
+  periodsRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (p: unknown) => p),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
+vi.mock('@/infrastructure/storage/categoriesRepository', () => ({
+  categoriesRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (c: unknown) => c),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
+vi.mock('@/infrastructure/storage/expensesRepository', () => ({
+  expensesRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (e: unknown) => e),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+    deleteByPeriod: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
+vi.mock('@/infrastructure/storage/recurringExpensesRepository', () => ({
+  recurringExpensesRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (r: unknown) => r),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
 const SEED_CATEGORIES = [
   { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🛒', createdAt: '2024-01-01T00:00:00Z' },
   { id: 'cat-2', name: 'Préstamos', color: '#F59E0B', icon: '💳', createdAt: '2024-01-01T00:00:00Z' },
@@ -32,6 +69,7 @@ function renderPage() {
 }
 
 beforeEach(() => {
+  vi.clearAllMocks()
   mockNavigate.mockReset()
   localStorage.clear()
   usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })

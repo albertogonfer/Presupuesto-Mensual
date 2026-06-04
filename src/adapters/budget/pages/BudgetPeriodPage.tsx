@@ -26,9 +26,9 @@ export default function BudgetPeriodPage() {
       }
     : undefined
 
-  function handleCreate(values: { month: number; year: number; netSalary: number; savingsGoal?: number }) {
+  async function handleCreate(values: { month: number; year: number; netSalary: number; savingsGoal?: number }) {
     setFormError(null)
-    const result = createPeriod(values)
+    const result = await createPeriod(values)
     if (!result.success) {
       setFormError(result.error ?? 'No se pudo crear el período.')
       return

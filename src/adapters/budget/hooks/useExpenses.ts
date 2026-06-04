@@ -4,6 +4,9 @@ import { usePeriodsStore } from '../store/periodsStore'
 export function useExpenses() {
   const activePeriodId = usePeriodsStore((s) => s.activePeriodId)
   const allExpenses = useExpensesStore((s) => s.expenses)
+  const loading = useExpensesStore((s) => s.loading)
+  const error = useExpensesStore((s) => s.error)
+  const fetchAll = useExpensesStore((s) => s.fetchAll)
   const addExpense = useExpensesStore((s) => s.addExpense)
   const updateExpense = useExpensesStore((s) => s.updateExpense)
   const removeExpense = useExpensesStore((s) => s.removeExpense)
@@ -12,5 +15,5 @@ export function useExpenses() {
     ? allExpenses.filter((e) => e.periodId === activePeriodId)
     : []
 
-  return { expenses, addExpense, updateExpense, removeExpense }
+  return { expenses, loading, error, fetchAll, addExpense, updateExpense, removeExpense }
 }

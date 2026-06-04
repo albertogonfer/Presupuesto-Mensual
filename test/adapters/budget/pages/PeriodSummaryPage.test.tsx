@@ -1,17 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { act } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { usePeriodsStore } from '@/adapters/budget/store/periodsStore'
 import { useExpensesStore } from '@/adapters/budget/store/expensesStore'
 import { useCategoriesStore } from '@/adapters/budget/store/categoriesStore'
 import PeriodSummaryPage from '@/adapters/budget/pages/PeriodSummaryPage'
+import type { BudgetPeriod, Expense } from '@/domain/budget/model/types'
 
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>()
   return { ...actual, useNavigate: () => mockNavigate }
 })
+
+function makePeriod(id: string, month: number, year: number, netSalary: number): BudgetPeriod {
+  return { id, month, year, netSalary, createdAt: `${year}-${String(month).padStart(2, '0')}-01T00:00:00Z` }
+}
+
+function makeExpense(id: string, periodId: string, amount: number, description: string, date: string): Expense {
+  return { id, periodId, categoryId: 'cat-1', description, amount, date, createdAt: `${date}T00:00:00Z` }
+}
 
 beforeEach(() => {
   usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
@@ -43,64 +51,44 @@ describe('PeriodSummaryPage', () => {
   })
 
   it('shows period title in header', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 6, year: 2026, netSalary: 2000 })
-    })
-    const period = usePeriodsStore.getState().periods[0]
+    const period = makePeriod('jun-2026', 6, 2026, 2000)
+    usePeriodsStore.setState({ periods: [period], activePeriodId: period.id, hasHydrated: true })
     renderPage(period.id)
     expect(screen.getByText(/Resumen · Junio 2026/i)).toBeInTheDocument()
   })
 
   it('shows total stats', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 6, year: 2026, netSalary: 2000 })
-    })
-    const period = usePeriodsStore.getState().periods[0]
-    act(() => {
-      useExpensesStore.getState().addExpense({
-        periodId: period.id,
-        categoryId: 'cat-1',
-        description: 'Test',
-        amount: 500,
-        date: '2026-06-01',
-      })
+    const period = makePeriod('jun-2026', 6, 2026, 2000)
+    usePeriodsStore.setState({ periods: [period], activePeriodId: period.id, hasHydrated: true })
+    useExpensesStore.setState({
+      expenses: [makeExpense('e1', period.id, 500, 'Test', '2026-06-01')],
+      hasHydrated: true,
     })
     renderPage(period.id)
     expect(screen.getAllByText(/500,00/).length).toBeGreaterThanOrEqual(1)
   })
 
   it('shows "Este período aún está en curso" when it is the latest period', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 6, year: 2026, netSalary: 2000 })
-    })
-    const period = usePeriodsStore.getState().periods[0]
+    const period = makePeriod('jun-2026', 6, 2026, 2000)
+    usePeriodsStore.setState({ periods: [period], activePeriodId: period.id, hasHydrated: true })
     renderPage(period.id)
     expect(screen.getByText(/este período aún está en curso/i)).toBeInTheDocument()
   })
 
   it('does NOT show "en curso" notice for a finished period', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 5, year: 2026, netSalary: 2000 })
-      usePeriodsStore.getState().createPeriod({ month: 6, year: 2026, netSalary: 2000 })
-    })
-    const mayPeriod = usePeriodsStore.getState().periods.find((p) => p.month === 5)!
-    renderPage(mayPeriod.id)
+    const may = makePeriod('may-2026', 5, 2026, 2000)
+    const jun = makePeriod('jun-2026', 6, 2026, 2000)
+    usePeriodsStore.setState({ periods: [may, jun], activePeriodId: jun.id, hasHydrated: true })
+    renderPage(may.id)
     expect(screen.queryByText(/este período aún está en curso/i)).toBeNull()
   })
 
   it('accordion: day row is visible, expenses hidden by default, click expands', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 6, year: 2026, netSalary: 2000 })
-    })
-    const period = usePeriodsStore.getState().periods[0]
-    act(() => {
-      useExpensesStore.getState().addExpense({
-        periodId: period.id,
-        categoryId: 'cat-1',
-        description: 'Cena restaurante',
-        amount: 45,
-        date: '2026-06-03',
-      })
+    const period = makePeriod('jun-2026', 6, 2026, 2000)
+    usePeriodsStore.setState({ periods: [period], activePeriodId: period.id, hasHydrated: true })
+    useExpensesStore.setState({
+      expenses: [makeExpense('e1', period.id, 45, 'Cena restaurante', '2026-06-03')],
+      hasHydrated: true,
     })
     renderPage(period.id)
 
@@ -121,10 +109,8 @@ describe('PeriodSummaryPage', () => {
   })
 
   it('back link navigates to /history', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 6, year: 2026, netSalary: 2000 })
-    })
-    const period = usePeriodsStore.getState().periods[0]
+    const period = makePeriod('jun-2026', 6, 2026, 2000)
+    usePeriodsStore.setState({ periods: [period], activePeriodId: period.id, hasHydrated: true })
     renderPage(period.id)
     const backLink = screen.getByRole('link', { name: /volver al historial/i })
     expect(backLink).toHaveAttribute('href', '/history')

@@ -1,11 +1,31 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useCategoriesStore } from '@/adapters/budget/store/categoriesStore'
 import { useExpensesStore } from '@/adapters/budget/store/expensesStore'
 import CategoriesPage from '@/adapters/budget/pages/CategoriesPage'
 
+vi.mock('@/infrastructure/storage/categoriesRepository', () => ({
+  categoriesRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (c: unknown) => c),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
+vi.mock('@/infrastructure/storage/expensesRepository', () => ({
+  expensesRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (e: unknown) => e),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+    deleteByPeriod: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
 beforeEach(() => {
+  vi.clearAllMocks()
   useCategoriesStore.setState({
     categories: [
       { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🛒', createdAt: '2024-01-01T00:00:00Z' },

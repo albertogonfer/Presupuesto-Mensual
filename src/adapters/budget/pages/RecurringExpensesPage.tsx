@@ -88,11 +88,11 @@ export default function RecurringExpensesPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!validate()) return
 
-    const newRecurring = addRecurringExpense({
+    const newRecurring = await addRecurringExpense({
       description: form.description.trim(),
       categoryId: form.categoryId,
       amount: parseFloat(form.amount),

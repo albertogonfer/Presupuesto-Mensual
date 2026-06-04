@@ -27,9 +27,9 @@ export default function CategoriesPage() {
     setConfirmDelete({ id, name: category.name })
   }
 
-  function handleConfirmDelete() {
+  async function handleConfirmDelete() {
     if (!confirmDelete) return
-    const result = removeCategory(confirmDelete.id, expenseCategoryIds)
+    const result = await removeCategory(confirmDelete.id, expenseCategoryIds)
     setConfirmDelete(null)
     if (!result.success) {
       setDeleteError(result.error ?? 'No se puede eliminar esta categoría.')

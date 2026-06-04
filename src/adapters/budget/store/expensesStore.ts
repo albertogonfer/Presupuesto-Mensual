@@ -1,59 +1,92 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 import type { Expense } from '../../../domain/budget/model/types'
+import { expensesRepository } from '../../../infrastructure/storage/expensesRepository'
 
 type ExpensesState = {
   expenses: Expense[]
+  loading: boolean
+  error: string | null
+  /** True after the first fetchAll() completes. Replaces persist hasHydrated. */
   hasHydrated: boolean
-  addExpense: (payload: Omit<Expense, 'id' | 'createdAt'>) => void
-  updateExpense: (id: string, patch: Partial<Omit<Expense, 'id' | 'createdAt'>>) => void
-  removeExpense: (id: string) => void
-  removeExpensesByPeriod: (periodId: string) => void
+  fetchAll: () => Promise<void>
+  addExpense: (payload: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>
+  updateExpense: (id: string, patch: Partial<Omit<Expense, 'id' | 'createdAt'>>) => Promise<void>
+  removeExpense: (id: string) => Promise<void>
+  removeExpensesByPeriod: (periodId: string) => Promise<void>
   getByPeriod: (periodId: string) => Expense[]
+  reset: () => void
 }
 
-export const useExpensesStore = create<ExpensesState>()(
-  persist(
-    (set, get) => ({
-      expenses: [],
-      hasHydrated: false,
+export const useExpensesStore = create<ExpensesState>()((set, get) => ({
+  expenses: [],
+  loading: false,
+  error: null,
+  hasHydrated: false,
 
-      addExpense(payload) {
-        const newExpense: Expense = {
-          ...payload,
-          id: crypto.randomUUID(),
-          createdAt: new Date().toISOString(),
-        }
-        set((s) => ({ expenses: [...s.expenses, newExpense] }))
-      },
+  async fetchAll() {
+    set({ loading: true, error: null })
+    try {
+      const expenses = await expensesRepository.getAll()
+      set({ expenses, loading: false, hasHydrated: true })
+    } catch (e) {
+      set({ error: (e as Error).message, loading: false, hasHydrated: true })
+    }
+  },
 
-      updateExpense(id, patch) {
-        set((s) => ({
-          expenses: s.expenses.map((e) =>
-            e.id === id ? { ...e, ...patch } : e,
-          ),
-        }))
-      },
+  async addExpense(payload) {
+    const newExpense: Expense = {
+      ...payload,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+    }
+    set((s) => ({ expenses: [...s.expenses, newExpense] }))
+    try {
+      await expensesRepository.create(newExpense)
+    } catch (e) {
+      set((s) => ({
+        expenses: s.expenses.filter((ex) => ex.id !== newExpense.id),
+        error: (e as Error).message,
+      }))
+    }
+  },
 
-      removeExpense(id) {
-        set((s) => ({ expenses: s.expenses.filter((e) => e.id !== id) }))
-      },
+  async updateExpense(id, patch) {
+    set((s) => ({
+      expenses: s.expenses.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+    }))
+    try {
+      await expensesRepository.update(id, patch)
+    } catch (e) {
+      set({ error: (e as Error).message })
+      await get().fetchAll()
+    }
+  },
 
-      removeExpensesByPeriod(periodId) {
-        set((s) => ({ expenses: s.expenses.filter((e) => e.periodId !== periodId) }))
-      },
+  async removeExpense(id) {
+    set((s) => ({ expenses: s.expenses.filter((e) => e.id !== id) }))
+    try {
+      await expensesRepository.delete(id)
+    } catch (e) {
+      set({ error: (e as Error).message })
+      await get().fetchAll()
+    }
+  },
 
-      getByPeriod(periodId) {
-        return get().expenses.filter((e) => e.periodId === periodId)
-      },
-    }),
-    {
-      name: 'budget-expenses',
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.hasHydrated = true
-        }
-      },
-    },
-  ),
-)
+  async removeExpensesByPeriod(periodId) {
+    set((s) => ({ expenses: s.expenses.filter((e) => e.periodId !== periodId) }))
+    try {
+      await expensesRepository.deleteByPeriod(periodId)
+    } catch (e) {
+      set({ error: (e as Error).message })
+      await get().fetchAll()
+    }
+  },
+
+  getByPeriod(periodId) {
+    return get().expenses.filter((e) => e.periodId === periodId)
+  },
+
+  reset() {
+    set({ expenses: [], loading: false, error: null })
+  },
+}))
