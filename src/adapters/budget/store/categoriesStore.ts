@@ -9,7 +9,7 @@ type CategoriesState = {
   loading: boolean
   error: string | null
   fetchAll: () => Promise<void>
-  addCategory: (payload: Omit<Category, 'id' | 'createdAt'>) => Promise<void>
+  addCategory: (payload: Omit<Category, 'id' | 'createdAt'>) => Promise<{ error?: string }>
   updateCategory: (id: string, patch: Partial<Omit<Category, 'id' | 'createdAt'>>) => Promise<void>
   removeCategory: (id: string, expenseCategoryIds: string[]) => Promise<RemoveResult>
   reset: () => void
@@ -45,16 +45,28 @@ export const useCategoriesStore = create<CategoriesState>()((set, get) => ({
   },
 
   async addCategory(payload) {
+    const duplicate = get().categories.some(
+      (c) =>
+        c.name.trim().toLowerCase() === payload.name.trim().toLowerCase() &&
+        c.color === payload.color &&
+        c.icon === payload.icon,
+    )
+    if (duplicate) {
+      return { error: 'Ya existe una categoría con el mismo nombre, color y emoji.' }
+    }
+
     const newCat: Omit<Category, 'createdAt'> = { ...payload, id: crypto.randomUUID() }
     const optimistic: Category = { ...newCat, createdAt: new Date().toISOString() }
     set((s) => ({ categories: [...s.categories, optimistic] }))
     try {
       await categoriesRepository.create(newCat)
+      return {}
     } catch (e) {
       set((s) => ({
         categories: s.categories.filter((c) => c.id !== newCat.id),
         error: (e as Error).message,
       }))
+      return { error: (e as Error).message }
     }
   },
 

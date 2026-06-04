@@ -45,11 +45,11 @@ export default function CategoriesPage() {
     }
   }
 
-  function handleSubmit(values: { name: string; color: string; icon: string; limit?: number }) {
+  async function handleSubmit(values: { name: string; color: string; icon: string; limit?: number }) {
     if (modal?.type === 'edit') {
       updateCategory(modal.category.id, values)
     } else {
-      addCategory(values)
+      await addCategory(values)
     }
     setModal(null)
   }
