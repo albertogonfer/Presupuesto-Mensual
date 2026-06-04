@@ -77,7 +77,7 @@ export function RecurringExpensesSummary() {
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-text-primary">{formatEur(r.amount)}</p>
+                    <p className="text-sm font-semibold text-danger">-{formatEur(r.amount)}</p>
                     <p className="text-xs text-text-secondary">
                       {remainingLabel ?? 'Sin vencimiento'}
                     </p>
