@@ -97,11 +97,11 @@ Chain strategy: feature-branch-chain
 
 | ID    | Title                          | Type | Files                                                                                     | AC Ref                       |
 |-------|--------------------------------|------|-------------------------------------------------------------------------------------------|------------------------------|
-| T5-1  | Implement calculateSummary     | feat | `src/domain/budget/services/calculateSummary.ts`                                          | Scenario: Calculate remaining|
-| T5-2  | Define BudgetSummary type      | feat | `src/domain/budget/model/types.ts`                                                        | design.md §Domain Types      |
-| T5-3  | SummaryCard presentational     | feat | `src/adapters/budget/components/SummaryCard.tsx`                                          | Scenario: Calculate remaining|
-| T5-4  | DashboardPage (summary only)   | feat | `src/adapters/budget/pages/DashboardPage.tsx`                                             | Scenario: Calculate remaining|
-| T5-5  | Unit tests: calculateSummary   | test | `src/domain/budget/services/calculateSummary.test.ts`                                     | Scenario: Calculate remaining|
+| ~~T5-1~~ ✅ | Implement calculateSummary     | feat | `src/domain/budget/services/calculateSummary.ts`                                          | Scenario: Calculate remaining|
+| ~~T5-2~~ ✅ | Define BudgetSummary type      | feat | `src/domain/budget/model/types.ts`                                                        | design.md §Domain Types      |
+| ~~T5-3~~ ✅ | SummaryCard presentational     | feat | `src/adapters/budget/components/SummaryCard.tsx`                                          | Scenario: Calculate remaining|
+| ~~T5-4~~ ✅ | DashboardPage (summary only)   | feat | `src/adapters/budget/pages/DashboardPage.tsx`                                             | Scenario: Calculate remaining|
+| ~~T5-5~~ ✅ | Unit tests: calculateSummary   | test | `src/domain/budget/services/calculateSummary.test.ts`                                     | Scenario: Calculate remaining|
 
 **Dependencies**: PR4
 
@@ -113,11 +113,11 @@ Chain strategy: feature-branch-chain
 
 | ID    | Title                              | Type | Files                                                                              | AC Ref                        |
 |-------|------------------------------------|------|------------------------------------------------------------------------------------|-------------------------------|
-| T6-1  | Implement chartTransformers        | feat | `src/domain/budget/services/chartTransformers.ts`                                  | Scenario: Render distribution |
-| T6-2  | BudgetPieChart (donut)             | feat | `src/adapters/budget/components/BudgetPieChart.tsx`                                | Scenario: Render distribution |
-| T6-3  | BudgetBarChart (monthly trends)    | feat | `src/adapters/budget/components/BudgetBarChart.tsx`                                | spec §Recharts Visualization  |
-| T6-4  | Integrate charts into DashboardPage| feat | `src/adapters/budget/pages/DashboardPage.tsx`                                      | Scenario: Render distribution |
-| T6-5  | Unit tests: chartTransformers      | test | `src/domain/budget/services/chartTransformers.test.ts`                             | Scenario: Render distribution |
+| ~~T6-1~~ ✅ | Implement chartTransformers        | feat | `src/domain/budget/services/chartTransformers.ts`                                  | Scenario: Render distribution |
+| ~~T6-2~~ ✅ | BudgetPieChart (donut)             | feat | `src/adapters/budget/components/BudgetPieChart.tsx`                                | Scenario: Render distribution |
+| ~~T6-3~~ ✅ | BudgetBarChart (monthly trends)    | feat | `src/adapters/budget/components/BudgetBarChart.tsx`                                | spec §Recharts Visualization  |
+| ~~T6-4~~ ✅ | Integrate charts into DashboardPage| feat | `src/adapters/budget/pages/DashboardPage.tsx`                                      | Scenario: Render distribution |
+| ~~T6-5~~ ✅ | Unit tests: chartTransformers      | test | `src/domain/budget/services/chartTransformers.test.ts`                             | Scenario: Render distribution |
 
 **Dependencies**: PR5
 
@@ -129,9 +129,9 @@ Chain strategy: feature-branch-chain
 
 | ID    | Title                             | Type | Files                                                                     | AC Ref                    |
 |-------|-----------------------------------|------|---------------------------------------------------------------------------|---------------------------|
-| T7-1  | PeriodSelector component          | feat | `src/adapters/budget/components/PeriodSelector.tsx`                       | Scenario: View past period|
-| T7-2  | Wire period selector to stores    | feat | `src/adapters/budget/pages/DashboardPage.tsx`, `ExpensesPage.tsx`         | Scenario: View past period|
-| T7-3  | Unit tests: setActive + history   | test | `src/adapters/budget/store/periodsStore.test.ts`                          | Scenario: View past period|
+| ~~T7-1~~ ✅ | PeriodSelector component          | feat | `src/adapters/budget/components/PeriodSelector.tsx`                       | Scenario: View past period|
+| ~~T7-2~~ ✅ | Wire period selector to stores    | feat | `src/adapters/budget/pages/DashboardPage.tsx`, `ExpensesPage.tsx`         | Scenario: View past period|
+| ~~T7-3~~ ✅ | Unit tests: setActive + history   | test | `src/adapters/budget/store/periodsStore.test.ts`                          | Scenario: View past period|
 
 **Dependencies**: PR6
 

@@ -4,6 +4,7 @@ import { useBudgetSummary } from '../hooks/useBudgetSummary'
 import { SummaryCard } from '../components/SummaryCard'
 import { BudgetPieChart } from '../components/BudgetPieChart'
 import { BudgetBarChart } from '../components/BudgetBarChart'
+import { PeriodSelector } from '../components/PeriodSelector'
 import { EmptyState } from '../../shared/components/EmptyState'
 
 const MONTH_NAMES = [
@@ -22,6 +23,7 @@ function formatEur(amount: number): string {
 
 export default function DashboardPage() {
   const activePeriodId = usePeriodsStore((s) => s.activePeriodId)
+  const setActivePeriod = usePeriodsStore((s) => s.setActivePeriod)
   const periods = usePeriodsStore((s) => s.periods)
   const activePeriod = periods.find((p) => p.id === activePeriodId) ?? null
   const summary = useBudgetSummary()
@@ -47,9 +49,16 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6">
       {/* Header card */}
       <div className="rounded-card bg-bg-card p-6 shadow-card">
-        <h1 className="text-2xl font-semibold text-text-primary">
-          {monthName} {activePeriod.year}
-        </h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-2xl font-semibold text-text-primary">
+            {monthName} {activePeriod.year}
+          </h1>
+          <PeriodSelector
+            periods={periods}
+            activePeriodId={activePeriodId}
+            onSelect={setActivePeriod}
+          />
+        </div>
         <p className="mt-1 text-text-secondary">
           Sueldo neto: <span className="font-medium text-text-primary">{formatEur(activePeriod.netSalary)}</span>
         </p>

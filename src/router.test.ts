@@ -26,7 +26,13 @@ describe('router', () => {
     expect(settings?.label).toBe('Configuración')
   })
 
-  it('exposes exactly 4 routes', () => {
-    expect(routes).toHaveLength(4)
+  it('defines a route for history at /history', () => {
+    const history = routes.find((r) => r.path === '/history')
+    expect(history).toBeDefined()
+    expect(history?.label).toBe('Historial')
+  })
+
+  it('exposes exactly 5 routes', () => {
+    expect(routes).toHaveLength(5)
   })
 })
