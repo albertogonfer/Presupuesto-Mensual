@@ -219,7 +219,13 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Charts section */}
+      </div>{/* end left column */}
+      <div className="mt-6 lg:mt-0 lg:sticky lg:top-6">
+        <RecurringExpensesSummary />
+      </div>
+      </div>{/* end two-column grid */}
+
+      {/* Charts — full width, outside the two-column grid */}
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold text-text-primary">Gráficos</h2>
         <div className="flex flex-wrap gap-4">
@@ -236,12 +242,7 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
-      </div>{/* end charts section */}
-      </div>{/* end left column */}
-      <div className="mt-6 lg:mt-0 lg:sticky lg:top-6">
-        <RecurringExpensesSummary />
       </div>
-      </div>{/* end two-column grid */}
 
       <Modal open={fabOpen} title="Nuevo gasto" onClose={() => setFabOpen(false)}>
         <ExpenseForm
