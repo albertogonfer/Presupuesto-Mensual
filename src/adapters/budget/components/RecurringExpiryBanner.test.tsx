@@ -40,6 +40,20 @@ function makeRecurring(overrides: Partial<RecurringExpense> = {}): RecurringExpe
   }
 }
 
+function mockPeriodsStore() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  vi.mocked(usePeriodsStore).mockImplementation((selector: any) =>
+    selector({ activePeriodId: 'period-1', periods: [activePeriod] }),
+  )
+}
+
+function mockRecurringStore(expenses: RecurringExpense[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  vi.mocked(useRecurringExpensesStore).mockImplementation((selector: any) =>
+    selector({ recurringExpenses: expenses }),
+  )
+}
+
 function renderBanner() {
   return render(
     <MemoryRouter>
@@ -51,44 +65,34 @@ function renderBanner() {
 describe('RecurringExpiryBanner', () => {
   beforeEach(() => {
     localStorage.clear()
-    vi.mocked(usePeriodsStore).mockImplementation((selector: (s: unknown) => unknown) => {
-      return selector({ activePeriodId: 'period-1', periods: [activePeriod] })
-    })
+    mockPeriodsStore()
   })
 
   it('is hidden when no expired recurring expenses', () => {
-    // not expired: occurrenceCount < endsAfter
-    vi.mocked(useRecurringExpensesStore).mockImplementation((selector: (s: unknown) => unknown) => {
-      return selector({ recurringExpenses: [makeRecurring({ occurrenceCount: 1 })] })
-    })
+    mockRecurringStore([makeRecurring({ occurrenceCount: 1 })])
     renderBanner()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
   it('shows names of expired recurring expenses', () => {
-    vi.mocked(useRecurringExpensesStore).mockImplementation((selector: (s: unknown) => unknown) => {
-      return selector({ recurringExpenses: [makeRecurring()] })
-    })
+    mockRecurringStore([makeRecurring()])
     renderBanner()
     expect(screen.getByRole('alert')).toBeInTheDocument()
     expect(screen.getByText('Netflix')).toBeInTheDocument()
   })
 
   it('shows multiple expired names', () => {
-    const expired1 = makeRecurring({ id: 'rec-1', description: 'Netflix' })
-    const expired2 = makeRecurring({ id: 'rec-2', description: 'Seguro moto' })
-    vi.mocked(useRecurringExpensesStore).mockImplementation((selector: (s: unknown) => unknown) => {
-      return selector({ recurringExpenses: [expired1, expired2] })
-    })
+    mockRecurringStore([
+      makeRecurring({ id: 'rec-1', description: 'Netflix' }),
+      makeRecurring({ id: 'rec-2', description: 'Seguro moto' }),
+    ])
     renderBanner()
     expect(screen.getByText('Netflix')).toBeInTheDocument()
     expect(screen.getByText('Seguro moto')).toBeInTheDocument()
   })
 
   it('dismisses the banner on X click', async () => {
-    vi.mocked(useRecurringExpensesStore).mockImplementation((selector: (s: unknown) => unknown) => {
-      return selector({ recurringExpenses: [makeRecurring()] })
-    })
+    mockRecurringStore([makeRecurring()])
     renderBanner()
     expect(screen.getByRole('alert')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: /cerrar aviso/i }))
@@ -96,10 +100,7 @@ describe('RecurringExpiryBanner', () => {
   })
 
   it('is hidden when recurring has occurrenceCount 0 (never ran)', () => {
-    // expired but never ran → occurrenceCount = 0 → should not show
-    vi.mocked(useRecurringExpensesStore).mockImplementation((selector: (s: unknown) => unknown) => {
-      return selector({ recurringExpenses: [makeRecurring({ occurrenceCount: 0 })] })
-    })
+    mockRecurringStore([makeRecurring({ occurrenceCount: 0 })])
     renderBanner()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })

@@ -68,6 +68,10 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Two-column layout on wide screens: main content left, recurring widget right */}
+      {/* Wrapper that becomes a grid at lg breakpoint */}
+      <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-start lg:gap-6">
+      <div className="flex flex-col gap-6">
       {/* Header card */}
       <div className="rounded-card bg-bg-card p-6 shadow-card">
         <div className="flex items-center justify-between gap-4">
@@ -128,10 +132,28 @@ export default function DashboardPage() {
 
       {/* Category breakdown */}
       {summary.byCategory.length === 0 ? (
-        <EmptyState message="Aún no tienes gastos registrados" icon="📋" />
+        <div className="flex items-center justify-between">
+          <EmptyState message="Aún no tienes gastos registrados" icon="📋" />
+          <button
+            aria-label="+ Gasto"
+            onClick={() => setFabOpen(true)}
+            className="shrink-0 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+          >
+            + Gasto
+          </button>
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold text-text-primary">Desglose por categorías</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-text-primary">Desglose por categorías</h2>
+            <button
+              aria-label="+ Gasto"
+              onClick={() => setFabOpen(true)}
+              className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+            >
+              + Gasto
+            </button>
+          </div>
           {summary.byCategory.map(({ category, total, percentage }) => (
             <div
               key={category.id}
@@ -174,20 +196,12 @@ export default function DashboardPage() {
         <h2 className="text-lg font-semibold text-text-primary">Gráficos</h2>
         <BudgetPieChart summary={summary} />
         <BudgetBarChart periods={periods} expenses={allExpenses} />
+      </div>{/* end charts section */}
+      </div>{/* end left column */}
+      <div className="mt-6 lg:mt-0 lg:sticky lg:top-6">
+        <RecurringExpensesSummary />
       </div>
-
-      {/* Recurring expenses summary */}
-      <RecurringExpensesSummary />
-
-      {/* FAB — quick add expense */}
-      <button
-        aria-label="+ Gasto"
-        onClick={() => setFabOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-lg transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:h-auto sm:w-auto sm:rounded-full sm:px-5 sm:py-3 sm:text-sm sm:font-medium"
-      >
-        <span className="hidden sm:inline">＋ Gasto</span>
-        <span className="text-xl sm:hidden">＋</span>
-      </button>
+      </div>{/* end two-column grid */}
 
       <Modal open={fabOpen} title="Nuevo gasto" onClose={() => setFabOpen(false)}>
         <ExpenseForm
