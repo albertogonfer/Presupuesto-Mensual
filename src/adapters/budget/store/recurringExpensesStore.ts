@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { RecurringExpense } from '../../../domain/budget/model/types'
+import { buildExpensesForPeriod } from '../../../domain/budget/services/recurringExpenseService'
 
 type RecurringExpensesState = {
   recurringExpenses: RecurringExpense[]
@@ -25,6 +26,25 @@ export const useRecurringExpensesStore = create<RecurringExpensesState>()(
           active: true,
         }
         set((s) => ({ recurringExpenses: [...s.recurringExpenses, newRecurring] }))
+
+        // If there is an active period, immediately generate an expense for it
+        // so the recurring shows up in the current period breakdown right away
+        const { usePeriodsStore } = require('./periodsStore')
+        const { useExpensesStore } = require('./expensesStore')
+        const periodsState = usePeriodsStore.getState()
+        const activePeriod = periodsState.periods.find(
+          (p: { id: string }) => p.id === periodsState.activePeriodId,
+        )
+        if (activePeriod) {
+          const expenses = buildExpensesForPeriod(activePeriod, [newRecurring])
+          if (expenses.length > 0) {
+            const expensesState = useExpensesStore.getState()
+            for (const expense of expenses) {
+              expensesState.addExpense(expense)
+            }
+            get().incrementOccurrence(newRecurring.id)
+          }
+        }
       },
 
       updateRecurringExpense(id, partial) {
