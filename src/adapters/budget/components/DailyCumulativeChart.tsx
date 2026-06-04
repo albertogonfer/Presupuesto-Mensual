@@ -79,7 +79,7 @@ export function DailyCumulativeChart({ data }: DailyCumulativeChartProps) {
             type="monotone"
             dataKey="budget"
             name="budget"
-            stroke="#22c55e"
+            stroke="#6366f1"
             strokeDasharray="5 5"
             strokeWidth={1.5}
             fill="none"

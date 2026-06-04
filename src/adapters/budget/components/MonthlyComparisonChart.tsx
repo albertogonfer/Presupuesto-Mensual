@@ -67,7 +67,7 @@ export function MonthlyComparisonChart({ data }: MonthlyComparisonChartProps) {
             }}
           />
           <Legend />
-          <Bar dataKey="netSalary" name="Sueldo neto" fill="#22c55e" />
+          <Bar dataKey="netSalary" name="Sueldo neto" fill="#6366f1" />
           <Bar dataKey="totalSpent" name="Total gastado" fill="#ef4444" />
           {hasSavingsGoal && (
             <Bar dataKey="objetivoAhorro" name="Objetivo ahorro" fill="#22c55e" />
