@@ -6,6 +6,7 @@ type ExpenseRowProps = {
   category: Category | undefined
   onEdit: (expense: Expense) => void
   onDelete: (id: string) => void
+  alternate?: boolean
 }
 
 function formatAmount(amount: number): string {
@@ -16,11 +17,15 @@ function formatAmount(amount: number): string {
   }).format(amount)
 }
 
-export function ExpenseRow({ expense, category, onEdit, onDelete }: ExpenseRowProps) {
+export function ExpenseRow({ expense, category, onEdit, onDelete, alternate }: ExpenseRowProps) {
   return (
-    <div className="flex items-center justify-between rounded-card bg-bg-card p-4 shadow-card">
-      <div className="flex flex-col gap-1">
-        <p className="font-medium text-text-primary">{expense.description}</p>
+    <div
+      className={`flex items-center justify-between border-b border-bg-input/60 p-4 transition-colors last:border-0 hover:bg-bg-input/30 ${
+        alternate ? 'bg-bg-input/10' : ''
+      }`}
+    >
+      <div className="flex min-w-0 flex-col gap-1">
+        <p className="truncate font-medium text-text-primary">{expense.description}</p>
         <div className="flex items-center gap-2">
           {category && (
             <span
@@ -34,20 +39,20 @@ export function ExpenseRow({ expense, category, onEdit, onDelete }: ExpenseRowPr
           <span className="text-xs text-text-secondary">{expense.date}</span>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="ml-4 flex shrink-0 items-center gap-4">
         <span className="font-semibold text-text-primary">{formatAmount(expense.amount)}</span>
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           <button
-            aria-label="Editar"
+            aria-label={`Editar ${expense.description}`}
             onClick={() => onEdit(expense)}
-            className="rounded-md px-3 py-1.5 text-sm text-text-secondary transition-colors hover:text-text-primary"
+            className="rounded-md px-3 py-1.5 text-sm text-text-secondary transition-colors hover:bg-bg-input hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             Editar
           </button>
           <button
-            aria-label="Eliminar"
+            aria-label={`Eliminar ${expense.description}`}
             onClick={() => onDelete(expense.id)}
-            className="rounded-md px-3 py-1.5 text-sm text-danger transition-colors hover:opacity-80"
+            className="rounded-md px-3 py-1.5 text-sm text-danger transition-colors hover:bg-danger/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger"
           >
             Eliminar
           </button>

@@ -31,24 +31,38 @@ export default function BudgetPeriodPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Page header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-text-primary">Período presupuestario</h1>
+        <div>
+          <h1 className="text-2xl font-semibold text-text-primary">Configuración</h1>
+          <p className="mt-1 text-sm text-text-secondary">
+            Gestiona tu período presupuestario y sueldo neto mensual.
+          </p>
+        </div>
         <Button onClick={() => { setFormError(null); setModal('create') }}>
           Nuevo período
         </Button>
       </div>
 
-      {activePeriod ? (
-        <PeriodHeader period={activePeriod} onEdit={() => { setFormError(null); setModal('edit') }} />
-      ) : (
-        <EmptyState message="Configura tu primer período para empezar a registrar tus gastos." />
-      )}
+      {/* Settings card */}
+      <section className="rounded-card bg-bg-card p-6 shadow-card">
+        <h2 className="mb-4 text-base font-semibold text-text-primary">Período activo</h2>
 
-      {formError && (
-        <p role="alert" className="rounded-md bg-danger/10 px-4 py-2 text-sm text-danger">
-          {formError}
-        </p>
-      )}
+        {activePeriod ? (
+          <PeriodHeader period={activePeriod} onEdit={() => { setFormError(null); setModal('edit') }} />
+        ) : (
+          <EmptyState
+            message="Configura tu primer período para empezar a registrar tus gastos."
+            icon="📅"
+          />
+        )}
+
+        {formError && (
+          <p role="alert" className="mt-4 rounded-md bg-danger/10 px-4 py-2 text-sm text-danger">
+            {formError}
+          </p>
+        )}
+      </section>
 
       <Modal
         open={modal !== null}

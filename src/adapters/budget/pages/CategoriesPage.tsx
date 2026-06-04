@@ -56,7 +56,7 @@ export default function CategoriesPage() {
           message="Crea tu primera categoría para clasificar tus gastos."
         />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {categories.map((cat) => (
             <CategoryCard
               key={cat.id}
