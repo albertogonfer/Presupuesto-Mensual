@@ -58,7 +58,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-bg-primary px-4 py-12">
+    <div className="flex flex-1 items-center justify-center px-4 py-12">
       <div className="w-full max-w-lg rounded-card bg-bg-card p-8 shadow-card">
         {/* Progress bar */}
         <div className="mb-8">
