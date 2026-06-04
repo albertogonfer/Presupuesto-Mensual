@@ -5,11 +5,12 @@ type ConfirmDialogProps = {
   open: boolean
   title: string
   message: string
+  confirmLabel?: string
   onConfirm: () => void
   onCancel: () => void
 }
 
-export function ConfirmDialog({ open, title, message, onConfirm, onCancel }: ConfirmDialogProps) {
+export function ConfirmDialog({ open, title, message, confirmLabel = 'Eliminar', onConfirm, onCancel }: ConfirmDialogProps) {
   return (
     <Modal open={open} title={title} onClose={onCancel}>
       <div className="flex flex-col gap-4">
@@ -19,7 +20,7 @@ export function ConfirmDialog({ open, title, message, onConfirm, onCancel }: Con
             Cancelar
           </Button>
           <Button type="button" variant="danger" onClick={onConfirm}>
-            Eliminar
+            {confirmLabel}
           </Button>
         </div>
       </div>

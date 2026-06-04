@@ -8,6 +8,7 @@ type ExpensesState = {
   addExpense: (payload: Omit<Expense, 'id' | 'createdAt'>) => void
   updateExpense: (id: string, patch: Partial<Omit<Expense, 'id' | 'createdAt'>>) => void
   removeExpense: (id: string) => void
+  removeExpensesByPeriod: (periodId: string) => void
   getByPeriod: (periodId: string) => Expense[]
 }
 
@@ -36,6 +37,10 @@ export const useExpensesStore = create<ExpensesState>()(
 
       removeExpense(id) {
         set((s) => ({ expenses: s.expenses.filter((e) => e.id !== id) }))
+      },
+
+      removeExpensesByPeriod(periodId) {
+        set((s) => ({ expenses: s.expenses.filter((e) => e.periodId !== periodId) }))
       },
 
       getByPeriod(periodId) {

@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePeriodsStore } from '../store/periodsStore'
 import { useExpensesStore } from '../store/expensesStore'
 import { EmptyState } from '../../shared/components/EmptyState'
 import { MonthlyComparisonChart } from '../components/MonthlyComparisonChart'
 import { buildComparisonData } from '../../../domain/budget/services/buildComparisonData'
+import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 
 const MONTH_NAMES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -23,7 +25,9 @@ export default function HistoryPage() {
   const navigate = useNavigate()
   const periods = usePeriodsStore((s) => s.periods)
   const setActivePeriod = usePeriodsStore((s) => s.setActivePeriod)
+  const deletePeriod = usePeriodsStore((s) => s.deletePeriod)
   const allExpenses = useExpensesStore((s) => s.expenses)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
 
   const sorted = [...periods].sort((a, b) =>
     a.year !== b.year ? b.year - a.year : b.month - a.month,
@@ -36,6 +40,15 @@ export default function HistoryPage() {
     setActivePeriod(id)
     navigate('/')
   }
+
+  function handleDeleteConfirm() {
+    if (confirmId) {
+      deletePeriod(confirmId)
+      setConfirmId(null)
+    }
+  }
+
+  const confirmPeriod = periods.find((p) => p.id === confirmId)
 
   return (
     <div className="flex flex-col gap-6">
@@ -141,6 +154,7 @@ export default function HistoryPage() {
                   <th className="p-4 font-medium">Total gastado</th>
                   <th className="p-4 font-medium">Restante</th>
                   <th className="p-4 font-medium">% usado</th>
+                  <th className="p-4 font-medium"></th>
                 </tr>
               </thead>
               <tbody>
@@ -185,6 +199,15 @@ export default function HistoryPage() {
                           {percentUsed.toFixed(1)} %
                         </span>
                       </td>
+                      <td className="p-4">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setConfirmId(period.id) }}
+                          className="rounded border border-danger/40 px-3 py-1 text-xs text-danger hover:bg-danger/10 transition-colors"
+                          aria-label={`Eliminar período ${MONTH_NAMES[period.month - 1]} ${period.year}`}
+                        >
+                          Eliminar
+                        </button>
+                      </td>
                     </tr>
                   )
                 })}
@@ -193,6 +216,18 @@ export default function HistoryPage() {
           </div>
         </>
       )}
+      <ConfirmDialog
+        open={confirmId !== null}
+        title="Eliminar período"
+        message={
+          confirmPeriod
+            ? `¿Seguro que quieres eliminar ${MONTH_NAMES[confirmPeriod.month - 1]} ${confirmPeriod.year}? Se borrarán también todos sus gastos. Esta acción no se puede deshacer.`
+            : ''
+        }
+        confirmLabel="Eliminar"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setConfirmId(null)}
+      />
     </div>
   )
 }
