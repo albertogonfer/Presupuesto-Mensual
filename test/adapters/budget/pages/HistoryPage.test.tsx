@@ -29,8 +29,8 @@ function makePeriod(id: string, month: number, year: number, netSalary: number):
 }
 
 beforeEach(() => {
-  usePeriodsStore.setState({ periods: [], activePeriodId: null })
-  useExpensesStore.setState({ expenses: [] })
+  usePeriodsStore.setState({ loading: false, periods: [], activePeriodId: null })
+  useExpensesStore.setState({ loading: false, expenses: [] })
   mockNavigate.mockClear()
 })
 
@@ -77,7 +77,7 @@ describe('HistoryPage', () => {
   it('clicking a row sets that period as active and navigates to dashboard', () => {
     const jan = makePeriod('jan-2026', 1, 2026, 100000)
     const feb = makePeriod('feb-2026', 2, 2026, 110000)
-    usePeriodsStore.setState({ periods: [jan, feb], activePeriodId: 'feb-2026' })
+    usePeriodsStore.setState({ loading: false, periods: [jan, feb], activePeriodId: 'feb-2026' })
     renderPage()
     const rows = screen.getAllByRole('row')
     // Sorted newest-first: header | Feb | Jan — click the last data row (Enero)

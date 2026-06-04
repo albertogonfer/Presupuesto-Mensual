@@ -23,7 +23,7 @@ const SEED_CATEGORIES: Omit<Category, 'id' | 'createdAt'>[] = [
 
 export const useCategoriesStore = create<CategoriesState>()((set, get) => ({
   categories: [],
-  loading: false,
+  loading: true,
   error: null,
 
   async fetchAll() {

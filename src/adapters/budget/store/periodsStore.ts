@@ -23,7 +23,7 @@ type PeriodsState = {
 export const usePeriodsStore = create<PeriodsState>()((set, get) => ({
   periods: [],
   activePeriodId: null,
-  loading: false,
+  loading: true,
   error: null,
 
   async fetchAll() {

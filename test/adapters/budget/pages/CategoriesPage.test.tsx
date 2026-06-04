@@ -27,12 +27,13 @@ vi.mock('@/infrastructure/storage/expensesRepository', () => ({
 beforeEach(() => {
   vi.clearAllMocks()
   useCategoriesStore.setState({
+    loading: false,
     categories: [
       { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🛒', createdAt: '2024-01-01T00:00:00Z' },
       { id: 'cat-2', name: 'Moto', color: '#3B82F6', icon: '🏍️', createdAt: '2024-01-02T00:00:00Z' },
     ],
   })
-  useExpensesStore.setState({ expenses: [] })
+  useExpensesStore.setState({ loading: false, expenses: [] })
 })
 
 describe('CategoriesPage', () => {

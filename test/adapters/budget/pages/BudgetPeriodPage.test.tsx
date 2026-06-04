@@ -35,8 +35,8 @@ vi.mock('@/infrastructure/storage/recurringExpensesRepository', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks()
-  usePeriodsStore.setState({ periods: [], activePeriodId: null })
-  useExpensesStore.setState({ expenses: [] })
+  usePeriodsStore.setState({ loading: false, periods: [], activePeriodId: null })
+  useExpensesStore.setState({ loading: false, expenses: [] })
 })
 
 describe('BudgetPeriodPage — empty state', () => {
