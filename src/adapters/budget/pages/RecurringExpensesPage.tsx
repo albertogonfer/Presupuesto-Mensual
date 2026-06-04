@@ -26,6 +26,7 @@ type FormValues = {
   expiryType: 'none' | 'date' | 'count'
   endsAt: string
   endsAfter: string
+  finalPaymentAmount: string
 }
 
 const defaultForm: FormValues = {
@@ -37,6 +38,7 @@ const defaultForm: FormValues = {
   expiryType: 'none',
   endsAt: '',
   endsAfter: '',
+  finalPaymentAmount: '',
 }
 
 function formatEur(amount: number): string {
@@ -98,6 +100,9 @@ export default function RecurringExpensesPage() {
       every: parseInt(form.every),
       ...(form.expiryType === 'date' ? { endsAt: form.endsAt } : {}),
       ...(form.expiryType === 'count' ? { endsAfter: parseInt(form.endsAfter) } : {}),
+      ...(form.finalPaymentAmount && form.expiryType !== 'none'
+        ? { finalPaymentAmount: parseFloat(form.finalPaymentAmount) }
+        : {}),
     })
 
     // Generate expense for the active period immediately
@@ -349,6 +354,27 @@ export default function RecurringExpensesPage() {
               {errors.endsAfter && (
                 <p className="text-xs text-danger">{errors.endsAfter}</p>
               )}
+            </div>
+          )}
+
+          {form.expiryType !== 'none' && (
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-text-primary" htmlFor="rec-final-payment">
+                Cuota final (€)
+              </label>
+              <input
+                id="rec-final-payment"
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={form.finalPaymentAmount}
+                onChange={(e) => setForm((f) => ({ ...f, finalPaymentAmount: e.target.value }))}
+                className="rounded border border-border bg-bg-input px-3 py-2 text-sm text-text-primary"
+                placeholder="0,00"
+              />
+              <p className="text-xs text-text-secondary">
+                Importe diferente al pagar la última cuota (cuota balón)
+              </p>
             </div>
           )}
 
