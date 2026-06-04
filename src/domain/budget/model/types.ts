@@ -11,6 +11,7 @@ export type BudgetPeriod = {
   month: number   // 1-12
   year: number
   netSalary: number
+  savingsGoal?: number  // optional monthly savings target in euros
   createdAt: string // ISO date string
 }
 
@@ -33,4 +34,6 @@ export type BudgetSummary = {
     total: number
     percentage: number
   }>
+  savingsGoal?: number
+  savingsProgress?: number  // remaining - savingsGoal (can be negative)
 }

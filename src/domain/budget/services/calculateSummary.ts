@@ -24,5 +24,8 @@ export function calculateSummary(
     }))
     .sort((a, b) => b.total - a.total)
 
-  return { totalSpent, remaining, percentUsed, byCategory }
+  const savingsGoal = period.savingsGoal
+  const savingsProgress = savingsGoal !== undefined ? remaining - savingsGoal : undefined
+
+  return { totalSpent, remaining, percentUsed, byCategory, savingsGoal, savingsProgress }
 }
