@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext'
 
 function EyeIcon({ open }: { open: boolean }) {
@@ -240,6 +240,15 @@ export function LoginPage() {
                   ? 'Un momento…'
                   : mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
               </button>
+
+              {mode === 'login' && (
+                <Link
+                  to="/forgot-password"
+                  className="text-center text-sm text-text-secondary hover:text-text-primary"
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              )}
             </form>
           </>
         )}
