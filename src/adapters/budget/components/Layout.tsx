@@ -116,9 +116,13 @@ export function Layout({ children }: LayoutProps) {
             ))}
             <button
               onClick={handleSignOut}
-              className="ml-2 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors duration-150 hover:border-danger/50 hover:text-danger"
+              className="ml-2 flex items-center gap-2 rounded-md border border-danger/30 bg-danger/5 px-3 py-1.5 text-sm font-medium text-danger/80 transition-colors duration-150 hover:border-danger/60 hover:bg-danger/10 hover:text-danger"
               aria-label="Cerrar sesión"
             >
+              <span className="text-text-secondary font-normal">
+                Hola, {user?.user_metadata?.full_name?.split(' ')[0] ?? user?.email}
+              </span>
+              <span className="text-danger/40">·</span>
               Cerrar sesión
             </button>
           </nav>
