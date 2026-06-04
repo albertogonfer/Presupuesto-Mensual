@@ -49,7 +49,7 @@ export function BudgetPieChart({ summary }: BudgetPieChartProps) {
             nameKey="name"
             cx="50%"
             cy="50%"
-            innerRadius={60}
+            innerRadius={0}
             outerRadius={100}
           >
             {data.map((entry) => (
