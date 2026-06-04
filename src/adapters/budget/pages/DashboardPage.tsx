@@ -10,6 +10,7 @@ import { BudgetPieChart } from '../components/BudgetPieChart'
 import { BudgetBarChart } from '../components/BudgetBarChart'
 import { PeriodSelector } from '../components/PeriodSelector'
 import { ExpenseForm } from '../components/ExpenseForm'
+import { RecurringExpensesSummary } from '../components/RecurringExpensesSummary'
 import { Modal } from '../../shared/components/Modal'
 import { EmptyState } from '../../shared/components/EmptyState'
 
@@ -174,6 +175,9 @@ export default function DashboardPage() {
         <BudgetPieChart summary={summary} />
         <BudgetBarChart periods={periods} expenses={allExpenses} />
       </div>
+
+      {/* Recurring expenses summary */}
+      <RecurringExpensesSummary />
 
       {/* FAB — quick add expense */}
       <button
