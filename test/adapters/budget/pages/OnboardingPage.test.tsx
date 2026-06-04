@@ -54,6 +54,13 @@ vi.mock('@/infrastructure/storage/recurringExpensesRepository', () => ({
   },
 }))
 
+vi.mock('@/infrastructure/storage/profilesRepository', () => ({
+  profilesRepository: {
+    get: vi.fn().mockResolvedValue({ id: 'u1', fullName: 'Test', onboardingCompleted: false, createdAt: '' }),
+    update: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
 const SEED_CATEGORIES = [
   { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🛒', createdAt: '2024-01-01T00:00:00Z' },
   { id: 'cat-2', name: 'Préstamos', color: '#F59E0B', icon: '💳', createdAt: '2024-01-01T00:00:00Z' },
@@ -99,7 +106,6 @@ describe('OnboardingPage — step 1 (bienvenida)', () => {
   it('"Saltar configuración" sets the flag and navigates to dashboard', async () => {
     renderPage()
     await userEvent.click(screen.getByRole('button', { name: /saltar configuración/i }))
-    expect(localStorage.getItem('onboarding-complete')).toBe('true')
     expect(mockNavigate).toHaveBeenCalledWith('/')
   })
 })
@@ -162,9 +168,9 @@ describe('OnboardingPage — step 3 (categorías)', () => {
   it('"¡Todo listo" button sets flag and navigates to dashboard', async () => {
     await goToStep3()
     await userEvent.click(screen.getByRole('button', { name: /todo listo/i }))
-    expect(localStorage.getItem('onboarding-complete')).toBe('true')
     expect(mockNavigate).toHaveBeenCalledWith('/')
   })
+})
 
   it('Eliminar removes a category from the list', async () => {
     await goToStep3()

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePeriodsStore } from '../store/periodsStore'
 import { useCategoriesStore } from '../store/categoriesStore'
+import { useProfileStore } from '../store/profileStore'
 import { PeriodForm } from '../components/PeriodForm'
 import { Button } from '../../shared/components/Button'
 import { Input } from '../../shared/components/Input'
@@ -10,16 +11,13 @@ import { PRESET_COLORS } from '../components/CategoryForm'
 
 const STEP_COUNT = 3
 
-function markOnboardingComplete() {
-  localStorage.setItem('onboarding-complete', 'true')
-}
-
 export default function OnboardingPage() {
   const navigate = useNavigate()
   const createPeriod = usePeriodsStore((s) => s.createPeriod)
   const categories = useCategoriesStore((s) => s.categories)
   const addCategory = useCategoriesStore((s) => s.addCategory)
   const removeCategory = useCategoriesStore((s) => s.removeCategory)
+  const completeOnboarding = useProfileStore((s) => s.completeOnboarding)
 
   const [step, setStep] = useState(1)
 
@@ -29,8 +27,8 @@ export default function OnboardingPage() {
   const [newCatIcon, setNewCatIcon] = useState('📦')
   const [newCatColor, setNewCatColor] = useState(PRESET_COLORS[0])
 
-  function handleSkip() {
-    markOnboardingComplete()
+  async function handleSkip() {
+    await completeOnboarding()
     navigate('/')
   }
 
@@ -54,8 +52,8 @@ export default function OnboardingPage() {
     setShowAddForm(false)
   }
 
-  function handleFinish() {
-    markOnboardingComplete()
+  async function handleFinish() {
+    await completeOnboarding()
     navigate('/')
   }
 
