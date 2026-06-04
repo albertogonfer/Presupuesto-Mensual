@@ -56,7 +56,7 @@ export function RecurringExpensesSummary() {
             return (
               <div
                 key={r.id}
-                className="flex items-center justify-between gap-3 rounded-card bg-bg-card p-4 shadow-card"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-bg-card p-4 shadow-card"
               >
                 <div className="flex flex-col gap-0.5">
                   <div className="flex items-center gap-2">

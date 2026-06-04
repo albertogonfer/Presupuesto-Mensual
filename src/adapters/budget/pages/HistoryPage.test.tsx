@@ -13,6 +13,17 @@ vi.mock('react-router-dom', async (importOriginal) => {
   return { ...actual, useNavigate: () => mockNavigate }
 })
 
+vi.mock('recharts', () => ({
+  BarChart: ({ children }: { children: React.ReactNode }) => <div data-testid="bar-chart">{children}</div>,
+  Bar: () => <div data-testid="bar" />,
+  XAxis: () => <div data-testid="x-axis" />,
+  YAxis: () => <div data-testid="y-axis" />,
+  CartesianGrid: () => <div data-testid="grid" />,
+  Tooltip: () => <div data-testid="tooltip" />,
+  Legend: () => <div data-testid="legend" />,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="responsive-container">{children}</div>,
+}))
+
 beforeEach(() => {
   usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
   useExpensesStore.setState({ expenses: [], hasHydrated: true })
@@ -68,5 +79,35 @@ describe('HistoryPage', () => {
     fireEvent.click(rows[rows.length - 1])
     expect(usePeriodsStore.getState().activePeriodId).toBe(januaryId)
     expect(mockNavigate).toHaveBeenCalledWith('/')
+  })
+
+  describe('comparison section', () => {
+    it('does not show comparison section with only 1 period', () => {
+      act(() => {
+        usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 2000 })
+      })
+      renderPage()
+      expect(screen.queryByText('Comparación mensual')).toBeNull()
+    })
+
+    it('shows comparison section with 2 or more periods', () => {
+      act(() => {
+        usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 2000 })
+        usePeriodsStore.getState().createPeriod({ month: 2, year: 2026, netSalary: 2100 })
+      })
+      renderPage()
+      expect(screen.getByText('Comparación mensual')).toBeInTheDocument()
+    })
+
+    it('"Ver resumen" button is present and disabled', () => {
+      act(() => {
+        usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 2000 })
+        usePeriodsStore.getState().createPeriod({ month: 2, year: 2026, netSalary: 2100 })
+      })
+      renderPage()
+      const buttons = screen.getAllByRole('button', { name: /ver resumen/i })
+      expect(buttons.length).toBeGreaterThanOrEqual(1)
+      buttons.forEach((btn) => expect(btn).toBeDisabled())
+    })
   })
 })
