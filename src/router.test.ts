@@ -32,7 +32,13 @@ describe('router', () => {
     expect(history?.label).toBe('Historial')
   })
 
-  it('exposes exactly 5 routes', () => {
-    expect(routes).toHaveLength(5)
+  it('defines a route for recurring expenses at /recurring', () => {
+    const recurring = routes.find((r) => r.path === '/recurring')
+    expect(recurring).toBeDefined()
+    expect(recurring?.label).toBe('Recurrentes')
+  })
+
+  it('exposes exactly 6 routes', () => {
+    expect(routes).toHaveLength(6)
   })
 })

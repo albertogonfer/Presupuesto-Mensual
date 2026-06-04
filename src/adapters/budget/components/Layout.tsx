@@ -9,6 +9,7 @@ const navLinks = [
   { to: '/expenses', label: 'Gastos' },
   { to: '/categories', label: 'Categorías' },
   { to: '/history', label: 'Historial' },
+  { to: '/recurring', label: 'Recurrentes' },
   { to: '/settings', label: 'Configuración' },
 ]
 
