@@ -52,7 +52,9 @@ export default function BudgetPeriodPage() {
           <PeriodHeader period={activePeriod} onEdit={() => { setFormError(null); setModal('edit') }} />
         ) : (
           <EmptyState
-            message="Configura tu primer período para empezar a registrar tus gastos."
+            message="Aún no tienes ningún período configurado. Crea uno para empezar a registrar tus gastos."
+            actionLabel="Crear primer período"
+            onAction={() => { setFormError(null); setModal('create') }}
             icon="📅"
           />
         )}

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import { useCategoriesStore } from '../store/categoriesStore'
 import { usePeriodsStore } from '../store/periodsStore'
@@ -34,14 +35,14 @@ beforeEach(resetStores)
 
 describe('DashboardPage', () => {
   it('shows period header with month, year and net salary', () => {
-    render(<DashboardPage />)
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     // h1 heading shows month and year
     expect(screen.getByRole('heading', { name: /junio 2026/i })).toBeInTheDocument()
     expect(screen.getAllByText(/2500,00\s*€/).length).toBeGreaterThanOrEqual(1)
   })
 
   it('shows empty state when no expenses', () => {
-    render(<DashboardPage />)
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.getByText(/aún no tienes gastos registrados/i)).toBeInTheDocument()
   })
 
@@ -52,7 +53,7 @@ describe('DashboardPage', () => {
       ],
       hasHydrated: true,
     })
-    render(<DashboardPage />)
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     // Total gastado label
     expect(screen.getByText(/total gastado/i)).toBeInTheDocument()
     // Remaining: 2500 - 600 = 1900
@@ -61,23 +62,23 @@ describe('DashboardPage', () => {
 
   it('shows empty state prompting to configure a period when no active period', () => {
     usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
-    render(<DashboardPage />)
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.getByText(/configura un período/i)).toBeInTheDocument()
   })
 
   it('shows FAB when active period exists', () => {
-    render(<DashboardPage />)
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.getByRole('button', { name: /\+ gasto/i })).toBeInTheDocument()
   })
 
   it('hides FAB when no active period', () => {
     usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
-    render(<DashboardPage />)
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.queryByRole('button', { name: /\+ gasto/i })).not.toBeInTheDocument()
   })
 
   it('opens expense form modal when FAB is clicked', async () => {
-    render(<DashboardPage />)
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     await userEvent.click(screen.getByRole('button', { name: /\+ gasto/i }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
@@ -89,7 +90,7 @@ describe('DashboardPage', () => {
       ],
       hasHydrated: true,
     })
-    render(<DashboardPage />)
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.getByText('Comida')).toBeInTheDocument()
   })
 })

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { usePeriodsStore } from '../store/periodsStore'
 import { useExpensesStore } from '../store/expensesStore'
 import { useExpenses } from '../hooks/useExpenses'
@@ -36,6 +37,7 @@ export default function DashboardPage() {
   const { addExpense } = useExpenses()
   const { categories } = useCategories()
   const [fabOpen, setFabOpen] = useState(false)
+  const navigate = useNavigate()
 
   if (!activePeriod || !summary) {
     return (
@@ -44,7 +46,7 @@ export default function DashboardPage() {
         <EmptyState
           message="Configura un período con tu sueldo antes de ver el resumen."
           actionLabel="Ir a Configuración"
-          onAction={() => { window.location.href = '/settings' }}
+          onAction={() => navigate('/settings')}
           icon="⚙️"
         />
       </div>
