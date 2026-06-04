@@ -90,6 +90,6 @@ export const useCategoriesStore = create<CategoriesState>()((set, get) => ({
   },
 
   reset() {
-    set({ categories: [], loading: false, error: null })
+    set({ categories: [], loading: true, error: null })
   },
 }))

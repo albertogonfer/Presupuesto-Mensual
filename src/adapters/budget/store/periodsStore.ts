@@ -120,6 +120,6 @@ export const usePeriodsStore = create<PeriodsState>()((set, get) => ({
   },
 
   reset() {
-    set({ periods: [], activePeriodId: null, loading: false, error: null })
+    set({ periods: [], activePeriodId: null, loading: true, error: null })
   },
 }))

@@ -84,6 +84,6 @@ export const useExpensesStore = create<ExpensesState>()((set, get) => ({
   },
 
   reset() {
-    set({ expenses: [], loading: false, error: null })
+    set({ expenses: [], loading: true, error: null })
   },
 }))

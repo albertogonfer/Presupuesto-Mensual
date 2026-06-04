@@ -105,6 +105,6 @@ export const useRecurringExpensesStore = create<RecurringExpensesState>()((set, 
   },
 
   reset() {
-    set({ recurringExpenses: [], loading: false, error: null })
+    set({ recurringExpenses: [], loading: true, error: null })
   },
 }))
