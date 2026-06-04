@@ -39,14 +39,22 @@ export default function ExpensesPage() {
 
     result.sort((a, b) => {
       switch (sortOrder) {
-        case 'date-desc':
-          return b.date.localeCompare(a.date)
-        case 'date-asc':
-          return a.date.localeCompare(b.date)
-        case 'amount-desc':
-          return b.amount - a.amount
-        case 'amount-asc':
-          return a.amount - b.amount
+        case 'date-desc': {
+          const cmp = b.date.localeCompare(a.date)
+          return cmp !== 0 ? cmp : b.createdAt.localeCompare(a.createdAt)
+        }
+        case 'date-asc': {
+          const cmp = a.date.localeCompare(b.date)
+          return cmp !== 0 ? cmp : a.createdAt.localeCompare(b.createdAt)
+        }
+        case 'amount-desc': {
+          const cmp = b.amount - a.amount
+          return cmp !== 0 ? cmp : b.createdAt.localeCompare(a.createdAt)
+        }
+        case 'amount-asc': {
+          const cmp = a.amount - b.amount
+          return cmp !== 0 ? cmp : a.createdAt.localeCompare(b.createdAt)
+        }
       }
     })
 
