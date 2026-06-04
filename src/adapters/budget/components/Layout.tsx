@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Navigate, Outlet } from 'react-router-dom'
 import { useCategoriesStore } from '../store/categoriesStore'
 import { usePeriodsStore } from '../store/periodsStore'
 import { useExpensesStore } from '../store/expensesStore'
@@ -22,6 +22,7 @@ export function Layout({ children }: LayoutProps) {
   const perHydrated = usePeriodsStore((s) => s.hasHydrated)
   const expHydrated = useExpensesStore((s) => s.hasHydrated)
   const allHydrated = catHydrated && perHydrated && expHydrated
+  const periods = usePeriodsStore((s) => s.periods)
 
   function renderContent() {
     // When children are explicitly passed (e.g. in tests), render them directly
@@ -56,6 +57,11 @@ export function Layout({ children }: LayoutProps) {
           </div>
         </div>
       )
+    }
+    // Guard: redirect to onboarding if no periods and onboarding not complete
+    const onboardingDone = localStorage.getItem('onboarding-complete')
+    if (periods.length === 0 && !onboardingDone) {
+      return <Navigate to="/onboarding" replace />
     }
     return <Outlet />
   }
