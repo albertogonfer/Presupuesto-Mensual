@@ -11,7 +11,7 @@ type ProfileState = {
   reset: () => void
 }
 
-export const useProfileStore = create<ProfileState>()((set, get) => ({
+export const useProfileStore = create<ProfileState>()((set) => ({
   profile: null,
   loading: true,
   error: null,
