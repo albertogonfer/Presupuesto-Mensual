@@ -30,7 +30,12 @@ export const usePeriodsStore = create<PeriodsState>()((set, get) => ({
     set({ loading: true, error: null })
     try {
       const periods = await periodsRepository.getAll()
-      set({ periods, loading: false })
+      const { activePeriodId } = get()
+      // Restore active period: keep existing if still valid, otherwise pick the most recent
+      const validActive = activePeriodId && periods.some((p) => p.id === activePeriodId)
+        ? activePeriodId
+        : (periods.at(-1)?.id ?? null)
+      set({ periods, activePeriodId: validActive, loading: false })
     } catch (e) {
       set({ error: (e as Error).message, loading: false })
     }
