@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildPieData, buildBarData } from './chartTransformers'
+import { buildPieData, buildBarData, buildDailyCumulativeData } from './chartTransformers'
 import type { BudgetSummary, BudgetPeriod, Expense, Category } from '../model/types'
 
 const catFood: Category = {
@@ -128,5 +128,65 @@ describe('buildBarData', () => {
     const result = buildBarData([periodJan], expenses)
     // es-ES short month for January = "ene"
     expect(result[0].month).toMatch(/^ene 2026$/i)
+  })
+})
+
+describe('buildDailyCumulativeData', () => {
+  const period: BudgetPeriod = {
+    id: 'p-jan',
+    month: 1,
+    year: 2026,
+    netSalary: 2000,
+    createdAt: '2026-01-01T00:00:00.000Z',
+  }
+
+  const expenses: Expense[] = [
+    { id: 'e-1', periodId: 'p-jan', categoryId: 'cat-1', description: 'Mercado', amount: 100, date: '2026-01-05', createdAt: '2026-01-05T00:00:00.000Z' },
+    { id: 'e-2', periodId: 'p-jan', categoryId: 'cat-1', description: 'Cuota',   amount: 200, date: '2026-01-10', createdAt: '2026-01-10T00:00:00.000Z' },
+    { id: 'e-3', periodId: 'p-jan', categoryId: 'cat-1', description: 'Ropa',    amount: 50,  date: '2026-01-10', createdAt: '2026-01-10T00:00:00.000Z' },
+  ]
+
+  it('returns one entry per day of the month', () => {
+    const result = buildDailyCumulativeData(expenses, period)
+    expect(result).toHaveLength(31) // January has 31 days
+    expect(result[0].day).toBe(1)
+    expect(result[30].day).toBe(31)
+  })
+
+  it('cumulative carries forward on days with no expense', () => {
+    const result = buildDailyCumulativeData(expenses, period)
+    // days 1-4 → 0
+    expect(result[0].cumulative).toBe(0)
+    expect(result[3].cumulative).toBe(0)
+    // day 5 → 100
+    expect(result[4].cumulative).toBe(100)
+    // days 6-9 → still 100
+    expect(result[5].cumulative).toBe(100)
+    expect(result[8].cumulative).toBe(100)
+    // day 10 → 100 + 200 + 50 = 350
+    expect(result[9].cumulative).toBe(350)
+    // day 31 → 350 (no more expenses)
+    expect(result[30].cumulative).toBe(350)
+  })
+
+  it('budget line is flat at netSalary for every day', () => {
+    const result = buildDailyCumulativeData(expenses, period)
+    expect(result.every(entry => entry.budget === 2000)).toBe(true)
+  })
+
+  it('returns all-zero cumulative when expenses array is empty', () => {
+    const result = buildDailyCumulativeData([], period)
+    expect(result).toHaveLength(31)
+    expect(result.every(entry => entry.cumulative === 0)).toBe(true)
+  })
+
+  it('ignores expenses from other periods', () => {
+    const mixed: Expense[] = [
+      ...expenses,
+      { id: 'e-other', periodId: 'p-other', categoryId: 'cat-1', description: 'Otro', amount: 9999, date: '2026-01-01', createdAt: '2026-01-01T00:00:00.000Z' },
+    ]
+    const result = buildDailyCumulativeData(mixed, period)
+    // day 31 should be 350, not 350 + 9999
+    expect(result[30].cumulative).toBe(350)
   })
 })
