@@ -16,7 +16,6 @@ type CategoriesState = {
 const SEED_CATEGORIES: Omit<Category, 'id' | 'createdAt'>[] = [
   { name: 'Comida',     color: '#10B981', icon: '🛒' },
   { name: 'Préstamos',  color: '#F59E0B', icon: '💳' },
-  { name: 'Moto',       color: '#3B82F6', icon: '🏍️' },
   { name: 'Otros',      color: '#8B5CF6', icon: '📦' },
 ]
 

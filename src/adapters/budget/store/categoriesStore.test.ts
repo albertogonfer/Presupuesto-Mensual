@@ -12,17 +12,17 @@ beforeEach(() => {
 })
 
 describe('categoriesStore — seed', () => {
-  it('seeds 4 default categories when categories is empty on hydration', () => {
+  it('seeds 3 default categories when categories is empty on hydration', () => {
     // Simulate first hydration with empty state
     useCategoriesStore.setState({ categories: [], hasHydrated: false })
     act(() => {
       useCategoriesStore.getState().seedIfEmpty()
     })
     const { categories } = getStore()
-    expect(categories).toHaveLength(4)
+    expect(categories).toHaveLength(3)
   })
 
-  it('seeds Comida, Préstamos, Moto, Otros by name', () => {
+  it('seeds Comida, Préstamos, Otros by name', () => {
     useCategoriesStore.setState({ categories: [], hasHydrated: false })
     act(() => {
       useCategoriesStore.getState().seedIfEmpty()
@@ -30,7 +30,6 @@ describe('categoriesStore — seed', () => {
     const names = getStore().categories.map((c) => c.name)
     expect(names).toContain('Comida')
     expect(names).toContain('Préstamos')
-    expect(names).toContain('Moto')
     expect(names).toContain('Otros')
   })
 

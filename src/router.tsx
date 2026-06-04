@@ -9,6 +9,7 @@ const BudgetPeriodPage = lazy(() => import('./adapters/budget/pages/BudgetPeriod
 const HistoryPage = lazy(() => import('./adapters/budget/pages/HistoryPage'))
 const RecurringExpensesPage = lazy(() => import('./adapters/budget/pages/RecurringExpensesPage'))
 const PeriodSummaryPage = lazy(() => import('./adapters/budget/pages/PeriodSummaryPage'))
+const OnboardingPage = lazy(() => import('./adapters/budget/pages/OnboardingPage'))
 
 export type AppRoute = {
   path: string
@@ -33,6 +34,7 @@ function wrap(Component: React.ComponentType) {
 }
 
 export const router = createBrowserRouter([
+  { path: '/onboarding', element: wrap(OnboardingPage) },
   {
     element: <Layout />,
     children: [

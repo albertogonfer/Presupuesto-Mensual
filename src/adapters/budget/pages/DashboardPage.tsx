@@ -153,12 +153,13 @@ export default function DashboardPage() {
 
       {/* Category breakdown */}
       {summary.byCategory.length === 0 ? (
-        <div className="flex items-center justify-between">
-          <EmptyState message="Aún no tienes gastos registrados" icon="📋" />
+        <div className="flex flex-col items-center gap-4 rounded-card bg-bg-card p-8 shadow-card text-center">
+          <span className="text-4xl">📋</span>
+          <p className="text-text-secondary">Aún no tienes gastos registrados</p>
           <button
             aria-label="+ Gasto"
             onClick={() => setFabOpen(true)}
-            className="shrink-0 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+            className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
           >
             + Gasto
           </button>
@@ -244,7 +245,8 @@ export default function DashboardPage() {
       </div>
       </div>{/* end two-column grid */}
 
-      {/* Charts section */}
+      {/* Charts section — only shown when there are expenses */}
+      {allExpenses.some((e) => e.periodId === activePeriodId) && (
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold text-text-primary">Gráficos</h2>
         <BudgetPieChart summary={summary} />
@@ -258,6 +260,7 @@ export default function DashboardPage() {
           />
         )}
       </div>
+      )}
 
       <Modal open={fabOpen} title="Nuevo gasto" onClose={() => setFabOpen(false)}>
         <ExpenseForm
