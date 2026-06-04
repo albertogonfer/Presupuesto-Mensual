@@ -6,8 +6,6 @@ type ExpensesState = {
   expenses: Expense[]
   loading: boolean
   error: string | null
-  /** True after the first fetchAll() completes. Replaces persist hasHydrated. */
-  hasHydrated: boolean
   fetchAll: () => Promise<void>
   addExpense: (payload: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>
   updateExpense: (id: string, patch: Partial<Omit<Expense, 'id' | 'createdAt'>>) => Promise<void>
@@ -21,15 +19,14 @@ export const useExpensesStore = create<ExpensesState>()((set, get) => ({
   expenses: [],
   loading: false,
   error: null,
-  hasHydrated: false,
 
   async fetchAll() {
     set({ loading: true, error: null })
     try {
       const expenses = await expensesRepository.getAll()
-      set({ expenses, loading: false, hasHydrated: true })
+      set({ expenses, loading: false })
     } catch (e) {
-      set({ error: (e as Error).message, loading: false, hasHydrated: true })
+      set({ error: (e as Error).message, loading: false })
     }
   },
 

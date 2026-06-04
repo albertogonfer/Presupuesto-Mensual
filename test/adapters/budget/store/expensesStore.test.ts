@@ -25,7 +25,7 @@ const BASE_EXPENSE = {
 }
 
 beforeEach(() => {
-  useExpensesStore.setState({ expenses: [], loading: false, error: null, hasHydrated: true })
+  useExpensesStore.setState({ expenses: [], loading: false, error: null })
 })
 
 describe('expensesStore — addExpense', () => {

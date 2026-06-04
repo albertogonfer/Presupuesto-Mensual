@@ -72,10 +72,10 @@ beforeEach(() => {
   vi.clearAllMocks()
   mockNavigate.mockReset()
   localStorage.clear()
-  usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
-  useCategoriesStore.setState({ categories: SEED_CATEGORIES, hasHydrated: true })
+  usePeriodsStore.setState({ periods: [], activePeriodId: null })
+  useCategoriesStore.setState({ categories: SEED_CATEGORIES })
   useRecurringExpensesStore.setState({ recurringExpenses: [] })
-  useExpensesStore.setState({ expenses: [], hasHydrated: true })
+  useExpensesStore.setState({ expenses: [] })
 })
 
 describe('OnboardingPage — step 1 (bienvenida)', () => {

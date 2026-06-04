@@ -29,8 +29,8 @@ function makePeriod(id: string, month: number, year: number, netSalary: number):
 }
 
 beforeEach(() => {
-  usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
-  useExpensesStore.setState({ expenses: [], hasHydrated: true })
+  usePeriodsStore.setState({ periods: [], activePeriodId: null })
+  useExpensesStore.setState({ expenses: [] })
   mockNavigate.mockClear()
 })
 
@@ -56,7 +56,6 @@ describe('HistoryPage', () => {
         makePeriod('feb', 2, 2026, 110000),
       ],
       activePeriodId: 'mar',
-      hasHydrated: true,
     })
     renderPage()
     const rows = screen.getAllByRole('row')
@@ -69,7 +68,6 @@ describe('HistoryPage', () => {
     usePeriodsStore.setState({
       periods: [makePeriod('jun', 6, 2026, 2500)],
       activePeriodId: 'jun',
-      hasHydrated: true,
     })
     renderPage()
     // netSalary column cell — at least one match (salary and remaining may both be 2500)
@@ -79,7 +77,7 @@ describe('HistoryPage', () => {
   it('clicking a row sets that period as active and navigates to dashboard', () => {
     const jan = makePeriod('jan-2026', 1, 2026, 100000)
     const feb = makePeriod('feb-2026', 2, 2026, 110000)
-    usePeriodsStore.setState({ periods: [jan, feb], activePeriodId: 'feb-2026', hasHydrated: true })
+    usePeriodsStore.setState({ periods: [jan, feb], activePeriodId: 'feb-2026' })
     renderPage()
     const rows = screen.getAllByRole('row')
     // Sorted newest-first: header | Feb | Jan — click the last data row (Enero)
@@ -93,7 +91,6 @@ describe('HistoryPage', () => {
       usePeriodsStore.setState({
         periods: [makePeriod('jan', 1, 2026, 2000)],
         activePeriodId: 'jan',
-        hasHydrated: true,
       })
       renderPage()
       expect(screen.queryByText('Comparación mensual')).toBeNull()
@@ -103,7 +100,6 @@ describe('HistoryPage', () => {
       usePeriodsStore.setState({
         periods: [makePeriod('jan', 1, 2026, 2000), makePeriod('feb', 2, 2026, 2100)],
         activePeriodId: 'feb',
-        hasHydrated: true,
       })
       renderPage()
       expect(screen.getByText('Comparación mensual')).toBeInTheDocument()
@@ -113,7 +109,6 @@ describe('HistoryPage', () => {
       usePeriodsStore.setState({
         periods: [makePeriod('jan', 1, 2026, 2000), makePeriod('feb', 2, 2026, 2100)],
         activePeriodId: 'feb',
-        hasHydrated: true,
       })
       renderPage()
       const buttons = screen.getAllByRole('button', { name: /ver resumen/i })

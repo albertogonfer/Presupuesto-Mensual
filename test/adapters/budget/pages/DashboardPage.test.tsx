@@ -28,9 +28,9 @@ const CAT = { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🛒', creat
 const PERIOD = { id: 'period-1', month: 6, year: 2026, netSalary: 2500, createdAt: '2026-06-01T00:00:00Z' }
 
 function resetStores() {
-  useCategoriesStore.setState({ categories: [CAT], hasHydrated: true })
-  usePeriodsStore.setState({ periods: [PERIOD], activePeriodId: 'period-1', hasHydrated: true })
-  useExpensesStore.setState({ expenses: [], hasHydrated: true })
+  useCategoriesStore.setState({ categories: [CAT] })
+  usePeriodsStore.setState({ periods: [PERIOD], activePeriodId: 'period-1' })
+  useExpensesStore.setState({ expenses: [] })
 }
 
 beforeEach(resetStores)
@@ -53,7 +53,6 @@ describe('DashboardPage', () => {
       expenses: [
         { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 600, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
       ],
-      hasHydrated: true,
     })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     // Total gastado label
@@ -63,7 +62,7 @@ describe('DashboardPage', () => {
   })
 
   it('shows empty state prompting to configure a period when no active period', () => {
-    usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
+    usePeriodsStore.setState({ periods: [], activePeriodId: null })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.getByText(/configura un período/i)).toBeInTheDocument()
   })
@@ -74,7 +73,7 @@ describe('DashboardPage', () => {
   })
 
   it('hides FAB when no active period', () => {
-    usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
+    usePeriodsStore.setState({ periods: [], activePeriodId: null })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.queryByRole('button', { name: /\+ gasto/i })).not.toBeInTheDocument()
   })
@@ -89,7 +88,6 @@ describe('DashboardPage', () => {
     usePeriodsStore.setState({
       periods: [{ ...PERIOD, savingsGoal: 500 }],
       activePeriodId: 'period-1',
-      hasHydrated: true,
     })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.getByText(/objetivo de ahorro/i)).toBeInTheDocument()
@@ -105,13 +103,11 @@ describe('DashboardPage', () => {
     usePeriodsStore.setState({
       periods: [{ ...PERIOD, savingsGoal: 500 }],
       activePeriodId: 'period-1',
-      hasHydrated: true,
     })
     useExpensesStore.setState({
       expenses: [
         { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 1000, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
       ],
-      hasHydrated: true,
     })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     // remaining = 2500 - 1000 = 1500; savingsProgress = 1500 - 500 = 1000 → positive
@@ -122,13 +118,11 @@ describe('DashboardPage', () => {
     usePeriodsStore.setState({
       periods: [{ ...PERIOD, savingsGoal: 2000 }],
       activePeriodId: 'period-1',
-      hasHydrated: true,
     })
     useExpensesStore.setState({
       expenses: [
         { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 1000, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
       ],
-      hasHydrated: true,
     })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     // remaining = 1500; savingsProgress = 1500 - 2000 = -500 → negative
@@ -141,8 +135,8 @@ describe('DashboardPage — category budget limit', () => {
   const EXPENSE_300 = { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 300, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' }
 
   beforeEach(() => {
-    useCategoriesStore.setState({ categories: [CAT_WITH_LIMIT], hasHydrated: true })
-    useExpensesStore.setState({ expenses: [EXPENSE_300], hasHydrated: true })
+    useCategoriesStore.setState({ categories: [CAT_WITH_LIMIT] })
+    useExpensesStore.setState({ expenses: [EXPENSE_300] })
   })
 
   it('shows "X € / Y €" when limit is set', () => {
@@ -151,7 +145,7 @@ describe('DashboardPage — category budget limit', () => {
   })
 
   it('shows "Límite superado" and red bar when spent >= limit', () => {
-    useCategoriesStore.setState({ categories: [{ ...CAT, limit: 300 }], hasHydrated: true })
+    useCategoriesStore.setState({ categories: [{ ...CAT, limit: 300 }] })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.getByText(/límite superado/i)).toBeInTheDocument()
     // The progress bar should have bg-danger class
@@ -161,14 +155,14 @@ describe('DashboardPage — category budget limit', () => {
 
   it('shows yellow bar when spent >= 80% of limit but under limit', () => {
     // spent=300, limit=350 → 300/350 = 85.7% → amber
-    useCategoriesStore.setState({ categories: [{ ...CAT, limit: 350 }], hasHydrated: true })
+    useCategoriesStore.setState({ categories: [{ ...CAT, limit: 350 }] })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     const bar = document.querySelector('.bg-yellow-500')
     expect(bar).toBeInTheDocument()
   })
 
   it('does not show limit indicator when category has no limit', () => {
-    useCategoriesStore.setState({ categories: [CAT], hasHydrated: true })
+    useCategoriesStore.setState({ categories: [CAT] })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     expect(screen.queryByText(/límite superado/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/300,00\s*€\s*\/\s*/)).not.toBeInTheDocument()

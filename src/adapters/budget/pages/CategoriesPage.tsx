@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Category } from '../../../domain/budget/model/types'
 import { useCategories } from '../hooks/useCategories'
+import { useCategoriesStore } from '../store/categoriesStore'
 import { useExpensesStore } from '../store/expensesStore'
 import { CategoryCard } from '../components/CategoryCard'
 import { CategoryForm } from '../components/CategoryForm'
@@ -8,6 +9,8 @@ import { Modal } from '../../shared/components/Modal'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Button } from '../../shared/components/Button'
 import { EmptyState } from '../../shared/components/EmptyState'
+import { PageSpinner } from '../../shared/components/PageSpinner'
+import { StoreError } from '../../shared/components/StoreError'
 
 type ModalMode = { type: 'add' } | { type: 'edit'; category: Category } | null
 type ConfirmDeleteState = { id: string; name: string } | null
@@ -16,9 +19,15 @@ export default function CategoriesPage() {
   const { categories, addCategory, updateCategory, removeCategory } = useCategories()
   const allExpenses = useExpensesStore((s) => s.expenses)
   const expenseCategoryIds = allExpenses.map((e) => e.categoryId)
+  const loading = useCategoriesStore((s) => s.loading)
+  const error = useCategoriesStore((s) => s.error)
+  const fetchCategories = useCategoriesStore((s) => s.fetchAll)
   const [modal, setModal] = useState<ModalMode>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<ConfirmDeleteState>(null)
+
+  if (loading) return <PageSpinner />
+  if (error) return <StoreError onRetry={fetchCategories} />
 
   function handleDeleteRequest(id: string) {
     const category = categories.find((c) => c.id === id)

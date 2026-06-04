@@ -8,8 +8,6 @@ type CategoriesState = {
   categories: Category[]
   loading: boolean
   error: string | null
-  /** True after the first fetchAll() completes (success or error). Replaces persist hasHydrated. */
-  hasHydrated: boolean
   fetchAll: () => Promise<void>
   addCategory: (payload: Omit<Category, 'id' | 'createdAt'>) => Promise<void>
   updateCategory: (id: string, patch: Partial<Omit<Category, 'id' | 'createdAt'>>) => Promise<void>
@@ -27,7 +25,6 @@ export const useCategoriesStore = create<CategoriesState>()((set, get) => ({
   categories: [],
   loading: false,
   error: null,
-  hasHydrated: false,
 
   async fetchAll() {
     set({ loading: true, error: null })
@@ -38,12 +35,12 @@ export const useCategoriesStore = create<CategoriesState>()((set, get) => ({
           await categoriesRepository.create({ ...seed, id: crypto.randomUUID() })
         }
         const seeded = await categoriesRepository.getAll()
-        set({ categories: seeded, loading: false, hasHydrated: true })
+        set({ categories: seeded, loading: false })
       } else {
-        set({ categories, loading: false, hasHydrated: true })
+        set({ categories, loading: false })
       }
     } catch (e) {
-      set({ error: (e as Error).message, loading: false, hasHydrated: true })
+      set({ error: (e as Error).message, loading: false })
     }
   },
 

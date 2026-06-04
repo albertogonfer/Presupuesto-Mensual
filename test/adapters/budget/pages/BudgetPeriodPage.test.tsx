@@ -35,8 +35,8 @@ vi.mock('@/infrastructure/storage/recurringExpensesRepository', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks()
-  usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
-  useExpensesStore.setState({ expenses: [], hasHydrated: true })
+  usePeriodsStore.setState({ periods: [], activePeriodId: null })
+  useExpensesStore.setState({ expenses: [] })
 })
 
 describe('BudgetPeriodPage — empty state', () => {
@@ -64,7 +64,6 @@ describe('BudgetPeriodPage — with active period', () => {
         },
       ],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
   })
 
@@ -127,7 +126,6 @@ describe('BudgetPeriodPage — period form prefill', () => {
     usePeriodsStore.setState({
       periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, createdAt: '2026-05-01T00:00:00Z' }],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
     render(<BudgetPeriodPage />)
     await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
@@ -138,7 +136,6 @@ describe('BudgetPeriodPage — period form prefill', () => {
     usePeriodsStore.setState({
       periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, savingsGoal: 400, createdAt: '2026-05-01T00:00:00Z' }],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
     render(<BudgetPeriodPage />)
     await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
@@ -150,7 +147,6 @@ describe('BudgetPeriodPage — period form prefill', () => {
     usePeriodsStore.setState({
       periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, createdAt: '2026-05-01T00:00:00Z' }],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
     render(<BudgetPeriodPage />)
     await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
@@ -162,7 +158,6 @@ describe('BudgetPeriodPage — period form prefill', () => {
     usePeriodsStore.setState({
       periods: [{ id: 'p1', month: 12, year: 2026, netSalary: 3000, createdAt: '2026-12-01T00:00:00Z' }],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
     render(<BudgetPeriodPage />)
     await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))

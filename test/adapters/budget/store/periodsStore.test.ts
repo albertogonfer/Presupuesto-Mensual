@@ -35,7 +35,7 @@ function getStore() {
 }
 
 beforeEach(() => {
-  usePeriodsStore.setState({ periods: [], activePeriodId: null, loading: false, error: null, hasHydrated: true })
+  usePeriodsStore.setState({ periods: [], activePeriodId: null, loading: false, error: null })
 })
 
 describe('periodsStore — createPeriod', () => {

@@ -12,8 +12,6 @@ type PeriodsState = {
   activePeriodId: string | null
   loading: boolean
   error: string | null
-  /** True after the first fetchAll() completes. Replaces persist hasHydrated. */
-  hasHydrated: boolean
   fetchAll: () => Promise<void>
   createPeriod: (payload: Omit<BudgetPeriod, 'id' | 'createdAt'>) => Promise<CreatePeriodResult>
   updatePeriod: (id: string, patch: Partial<Omit<BudgetPeriod, 'id' | 'createdAt'>>) => Promise<void>
@@ -27,15 +25,14 @@ export const usePeriodsStore = create<PeriodsState>()((set, get) => ({
   activePeriodId: null,
   loading: false,
   error: null,
-  hasHydrated: false,
 
   async fetchAll() {
     set({ loading: true, error: null })
     try {
       const periods = await periodsRepository.getAll()
-      set({ periods, loading: false, hasHydrated: true })
+      set({ periods, loading: false })
     } catch (e) {
-      set({ error: (e as Error).message, loading: false, hasHydrated: true })
+      set({ error: (e as Error).message, loading: false })
     }
   },
 
@@ -123,6 +120,6 @@ export const usePeriodsStore = create<PeriodsState>()((set, get) => ({
   },
 
   reset() {
-    set({ periods: [], activePeriodId: null, loading: false, error: null, hasHydrated: false })
+    set({ periods: [], activePeriodId: null, loading: false, error: null })
   },
 }))

@@ -6,6 +6,8 @@ import { EmptyState } from '../../shared/components/EmptyState'
 import { MonthlyComparisonChart } from '../components/MonthlyComparisonChart'
 import { buildComparisonData } from '../../../domain/budget/services/buildComparisonData'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
+import { PageSpinner } from '../../shared/components/PageSpinner'
+import { StoreError } from '../../shared/components/StoreError'
 
 const MONTH_NAMES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -27,7 +29,19 @@ export default function HistoryPage() {
   const setActivePeriod = usePeriodsStore((s) => s.setActivePeriod)
   const deletePeriod = usePeriodsStore((s) => s.deletePeriod)
   const allExpenses = useExpensesStore((s) => s.expenses)
+  const periodsLoading = usePeriodsStore((s) => s.loading)
+  const periodsError = usePeriodsStore((s) => s.error)
+  const expensesLoading = useExpensesStore((s) => s.loading)
+  const expensesError = useExpensesStore((s) => s.error)
+  const fetchPeriods = usePeriodsStore((s) => s.fetchAll)
+  const fetchExpenses = useExpensesStore((s) => s.fetchAll)
   const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const loading = periodsLoading || expensesLoading
+  const error = periodsError || expensesError
+
+  if (loading) return <PageSpinner />
+  if (error) return <StoreError onRetry={() => { fetchPeriods(); fetchExpenses() }} />
 
   const sorted = [...periods].sort((a, b) =>
     a.year !== b.year ? b.year - a.year : b.month - a.month,

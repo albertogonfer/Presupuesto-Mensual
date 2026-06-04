@@ -19,7 +19,7 @@ function getStore() {
 }
 
 beforeEach(() => {
-  useCategoriesStore.setState({ categories: [], loading: false, error: null, hasHydrated: true })
+  useCategoriesStore.setState({ categories: [], loading: false, error: null })
 })
 
 describe('categoriesStore — delete referenced category block (integration)', () => {

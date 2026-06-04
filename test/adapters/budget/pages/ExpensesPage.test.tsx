@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useExpensesStore } from '@/adapters/budget/store/expensesStore'
@@ -6,13 +6,24 @@ import { usePeriodsStore } from '@/adapters/budget/store/periodsStore'
 import { useCategoriesStore } from '@/adapters/budget/store/categoriesStore'
 import ExpensesPage from '@/adapters/budget/pages/ExpensesPage'
 
+// Mock repositories so async store ops don't trigger error→fetchAll side effects
+vi.mock('@/infrastructure/storage/expensesRepository', () => ({
+  expensesRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockResolvedValue({}),
+    update: vi.fn().mockResolvedValue({}),
+    delete: vi.fn().mockResolvedValue({}),
+    deleteByPeriod: vi.fn().mockResolvedValue({}),
+  },
+}))
+
 const CATEGORY = { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🛒', createdAt: '2026-01-01T00:00:00Z' }
 const PERIOD = { id: 'period-1', month: 6, year: 2026, netSalary: 2000, createdAt: '2026-06-01T00:00:00Z' }
 
 beforeEach(() => {
-  useCategoriesStore.setState({ categories: [CATEGORY], hasHydrated: true })
-  usePeriodsStore.setState({ periods: [PERIOD], activePeriodId: 'period-1', hasHydrated: true })
-  useExpensesStore.setState({ expenses: [], hasHydrated: true })
+  useCategoriesStore.setState({ categories: [CATEGORY], loading: false, error: null })
+  usePeriodsStore.setState({ periods: [PERIOD], activePeriodId: 'period-1', loading: false, error: null })
+  useExpensesStore.setState({ expenses: [], loading: false, error: null })
 })
 
 describe('ExpensesPage — active period', () => {
@@ -48,7 +59,7 @@ describe('ExpensesPage — active period', () => {
         date: '2026-06-01',
         createdAt: '2026-06-01T10:00:00Z',
       }],
-      hasHydrated: true,
+      loading: false,
     })
     render(<ExpensesPage />)
     expect(screen.getByText('Compra supermercado')).toBeInTheDocument()
@@ -67,7 +78,7 @@ describe('ExpensesPage — active period', () => {
         date: '2026-06-01',
         createdAt: '2026-06-01T10:00:00Z',
       }],
-      hasHydrated: true,
+      loading: false,
     })
     render(<ExpensesPage />)
     expect(screen.getAllByText('Comida').length).toBeGreaterThanOrEqual(1)
@@ -84,7 +95,7 @@ describe('ExpensesPage — active period', () => {
         date: '2026-06-01',
         createdAt: '2026-06-01T10:00:00Z',
       }],
-      hasHydrated: true,
+      loading: false,
     })
     render(<ExpensesPage />)
     await userEvent.click(screen.getByRole('button', { name: /eliminar para borrar/i }))
@@ -103,7 +114,7 @@ describe('ExpensesPage — active period', () => {
         date: '2026-06-01',
         createdAt: '2026-06-01T10:00:00Z',
       }],
-      hasHydrated: true,
+      loading: false,
     })
     render(<ExpensesPage />)
     await userEvent.click(screen.getByRole('button', { name: /eliminar para borrar/i }))
@@ -122,7 +133,7 @@ describe('ExpensesPage — active period', () => {
         date: '2026-06-01',
         createdAt: '2026-06-01T10:00:00Z',
       }],
-      hasHydrated: true,
+      loading: false,
     })
     render(<ExpensesPage />)
     await userEvent.click(screen.getByRole('button', { name: /eliminar para borrar/i }))
@@ -140,8 +151,8 @@ describe('ExpensesPage — filter, search and sort', () => {
   ]
 
   beforeEach(() => {
-    useCategoriesStore.setState({ categories: [CATEGORY, CATEGORY_2], hasHydrated: true })
-    useExpensesStore.setState({ expenses: BASE_EXPENSES, hasHydrated: true })
+    useCategoriesStore.setState({ categories: [CATEGORY, CATEGORY_2], loading: false, error: null })
+    useExpensesStore.setState({ expenses: BASE_EXPENSES, loading: false, error: null })
   })
 
   it('filter by category shows only expenses of that category', async () => {
@@ -191,7 +202,7 @@ describe('ExpensesPage — filter, search and sort', () => {
 
 describe('ExpensesPage — no active period', () => {
   it('shows a message to configure a period first', () => {
-    usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
+    usePeriodsStore.setState({ periods: [], activePeriodId: null, loading: false, error: null })
     render(<ExpensesPage />)
     expect(screen.getByText(/configura un período/i)).toBeInTheDocument()
   })

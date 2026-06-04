@@ -21,7 +21,7 @@ function getStore() {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  useCategoriesStore.setState({ categories: [], loading: false, error: null, hasHydrated: true })
+  useCategoriesStore.setState({ categories: [], loading: false, error: null })
 })
 
 describe('categoriesStore — fetchAll seeds defaults when empty', () => {

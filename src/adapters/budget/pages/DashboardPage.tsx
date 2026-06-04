@@ -15,6 +15,8 @@ import { ExpenseForm } from '../components/ExpenseForm'
 import { RecurringExpensesSummary } from '../components/RecurringExpensesSummary'
 import { Modal } from '../../shared/components/Modal'
 import { EmptyState } from '../../shared/components/EmptyState'
+import { PageSpinner } from '../../shared/components/PageSpinner'
+import { StoreError } from '../../shared/components/StoreError'
 
 const MONTH_NAMES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -34,6 +36,12 @@ export default function DashboardPage() {
   const activePeriodId = usePeriodsStore((s) => s.activePeriodId)
   const setActivePeriod = usePeriodsStore((s) => s.setActivePeriod)
   const periods = usePeriodsStore((s) => s.periods)
+  const periodsLoading = usePeriodsStore((s) => s.loading)
+  const periodsError = usePeriodsStore((s) => s.error)
+  const expensesLoading = useExpensesStore((s) => s.loading)
+  const expensesError = useExpensesStore((s) => s.error)
+  const fetchPeriods = usePeriodsStore((s) => s.fetchAll)
+  const fetchExpenses = useExpensesStore((s) => s.fetchAll)
   const activePeriod = periods.find((p) => p.id === activePeriodId) ?? null
   const summary = useBudgetSummary()
   const allExpenses = useExpensesStore((s) => s.expenses)
@@ -41,6 +49,12 @@ export default function DashboardPage() {
   const { categories } = useCategories()
   const [fabOpen, setFabOpen] = useState(false)
   const navigate = useNavigate()
+
+  const loading = periodsLoading || expensesLoading
+  const error = periodsError || expensesError
+
+  if (loading) return <PageSpinner />
+  if (error) return <StoreError onRetry={() => { fetchPeriods(); fetchExpenses() }} />
 
   if (!activePeriod || !summary) {
     return (

@@ -9,6 +9,8 @@ import { Button } from '../../shared/components/Button'
 import { Modal } from '../../shared/components/Modal'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { EmptyState } from '../../shared/components/EmptyState'
+import { PageSpinner } from '../../shared/components/PageSpinner'
+import { StoreError } from '../../shared/components/StoreError'
 
 const FREQUENCY_LABELS: Record<RecurringExpense['frequency'], string> = {
   daily: 'Diaria',
@@ -58,6 +60,9 @@ export default function RecurringExpensesPage() {
   const activePeriodId = usePeriodsStore((s) => s.activePeriodId)
   const periods = usePeriodsStore((s) => s.periods)
   const activePeriod = periods.find((p) => p.id === activePeriodId) ?? null
+  const loading = useRecurringExpensesStore((s) => s.loading)
+  const error = useRecurringExpensesStore((s) => s.error)
+  const fetchRecurring = useRecurringExpensesStore((s) => s.fetchAll)
 
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState<FormValues>(defaultForm)
@@ -65,6 +70,9 @@ export default function RecurringExpensesPage() {
   const [confirmCancel, setConfirmCancel] = useState<{ id: string; description: string } | null>(
     null,
   )
+
+  if (loading) return <PageSpinner />
+  if (error) return <StoreError onRetry={fetchRecurring} />
 
   const activeRecurring = recurringExpenses.filter((r) => r.active)
 
