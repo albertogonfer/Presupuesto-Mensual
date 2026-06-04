@@ -73,7 +73,7 @@ describe('ExpensesPage — active period', () => {
     expect(screen.getByText('Comida')).toBeInTheDocument()
   })
 
-  it('removes an expense when delete button is clicked', async () => {
+  it('opens confirm dialog when delete button is clicked', async () => {
     useExpensesStore.setState({
       expenses: [{
         id: 'exp-1',
@@ -87,8 +87,47 @@ describe('ExpensesPage — active period', () => {
       hasHydrated: true,
     })
     render(<ExpensesPage />)
-    await userEvent.click(screen.getByRole('button', { name: /eliminar/i }))
+    await userEvent.click(screen.getByRole('button', { name: /eliminar para borrar/i }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByText(/¿eliminar gasto\?/i)).toBeInTheDocument()
+  })
+
+  it('removes an expense after confirming deletion', async () => {
+    useExpensesStore.setState({
+      expenses: [{
+        id: 'exp-1',
+        periodId: 'period-1',
+        categoryId: 'cat-1',
+        description: 'Para borrar',
+        amount: 10,
+        date: '2026-06-01',
+        createdAt: '2026-06-01T10:00:00Z',
+      }],
+      hasHydrated: true,
+    })
+    render(<ExpensesPage />)
+    await userEvent.click(screen.getByRole('button', { name: /eliminar para borrar/i }))
+    await userEvent.click(screen.getByRole('button', { name: /^eliminar$/i }))
     expect(screen.queryByText('Para borrar')).not.toBeInTheDocument()
+  })
+
+  it('keeps expense when deletion is cancelled', async () => {
+    useExpensesStore.setState({
+      expenses: [{
+        id: 'exp-1',
+        periodId: 'period-1',
+        categoryId: 'cat-1',
+        description: 'Para borrar',
+        amount: 10,
+        date: '2026-06-01',
+        createdAt: '2026-06-01T10:00:00Z',
+      }],
+      hasHydrated: true,
+    })
+    render(<ExpensesPage />)
+    await userEvent.click(screen.getByRole('button', { name: /eliminar para borrar/i }))
+    await userEvent.click(screen.getByRole('button', { name: /cancelar/i }))
+    expect(screen.getByText('Para borrar')).toBeInTheDocument()
   })
 })
 

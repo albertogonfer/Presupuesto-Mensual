@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useCategoriesStore } from '../store/categoriesStore'
+import { useExpensesStore } from '../store/expensesStore'
 import CategoriesPage from '../pages/CategoriesPage'
 
 beforeEach(() => {
@@ -12,6 +13,7 @@ beforeEach(() => {
     ],
     hasHydrated: true,
   })
+  useExpensesStore.setState({ expenses: [], hasHydrated: true })
 })
 
 describe('CategoriesPage', () => {
@@ -38,5 +40,28 @@ describe('CategoriesPage', () => {
     await userEvent.type(screen.getByLabelText(/nombre/i), 'Transporte')
     await userEvent.click(screen.getByRole('button', { name: /guardar/i }))
     expect(screen.getByText('Transporte')).toBeInTheDocument()
+  })
+
+  it('opens confirm dialog when delete is clicked', async () => {
+    render(<CategoriesPage />)
+    await userEvent.click(screen.getByRole('button', { name: /eliminar comida/i }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByText(/¿eliminar categoría\?/i)).toBeInTheDocument()
+  })
+
+  it('removes category after confirming deletion', async () => {
+    render(<CategoriesPage />)
+    await userEvent.click(screen.getByRole('button', { name: /eliminar comida/i }))
+    // Click the confirm "Eliminar" button inside the dialog
+    const confirmBtn = screen.getByRole('button', { name: /^eliminar$/i })
+    await userEvent.click(confirmBtn)
+    expect(screen.queryByText('Comida')).not.toBeInTheDocument()
+  })
+
+  it('keeps category when deletion is cancelled', async () => {
+    render(<CategoriesPage />)
+    await userEvent.click(screen.getByRole('button', { name: /eliminar comida/i }))
+    await userEvent.click(screen.getByRole('button', { name: /cancelar/i }))
+    expect(screen.getByText('Comida')).toBeInTheDocument()
   })
 })

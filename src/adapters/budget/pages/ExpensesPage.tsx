@@ -6,16 +6,19 @@ import { usePeriodsStore } from '../store/periodsStore'
 import { ExpenseRow } from '../components/ExpenseRow'
 import { ExpenseForm } from '../components/ExpenseForm'
 import { Modal } from '../../shared/components/Modal'
+import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Button } from '../../shared/components/Button'
 import { EmptyState } from '../../shared/components/EmptyState'
 
 type ModalMode = { type: 'add' } | { type: 'edit'; expense: Expense } | null
+type ConfirmDeleteState = { id: string; description: string } | null
 
 export default function ExpensesPage() {
   const activePeriodId = usePeriodsStore((s) => s.activePeriodId)
   const { expenses, addExpense, updateExpense, removeExpense } = useExpenses()
   const { categories } = useCategories()
   const [modal, setModal] = useState<ModalMode>(null)
+  const [confirmDelete, setConfirmDelete] = useState<ConfirmDeleteState>(null)
 
   if (!activePeriodId) {
     return (
@@ -24,6 +27,18 @@ export default function ExpensesPage() {
         <EmptyState message="Configura un período con tu sueldo antes de registrar gastos." icon="⚙️" />
       </div>
     )
+  }
+
+  function handleDeleteRequest(id: string) {
+    const expense = expenses.find((e) => e.id === id)
+    if (!expense) return
+    setConfirmDelete({ id, description: expense.description })
+  }
+
+  function handleConfirmDelete() {
+    if (!confirmDelete) return
+    removeExpense(confirmDelete.id)
+    setConfirmDelete(null)
   }
 
   function handleSubmit(values: { description: string; amount: number; categoryId: string; date: string }) {
@@ -59,7 +74,7 @@ export default function ExpensesPage() {
                 expense={expense}
                 category={category}
                 onEdit={(e) => setModal({ type: 'edit', expense: e })}
-                onDelete={removeExpense}
+                onDelete={handleDeleteRequest}
                 alternate={idx % 2 === 1}
               />
             )
@@ -88,6 +103,14 @@ export default function ExpensesPage() {
           }
         />
       </Modal>
+
+      <ConfirmDialog
+        open={confirmDelete !== null}
+        title="¿Eliminar gasto?"
+        message={confirmDelete ? `Se eliminará «${confirmDelete.description}» de forma permanente.` : ''}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   )
 }

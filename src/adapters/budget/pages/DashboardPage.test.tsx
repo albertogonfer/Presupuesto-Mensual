@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useCategoriesStore } from '../store/categoriesStore'
 import { usePeriodsStore } from '../store/periodsStore'
 import { useExpensesStore } from '../store/expensesStore'
@@ -62,6 +63,23 @@ describe('DashboardPage', () => {
     usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
     render(<DashboardPage />)
     expect(screen.getByText(/configura un período/i)).toBeInTheDocument()
+  })
+
+  it('shows FAB when active period exists', () => {
+    render(<DashboardPage />)
+    expect(screen.getByRole('button', { name: /\+ gasto/i })).toBeInTheDocument()
+  })
+
+  it('hides FAB when no active period', () => {
+    usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
+    render(<DashboardPage />)
+    expect(screen.queryByRole('button', { name: /\+ gasto/i })).not.toBeInTheDocument()
+  })
+
+  it('opens expense form modal when FAB is clicked', async () => {
+    render(<DashboardPage />)
+    await userEvent.click(screen.getByRole('button', { name: /\+ gasto/i }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 
   it('shows category breakdown with category name when expenses exist', () => {
