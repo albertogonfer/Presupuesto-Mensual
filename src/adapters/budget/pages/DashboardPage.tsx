@@ -8,6 +8,8 @@ import { useBudgetSummary } from '../hooks/useBudgetSummary'
 import { SummaryCard } from '../components/SummaryCard'
 import { BudgetPieChart } from '../components/BudgetPieChart'
 import { BudgetBarChart } from '../components/BudgetBarChart'
+import { DailyCumulativeChart } from '../components/DailyCumulativeChart'
+import { buildDailyCumulativeData } from '../../../domain/budget/services/chartTransformers'
 import { PeriodSelector } from '../components/PeriodSelector'
 import { ExpenseForm } from '../components/ExpenseForm'
 import { RecurringExpensesSummary } from '../components/RecurringExpensesSummary'
@@ -222,6 +224,14 @@ export default function DashboardPage() {
         <h2 className="text-lg font-semibold text-text-primary">Gráficos</h2>
         <BudgetPieChart summary={summary} />
         <BudgetBarChart periods={periods} expenses={allExpenses} />
+        {activePeriod && allExpenses.some((e) => e.periodId === activePeriod.id) && (
+          <DailyCumulativeChart
+            data={buildDailyCumulativeData(
+              allExpenses.filter((e) => e.periodId === activePeriod.id),
+              activePeriod,
+            )}
+          />
+        )}
       </div>{/* end charts section */}
       </div>{/* end left column */}
       <div className="mt-6 lg:mt-0 lg:sticky lg:top-6">
