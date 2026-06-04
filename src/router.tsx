@@ -5,7 +5,7 @@ import { Layout } from './adapters/budget/components/Layout'
 const DashboardPage = lazy(() => import('./adapters/budget/pages/DashboardPage'))
 const ExpensesPage = lazy(() => import('./adapters/budget/pages/ExpensesPage'))
 const CategoriesPage = lazy(() => import('./adapters/budget/pages/CategoriesPage'))
-const SettingsPage = lazy(() => import('./adapters/budget/pages/SettingsPage'))
+const BudgetPeriodPage = lazy(() => import('./adapters/budget/pages/BudgetPeriodPage'))
 const HistoryPage = lazy(() => import('./adapters/budget/pages/HistoryPage'))
 
 export type AppRoute = {
@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
       { path: '/expenses', element: wrap(ExpensesPage) },
       { path: '/categories', element: wrap(CategoriesPage) },
       { path: '/history', element: wrap(HistoryPage) },
-      { path: '/settings', element: wrap(SettingsPage) },
+      { path: '/settings', element: wrap(BudgetPeriodPage) },
     ],
   },
 ])
