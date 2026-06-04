@@ -48,6 +48,7 @@ export function BudgetBarChart({ periods, expenses }: BudgetBarChartProps) {
               }).format(value)
             }
             contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '0.75rem' }}
+            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
           />
           <Legend />
           <Bar dataKey="gastado" name="Gastado" fill="#ef4444" radius={[4, 4, 0, 0]} />

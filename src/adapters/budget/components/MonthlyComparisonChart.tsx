@@ -65,6 +65,7 @@ export function MonthlyComparisonChart({ data }: MonthlyComparisonChartProps) {
               border: 'none',
               borderRadius: '0.75rem',
             }}
+            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
           />
           <Legend />
           <Bar dataKey="netSalary" name="Sueldo neto" fill="#6366f1" />
