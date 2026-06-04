@@ -99,7 +99,7 @@ describe('HistoryPage', () => {
       expect(screen.getByText('Comparación mensual')).toBeInTheDocument()
     })
 
-    it('"Ver resumen" button is present and disabled', () => {
+    it('"Ver resumen" button is present and enabled', () => {
       act(() => {
         usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 2000 })
         usePeriodsStore.getState().createPeriod({ month: 2, year: 2026, netSalary: 2100 })
@@ -107,7 +107,7 @@ describe('HistoryPage', () => {
       renderPage()
       const buttons = screen.getAllByRole('button', { name: /ver resumen/i })
       expect(buttons.length).toBeGreaterThanOrEqual(1)
-      buttons.forEach((btn) => expect(btn).toBeDisabled())
+      buttons.forEach((btn) => expect(btn).not.toBeDisabled())
     })
   })
 })

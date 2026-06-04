@@ -8,6 +8,7 @@ const CategoriesPage = lazy(() => import('./adapters/budget/pages/CategoriesPage
 const BudgetPeriodPage = lazy(() => import('./adapters/budget/pages/BudgetPeriodPage'))
 const HistoryPage = lazy(() => import('./adapters/budget/pages/HistoryPage'))
 const RecurringExpensesPage = lazy(() => import('./adapters/budget/pages/RecurringExpensesPage'))
+const PeriodSummaryPage = lazy(() => import('./adapters/budget/pages/PeriodSummaryPage'))
 
 export type AppRoute = {
   path: string
@@ -39,6 +40,7 @@ export const router = createBrowserRouter([
       { path: '/expenses', element: wrap(ExpensesPage) },
       { path: '/categories', element: wrap(CategoriesPage) },
       { path: '/history', element: wrap(HistoryPage) },
+      { path: '/history/:periodId/summary', element: wrap(PeriodSummaryPage) },
       { path: '/recurring', element: wrap(RecurringExpensesPage) },
       { path: '/settings', element: wrap(BudgetPeriodPage) },
     ],

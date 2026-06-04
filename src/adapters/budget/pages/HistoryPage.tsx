@@ -115,9 +115,8 @@ export default function HistoryPage() {
                           </td>
                           <td className="p-4">
                             <button
-                              disabled
-                              title="Próximamente"
-                              className="cursor-not-allowed rounded border border-bg-input px-3 py-1 text-xs text-text-secondary opacity-50"
+                              onClick={(e) => { e.stopPropagation(); navigate(`/history/${row.periodId}/summary`) }}
+                              className="rounded border border-bg-input px-3 py-1 text-xs text-text-secondary hover:text-text-primary hover:border-text-secondary transition-colors"
                             >
                               Ver resumen
                             </button>
