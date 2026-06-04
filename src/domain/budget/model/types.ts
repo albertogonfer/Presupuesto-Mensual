@@ -3,6 +3,7 @@ export type Category = {
   name: string
   color: string   // hex, used in charts
   icon: string    // emoji
+  limit?: number  // optional monthly budget limit in euros
   createdAt: string // ISO date string
 }
 
