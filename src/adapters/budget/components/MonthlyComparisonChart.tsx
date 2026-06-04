@@ -34,16 +34,6 @@ export function MonthlyComparisonChart({ data }: MonthlyComparisonChartProps) {
 
   const hasSavingsGoal = data.some((row) => row.savedVsGoal !== undefined)
 
-  const chartData = data.map((row) => ({
-    name: shortLabel(row.label),
-    netSalary: row.netSalary,
-    totalSpent: row.totalSpent,
-    ...(hasSavingsGoal && row.savedVsGoal !== undefined
-      ? { savingsGoal: row.netSalary - row.remaining + (row.savedVsGoal + row.remaining) }
-      : {}),
-    _row: row,
-  }))
-
   // savingsGoal bar = netSalary - savingsGoal (the target spending ceiling)
   const goalChartData = data.map((row) => {
     const base: Record<string, unknown> = {
