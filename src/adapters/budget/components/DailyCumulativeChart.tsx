@@ -36,8 +36,8 @@ export function DailyCumulativeChart({ data }: DailyCumulativeChartProps) {
         <AreaChart data={data} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
           <defs>
             <linearGradient id="colorCumulative" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
@@ -71,7 +71,7 @@ export function DailyCumulativeChart({ data }: DailyCumulativeChartProps) {
             type="monotone"
             dataKey="cumulative"
             name="cumulative"
-            stroke="#6366f1"
+            stroke="#ef4444"
             strokeWidth={2}
             fill="url(#colorCumulative)"
           />
@@ -79,7 +79,7 @@ export function DailyCumulativeChart({ data }: DailyCumulativeChartProps) {
             type="monotone"
             dataKey="budget"
             name="budget"
-            stroke="#94a3b8"
+            stroke="#22c55e"
             strokeDasharray="5 5"
             strokeWidth={1.5}
             fill="none"

@@ -16,7 +16,7 @@ vi.mock('recharts', () => ({
 const mockSummary: BudgetSummary = {
   totalSpent: 300,
   remaining: 700,
-  percentUsed: 30,
+  percentUsed: 30, mandatoryReserves: [], totalMandatoryReserves: 0, adjustedRemaining: 0,
   byCategory: [
     {
       category: { id: 'cat-1', name: 'Comida', color: '#10B981', icon: '🍔', createdAt: '2026-01-01T00:00:00.000Z' },
@@ -34,7 +34,7 @@ const mockSummary: BudgetSummary = {
 const emptySummary: BudgetSummary = {
   totalSpent: 0,
   remaining: 1000,
-  percentUsed: 0,
+  percentUsed: 0, mandatoryReserves: [], totalMandatoryReserves: 0, adjustedRemaining: 0,
   byCategory: [],
 }
 

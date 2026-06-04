@@ -50,8 +50,8 @@ export function BudgetBarChart({ periods, expenses }: BudgetBarChartProps) {
             contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '0.75rem' }}
           />
           <Legend />
-          <Bar dataKey="gastado" name="Gastado" fill="#6366f1" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="presupuesto" name="Presupuesto" fill="#64748b" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="gastado" name="Gastado" fill="#ef4444" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="presupuesto" name="Presupuesto" fill="#22c55e" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

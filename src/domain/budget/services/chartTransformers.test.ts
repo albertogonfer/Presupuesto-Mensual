@@ -24,6 +24,7 @@ describe('buildPieData', () => {
       totalSpent: 300,
       remaining: 700,
       percentUsed: 30,
+      mandatoryReserves: [], totalMandatoryReserves: 0, adjustedRemaining: 0,
       byCategory: [
         { category: catFood, total: 200, percentage: 66.67 },
         { category: catLoan, total: 100, percentage: 33.33 },
@@ -42,6 +43,7 @@ describe('buildPieData', () => {
       totalSpent: 0,
       remaining: 1000,
       percentUsed: 0,
+      mandatoryReserves: [], totalMandatoryReserves: 0, adjustedRemaining: 0,
       byCategory: [],
     }
 
@@ -53,6 +55,7 @@ describe('buildPieData', () => {
       totalSpent: 100,
       remaining: 900,
       percentUsed: 10,
+      mandatoryReserves: [], totalMandatoryReserves: 0, adjustedRemaining: 0,
       byCategory: [{ category: catFood, total: 100, percentage: 100 }],
     }
 
