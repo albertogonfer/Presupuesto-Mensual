@@ -133,3 +133,42 @@ describe('DashboardPage', () => {
     expect(screen.getByText(/faltan/i)).toBeInTheDocument()
   })
 })
+
+describe('DashboardPage — category budget limit', () => {
+  const CAT_WITH_LIMIT = { ...CAT, limit: 500 }
+  const EXPENSE_300 = { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 300, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' }
+
+  beforeEach(() => {
+    useCategoriesStore.setState({ categories: [CAT_WITH_LIMIT], hasHydrated: true })
+    useExpensesStore.setState({ expenses: [EXPENSE_300], hasHydrated: true })
+  })
+
+  it('shows "X € / Y €" when limit is set', () => {
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    expect(screen.getByText(/300,00\s*€\s*\/\s*500,00\s*€/)).toBeInTheDocument()
+  })
+
+  it('shows "Límite superado" and red bar when spent >= limit', () => {
+    useCategoriesStore.setState({ categories: [{ ...CAT, limit: 300 }], hasHydrated: true })
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    expect(screen.getByText(/límite superado/i)).toBeInTheDocument()
+    // The progress bar should have bg-danger class
+    const bar = document.querySelector('.bg-danger')
+    expect(bar).toBeInTheDocument()
+  })
+
+  it('shows yellow bar when spent >= 80% of limit but under limit', () => {
+    // spent=300, limit=350 → 300/350 = 85.7% → amber
+    useCategoriesStore.setState({ categories: [{ ...CAT, limit: 350 }], hasHydrated: true })
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    const bar = document.querySelector('.bg-yellow-500')
+    expect(bar).toBeInTheDocument()
+  })
+
+  it('does not show limit indicator when category has no limit', () => {
+    useCategoriesStore.setState({ categories: [CAT], hasHydrated: true })
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    expect(screen.queryByText(/límite superado/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/300,00\s*€\s*\/\s*/)).not.toBeInTheDocument()
+  })
+})
