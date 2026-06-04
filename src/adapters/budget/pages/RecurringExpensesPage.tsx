@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useRecurringExpensesStore } from '../store/recurringExpensesStore'
+import { useExpensesStore } from '../store/expensesStore'
 import { useCategories } from '../hooks/useCategories'
 import { usePeriodsStore } from '../store/periodsStore'
-import { getRemainingLabel } from '../../../domain/budget/services/recurringExpenseService'
+import { getRemainingLabel, buildExpensesForPeriod } from '../../../domain/budget/services/recurringExpenseService'
 import type { RecurringExpense } from '../../../domain/budget/model/types'
 import { Button } from '../../shared/components/Button'
 import { Modal } from '../../shared/components/Modal'
@@ -48,7 +49,8 @@ function formatEur(amount: number): string {
 }
 
 export default function RecurringExpensesPage() {
-  const { recurringExpenses, addRecurringExpense, cancelRecurringExpense } =
+  const { addExpense } = useExpensesStore()
+  const { recurringExpenses, addRecurringExpense, cancelRecurringExpense, incrementOccurrence } =
     useRecurringExpensesStore()
   const { categories } = useCategories()
   const activePeriodId = usePeriodsStore((s) => s.activePeriodId)
@@ -88,7 +90,7 @@ export default function RecurringExpensesPage() {
     e.preventDefault()
     if (!validate()) return
 
-    addRecurringExpense({
+    const newRecurring = addRecurringExpense({
       description: form.description.trim(),
       categoryId: form.categoryId,
       amount: parseFloat(form.amount),
@@ -97,6 +99,16 @@ export default function RecurringExpensesPage() {
       ...(form.expiryType === 'date' ? { endsAt: form.endsAt } : {}),
       ...(form.expiryType === 'count' ? { endsAfter: parseInt(form.endsAfter) } : {}),
     })
+
+    // Generate expense for the active period immediately
+    if (activePeriod) {
+      const expenses = buildExpensesForPeriod(activePeriod, [newRecurring])
+      for (const expense of expenses) {
+        addExpense(expense)
+      }
+      if (expenses.length > 0) incrementOccurrence(newRecurring.id)
+    }
+
     setForm(defaultForm)
     setErrors({})
     setShowForm(false)
