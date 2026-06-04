@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { calculateSummary } from './calculateSummary'
-import type { BudgetPeriod, Expense, Category } from '../model/types'
+import type { BudgetPeriod, Expense, Category, RecurringExpense } from '../model/types'
 
 const makeCategory = (overrides: Partial<Category> = {}): Category => ({
   id: 'cat-1',
@@ -122,5 +122,66 @@ describe('calculateSummary', () => {
     const result = calculateSummary(period, expenses, [makeCategory()])
     expect(result.savingsGoal).toBeUndefined()
     expect(result.savingsProgress).toBeUndefined()
+  })
+})
+
+const makeRecurring = (overrides: Partial<RecurringExpense> = {}): RecurringExpense => ({
+  id: 'rec-1',
+  categoryId: 'cat-1',
+  description: 'Préstamo moto',
+  amount: 200,
+  frequency: 'monthly',
+  every: 1,
+  occurrenceCount: 0,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  active: true,
+  ...overrides,
+})
+
+describe('calculateSummary with balloon reserves', () => {
+  it('no recurring → mandatoryReserves empty, adjustedRemaining === remaining', () => {
+    const period = makePeriod({ netSalary: 1000 })
+    const expenses = [makeExpense({ amount: 400 })]
+    const result = calculateSummary(period, expenses, [makeCategory()], [], 6, 2026)
+    expect(result.mandatoryReserves).toEqual([])
+    expect(result.totalMandatoryReserves).toBe(0)
+    expect(result.adjustedRemaining).toBe(result.remaining)
+  })
+
+  it('one recurring with balloon → correct reserve and adjustedRemaining', () => {
+    const period = makePeriod({ netSalary: 2000 })
+    const expenses = [makeExpense({ amount: 500 })]
+    // endsAfter: 6, occurrenceCount: 0 → remaining = 6, reserve = 1200/6 = 200
+    const r = makeRecurring({ endsAfter: 6, occurrenceCount: 0, finalPaymentAmount: 1200 })
+    const result = calculateSummary(period, expenses, [makeCategory()], [r], 6, 2026)
+    expect(result.mandatoryReserves).toHaveLength(1)
+    expect(result.mandatoryReserves[0].recurringId).toBe('rec-1')
+    expect(result.mandatoryReserves[0].description).toBe('Préstamo moto')
+    expect(result.mandatoryReserves[0].monthlyReserve).toBeCloseTo(200, 5)
+    expect(result.totalMandatoryReserves).toBeCloseTo(200, 5)
+    // remaining = 2000 - 500 = 1500; adjustedRemaining = 1500 - 200 = 1300
+    expect(result.adjustedRemaining).toBeCloseTo(1300, 5)
+  })
+
+  it('multiple recurring → sums correctly', () => {
+    const period = makePeriod({ netSalary: 3000 })
+    const expenses = [makeExpense({ amount: 500 })]
+    const r1 = makeRecurring({ id: 'rec-1', description: 'Moto', endsAfter: 6, occurrenceCount: 0, finalPaymentAmount: 1200 })
+    const r2 = makeRecurring({ id: 'rec-2', description: 'Coche', endsAfter: 4, occurrenceCount: 0, finalPaymentAmount: 800 })
+    const result = calculateSummary(period, expenses, [makeCategory()], [r1, r2], 6, 2026)
+    expect(result.mandatoryReserves).toHaveLength(2)
+    // r1 reserve = 200, r2 reserve = 200 → total = 400
+    expect(result.totalMandatoryReserves).toBeCloseTo(400, 5)
+    // remaining = 3000 - 500 = 2500; adjustedRemaining = 2500 - 400 = 2100
+    expect(result.adjustedRemaining).toBeCloseTo(2100, 5)
+  })
+
+  it('recurring without finalPaymentAmount is excluded from reserves', () => {
+    const period = makePeriod({ netSalary: 2000 })
+    const expenses = [makeExpense({ amount: 500 })]
+    const r = makeRecurring({ endsAfter: 6, occurrenceCount: 0 })
+    const result = calculateSummary(period, expenses, [makeCategory()], [r], 6, 2026)
+    expect(result.mandatoryReserves).toHaveLength(0)
+    expect(result.adjustedRemaining).toBe(result.remaining)
   })
 })

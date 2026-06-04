@@ -107,6 +107,39 @@ export function getRemainingLabel(
 }
 
 /**
+ * Returns how much to reserve per month for the balloon payment.
+ * Returns 0 if no finalPaymentAmount, or if neither endsAfter nor endsAt is set.
+ * Formula: finalPaymentAmount / remainingOccurrences
+ */
+export function getMonthlyBalloonReserve(
+  recurring: RecurringExpense,
+  currentMonth: number,
+  currentYear: number,
+): number {
+  if (!recurring.finalPaymentAmount) return 0
+
+  if (recurring.endsAfter !== undefined) {
+    const remaining = recurring.endsAfter - recurring.occurrenceCount
+    if (remaining <= 0) return recurring.finalPaymentAmount
+    if (remaining === 1) return recurring.finalPaymentAmount
+    return recurring.finalPaymentAmount / remaining
+  }
+
+  if (recurring.endsAt) {
+    const endsDate = new Date(recurring.endsAt + 'T00:00:00')
+    const endsMonth = endsDate.getMonth() + 1
+    const endsYear = endsDate.getFullYear()
+    const remaining = (endsYear - currentYear) * 12 + (endsMonth - currentMonth)
+    if (remaining <= 0) return recurring.finalPaymentAmount
+    if (remaining === 1) return recurring.finalPaymentAmount
+    return recurring.finalPaymentAmount / remaining
+  }
+
+  // indefinite recurring — no balloon by definition
+  return 0
+}
+
+/**
  * Builds the list of expenses to create for a period from active recurring expenses.
  */
 export function buildExpensesForPeriod(

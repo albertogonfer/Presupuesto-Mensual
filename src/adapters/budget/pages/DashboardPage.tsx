@@ -129,6 +129,25 @@ export default function DashboardPage() {
               style={{ width: `${Math.max(savingsProgressPercent, 0)}%` }}
             />
           </div>
+          {summary.totalMandatoryReserves > 0 && (
+            <div className="mt-2 flex flex-col gap-1 border-t border-border pt-3">
+              <span className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
+                Reservas obligatorias
+              </span>
+              {summary.mandatoryReserves.map((mr) => (
+                <div key={mr.recurringId} className="flex items-center justify-between text-sm">
+                  <span className="text-text-secondary">{mr.description}</span>
+                  <span className="font-medium text-text-secondary">{formatEur(mr.monthlyReserve)}/mes</span>
+                </div>
+              ))}
+              <div className="mt-1 flex items-center justify-between border-t border-border pt-2">
+                <span className="text-sm font-medium text-text-primary">Dinero realmente disponible</span>
+                <span className={`text-sm font-bold ${summary.adjustedRemaining >= 0 ? 'text-success' : 'text-danger'}`}>
+                  {formatEur(summary.adjustedRemaining)}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useRecurringExpensesStore } from '../store/recurringExpensesStore'
 import { useCategories } from '../hooks/useCategories'
 import { usePeriodsStore } from '../store/periodsStore'
-import { getRemainingLabel } from '../../../domain/budget/services/recurringExpenseService'
+import { getRemainingLabel, getMonthlyBalloonReserve } from '../../../domain/budget/services/recurringExpenseService'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import type { RecurringExpense } from '../../../domain/budget/model/types'
 
@@ -81,6 +81,14 @@ export function RecurringExpensesSummary() {
                     <p className="text-xs text-text-secondary">
                       {remainingLabel ?? 'Sin vencimiento'}
                     </p>
+                    {(() => {
+                      const reserve = getMonthlyBalloonReserve(r, currentMonth, currentYear)
+                      return reserve > 0 ? (
+                        <p className="text-xs text-text-secondary">
+                          Reserva mensual: {formatEur(reserve)}
+                        </p>
+                      ) : null
+                    })()}
                   </div>
                   <button
                     aria-label={`Cancelar ${r.description}`}

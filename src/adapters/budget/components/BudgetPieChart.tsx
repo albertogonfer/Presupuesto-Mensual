@@ -9,6 +9,15 @@ import {
 import { buildPieData } from '../../../domain/budget/services/chartTransformers'
 import type { BudgetSummary } from '../../../domain/budget/model/types'
 
+// Darkens a hex color by the given amount (0–255)
+function darkenHex(hex: string, amount = 40): string {
+  const n = parseInt(hex.replace('#', ''), 16)
+  const r = Math.max(0, (n >> 16) - amount)
+  const g = Math.max(0, ((n >> 8) & 0xff) - amount)
+  const b = Math.max(0, (n & 0xff) - amount)
+  return `#${[r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('')}`
+}
+
 type BudgetPieChartProps = {
   summary: BudgetSummary
 }
@@ -40,11 +49,11 @@ export function BudgetPieChart({ summary }: BudgetPieChartProps) {
             nameKey="name"
             cx="50%"
             cy="50%"
-            innerRadius={60}
+            innerRadius={0}
             outerRadius={100}
           >
             {data.map((entry) => (
-              <Cell key={entry.name} fill={entry.fill} />
+              <Cell key={entry.name} fill={entry.fill} stroke={darkenHex(entry.fill)} strokeWidth={1} />
             ))}
           </Pie>
           <Tooltip

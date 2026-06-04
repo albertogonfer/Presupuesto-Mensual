@@ -4,6 +4,7 @@ import {
   isExpiredForPeriod,
   getRemainingLabel,
   buildExpensesForPeriod,
+  getMonthlyBalloonReserve,
 } from './recurringExpenseService'
 import type { RecurringExpense, BudgetPeriod } from '../model/types'
 
@@ -184,5 +185,41 @@ describe('buildExpensesForPeriod', () => {
     const recurring = makeRecurring()
     const expenses = buildExpensesForPeriod(period, [recurring])
     expect(expenses[0].date).toBe('2025-03-01')
+  })
+})
+
+describe('getMonthlyBalloonReserve', () => {
+  it('returns 0 when no finalPaymentAmount', () => {
+    const r = makeRecurring({ endsAfter: 6, occurrenceCount: 0 })
+    expect(getMonthlyBalloonReserve(r, 6, 2025)).toBe(0)
+  })
+
+  it('endsAfter with 6 remaining → finalPaymentAmount / 6', () => {
+    const r = makeRecurring({ endsAfter: 6, occurrenceCount: 0, finalPaymentAmount: 1200 })
+    // remaining = 6 - 0 = 6
+    expect(getMonthlyBalloonReserve(r, 6, 2025)).toBeCloseTo(200, 5)
+  })
+
+  it('remainingOccurrences = 1 → returns finalPaymentAmount', () => {
+    const r = makeRecurring({ endsAfter: 5, occurrenceCount: 4, finalPaymentAmount: 1200 })
+    // remaining = 5 - 4 = 1
+    expect(getMonthlyBalloonReserve(r, 6, 2025)).toBe(1200)
+  })
+
+  it('remainingOccurrences <= 0 → returns finalPaymentAmount', () => {
+    const r = makeRecurring({ endsAfter: 3, occurrenceCount: 3, finalPaymentAmount: 1200 })
+    // remaining = 0
+    expect(getMonthlyBalloonReserve(r, 6, 2025)).toBe(1200)
+  })
+
+  it('endsAt: estimates remaining months correctly', () => {
+    // endsAt = 2026-06-01 → from June 2025 → 12 months remaining
+    const r = makeRecurring({ endsAt: '2026-06-01', finalPaymentAmount: 1200 })
+    expect(getMonthlyBalloonReserve(r, 6, 2025)).toBeCloseTo(100, 5)
+  })
+
+  it('returns 0 when neither endsAt nor endsAfter (indefinite)', () => {
+    const r = makeRecurring({ finalPaymentAmount: 1200 })
+    expect(getMonthlyBalloonReserve(r, 6, 2025)).toBe(0)
   })
 })
