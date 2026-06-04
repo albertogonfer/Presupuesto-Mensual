@@ -14,7 +14,7 @@ type RecurringExpenseRow = {
   occurrence_count: number
   user_id: string
   created_at: string
-  active: boolean
+  is_active: boolean
   final_payment_amount: number | null
 }
 
@@ -30,7 +30,7 @@ function toRecurringExpense(row: RecurringExpenseRow): RecurringExpense {
     ...(row.ends_after != null ? { endsAfter: row.ends_after } : {}),
     occurrenceCount: row.occurrence_count,
     createdAt: row.created_at,
-    active: row.active,
+    active: row.is_active,
     ...(row.final_payment_amount != null ? { finalPaymentAmount: row.final_payment_amount } : {}),
   }
 }
@@ -67,7 +67,7 @@ export const recurringExpensesRepository: RecurringExpensesRepository = {
         occurrence_count: expense.occurrenceCount,
         user_id: userId,
         created_at: expense.createdAt,
-        active: expense.active,
+        is_active: expense.active,
         final_payment_amount: expense.finalPaymentAmount ?? null,
       })
       .select()
@@ -86,7 +86,7 @@ export const recurringExpensesRepository: RecurringExpensesRepository = {
     if (patch.endsAt !== undefined) dbPatch.ends_at = patch.endsAt
     if (patch.endsAfter !== undefined) dbPatch.ends_after = patch.endsAfter
     if (patch.occurrenceCount !== undefined) dbPatch.occurrence_count = patch.occurrenceCount
-    if (patch.active !== undefined) dbPatch.active = patch.active
+    if (patch.active !== undefined) dbPatch.is_active = patch.active
     if (patch.finalPaymentAmount !== undefined) dbPatch.final_payment_amount = patch.finalPaymentAmount
 
     const { error } = await supabase
