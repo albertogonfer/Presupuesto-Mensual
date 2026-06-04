@@ -184,7 +184,7 @@ export default function DashboardPage() {
                     </span>
                     <div className="flex flex-col">
                       <span
-                        className="rounded px-2 py-0.5 text-xs font-medium text-white"
+                        className="w-fit rounded px-2 py-0.5 text-xs font-medium text-white"
                         style={{ backgroundColor: category.color }}
                       >
                         {category.name}
