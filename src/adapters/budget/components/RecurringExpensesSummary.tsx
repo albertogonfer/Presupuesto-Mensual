@@ -56,10 +56,11 @@ export function RecurringExpensesSummary() {
             return (
               <div
                 key={r.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-bg-card p-4 shadow-card"
+                className="flex flex-col gap-2 rounded-card bg-bg-card p-4 shadow-card"
               >
-                <div className="flex flex-col gap-0.5">
-                  <div className="flex items-center gap-2">
+                {/* Top row: category + name + cancel */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     {category && (
                       <span
                         className="rounded px-2 py-0.5 text-xs font-medium text-white shrink-0"
@@ -68,36 +69,40 @@ export function RecurringExpensesSummary() {
                         {category.icon}
                       </span>
                     )}
-                    <span className="text-sm font-medium text-text-primary">{r.description}</span>
-                  </div>
-                  <span className="text-xs text-text-secondary">
-                    {FREQUENCY_LABELS[r.frequency]}
-                    {r.every > 1 ? ` · cada ${r.every}` : ''}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-danger">-{formatEur(r.amount)}</p>
-                    <p className="text-xs text-text-secondary">
-                      {remainingLabel ?? 'Sin vencimiento'}
-                    </p>
-                    {(() => {
-                      const reserve = getMonthlyBalloonReserve(r, currentMonth, currentYear)
-                      return reserve > 0 ? (
-                        <p className="text-xs text-text-secondary">
-                          Reserva mensual: {formatEur(reserve)}
-                        </p>
-                      ) : null
-                    })()}
+                    <span className="text-sm font-medium text-text-primary truncate">{r.description}</span>
                   </div>
                   <button
                     aria-label={`Cancelar ${r.description}`}
                     onClick={() => setConfirmCancel({ id: r.id, description: r.description })}
-                    className="text-text-secondary transition-colors hover:text-danger"
+                    className="text-text-secondary transition-colors hover:text-danger shrink-0"
                     title="Cancelar gasto recurrente"
                   >
                     ✕
                   </button>
+                </div>
+                {/* Bottom row: frequency + amount + remaining */}
+                <div className="flex items-end justify-between gap-2">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-xs text-text-secondary">
+                      {FREQUENCY_LABELS[r.frequency]}
+                      {r.every > 1 ? ` · cada ${r.every}` : ''}
+                    </span>
+                    {(() => {
+                      const reserve = getMonthlyBalloonReserve(r, currentMonth, currentYear)
+                      return reserve > 0 ? (
+                        <span className="text-xs text-text-secondary">
+                          Reserva: {formatEur(reserve)}/mes
+                        </span>
+                      ) : null
+                    })()}
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-semibold text-danger">-{formatEur(r.amount)}</p>
+                    <p className="text-xs text-text-secondary">
+                      {remainingLabel ?? 'Sin vencimiento'}
+                    </p>
+                  </div>
+                </div>
                 </div>
               </div>
             )
