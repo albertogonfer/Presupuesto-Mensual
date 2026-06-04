@@ -83,14 +83,53 @@ describe('DashboardPage', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 
-  it('shows category breakdown with category name when expenses exist', () => {
+  it('shows savings goal card when period has savingsGoal', () => {
+    usePeriodsStore.setState({
+      periods: [{ ...PERIOD, savingsGoal: 500 }],
+      activePeriodId: 'period-1',
+      hasHydrated: true,
+    })
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    expect(screen.getByText(/objetivo de ahorro/i)).toBeInTheDocument()
+    expect(screen.getByText(/500,00\s*€\s*objetivo/i)).toBeInTheDocument()
+  })
+
+  it('hides savings goal card when period has no savingsGoal', () => {
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    expect(screen.queryByText(/objetivo de ahorro/i)).not.toBeInTheDocument()
+  })
+
+  it('shows positive savings progress in green when remaining > savingsGoal', () => {
+    usePeriodsStore.setState({
+      periods: [{ ...PERIOD, savingsGoal: 500 }],
+      activePeriodId: 'period-1',
+      hasHydrated: true,
+    })
     useExpensesStore.setState({
       expenses: [
-        { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 300, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
+        { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 1000, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
       ],
       hasHydrated: true,
     })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
-    expect(screen.getByText('Comida')).toBeInTheDocument()
+    // remaining = 2500 - 1000 = 1500; savingsProgress = 1500 - 500 = 1000 → positive
+    expect(screen.getByText(/te quedan/i)).toBeInTheDocument()
+  })
+
+  it('shows negative savings progress message when remaining < savingsGoal', () => {
+    usePeriodsStore.setState({
+      periods: [{ ...PERIOD, savingsGoal: 2000 }],
+      activePeriodId: 'period-1',
+      hasHydrated: true,
+    })
+    useExpensesStore.setState({
+      expenses: [
+        { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 1000, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
+      ],
+      hasHydrated: true,
+    })
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    // remaining = 1500; savingsProgress = 1500 - 2000 = -500 → negative
+    expect(screen.getByText(/faltan/i)).toBeInTheDocument()
   })
 })
