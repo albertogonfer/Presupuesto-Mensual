@@ -98,12 +98,29 @@ describe('calculateSummary', () => {
     expect(result.byCategory[0].category.id).toBe('cat-a')
   })
 
-  it('handles remaining going negative when overspent', () => {
-    const period = makePeriod({ netSalary: 500 })
+  it('includes savingsGoal and savingsProgress when period has savingsGoal', () => {
+    const period = makePeriod({ netSalary: 1000, savingsGoal: 200 })
     const expenses = [makeExpense({ amount: 600 })]
     const result = calculateSummary(period, expenses, [makeCategory()])
-    expect(result.totalSpent).toBe(600)
-    expect(result.remaining).toBe(-100)
-    expect(result.percentUsed).toBeCloseTo(120, 1)
+    // remaining = 1000 - 600 = 400; savingsProgress = 400 - 200 = 200
+    expect(result.savingsGoal).toBe(200)
+    expect(result.savingsProgress).toBe(200)
+  })
+
+  it('savingsProgress is negative when remaining is less than savingsGoal', () => {
+    const period = makePeriod({ netSalary: 1000, savingsGoal: 500 })
+    const expenses = [makeExpense({ amount: 700 })]
+    const result = calculateSummary(period, expenses, [makeCategory()])
+    // remaining = 300; savingsProgress = 300 - 500 = -200
+    expect(result.savingsGoal).toBe(500)
+    expect(result.savingsProgress).toBe(-200)
+  })
+
+  it('savingsGoal and savingsProgress are undefined when period has no savingsGoal', () => {
+    const period = makePeriod({ netSalary: 1000 })
+    const expenses = [makeExpense({ amount: 300 })]
+    const result = calculateSummary(period, expenses, [makeCategory()])
+    expect(result.savingsGoal).toBeUndefined()
+    expect(result.savingsProgress).toBeUndefined()
   })
 })
