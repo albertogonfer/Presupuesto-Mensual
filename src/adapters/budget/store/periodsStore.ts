@@ -1,6 +1,9 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { BudgetPeriod } from '../../../domain/budget/model/types'
+import { buildExpensesForPeriod } from '../../../domain/budget/services/recurringExpenseService'
+import { useRecurringExpensesStore } from './recurringExpensesStore'
+import { useExpensesStore } from './expensesStore'
 
 type CreatePeriodResult = { success: boolean; error?: string }
 
@@ -40,6 +43,22 @@ export const usePeriodsStore = create<PeriodsState>()(
           periods: [...s.periods, newPeriod],
           activePeriodId: newPeriod.id,
         }))
+
+        // Auto-generate recurring expenses for this period
+        const recurringState = useRecurringExpensesStore.getState()
+        const expensesState = useExpensesStore.getState()
+        const activeRecurring = recurringState.getActiveRecurring()
+        const expensesToCreate = buildExpensesForPeriod(newPeriod, activeRecurring)
+        for (const expense of expensesToCreate) {
+          expensesState.addExpense(expense)
+        }
+        // Increment occurrenceCount for each recurring that generated an expense
+        for (const recurring of activeRecurring) {
+          if (expensesToCreate.some((e) => e.description === `🔁 ${recurring.description}`)) {
+            recurringState.incrementOccurrence(recurring.id)
+          }
+        }
+
         return { success: true }
       },
 

@@ -5,6 +5,7 @@ import { useCategories } from '../hooks/useCategories'
 import { usePeriodsStore } from '../store/periodsStore'
 import { ExpenseRow } from '../components/ExpenseRow'
 import { ExpenseForm } from '../components/ExpenseForm'
+import { RecurringExpiryBanner } from '../components/RecurringExpiryBanner'
 import { Modal } from '../../shared/components/Modal'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Button } from '../../shared/components/Button'
@@ -97,6 +98,7 @@ export default function ExpensesPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <RecurringExpiryBanner />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-text-primary">Gastos</h1>
         <Button onClick={() => setModal({ type: 'add' })}>Nuevo gasto</Button>
