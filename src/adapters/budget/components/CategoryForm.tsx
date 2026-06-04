@@ -3,14 +3,14 @@ import { Input } from '../../shared/components/Input'
 import { Button } from '../../shared/components/Button'
 
 const PRESET_COLORS = [
-  '#6366F1', // indigo
-  '#10B981', // emerald
-  '#F59E0B', // amber
-  '#EF4444', // rose
   '#8B5CF6', // violet
   '#0EA5E9', // sky
+  '#F59E0B', // amber
   '#F97316', // orange
   '#14B8A6', // teal
+  '#EC4899', // pink
+  '#64748B', // slate
+  '#A16207', // yellow-dark
 ]
 
 type CategoryFormValues = {

@@ -13,6 +13,7 @@ type PeriodsState = {
   hasHydrated: boolean
   createPeriod: (payload: Omit<BudgetPeriod, 'id' | 'createdAt'>) => CreatePeriodResult
   updatePeriod: (id: string, patch: Partial<Omit<BudgetPeriod, 'id' | 'createdAt'>>) => void
+  deletePeriod: (id: string) => void
   setActivePeriod: (id: string) => void
 }
 
@@ -68,6 +69,19 @@ export const usePeriodsStore = create<PeriodsState>()(
             p.id === id ? { ...p, ...patch } : p,
           ),
         }))
+      },
+
+      deletePeriod(id) {
+        const { periods, activePeriodId } = get()
+        const remaining = periods.filter((p) => p.id !== id)
+        // Remove all expenses belonging to this period
+        useExpensesStore.getState().removeExpensesByPeriod(id)
+        // Reassign active period if needed
+        const newActive =
+          activePeriodId === id
+            ? (remaining.at(-1)?.id ?? null)
+            : activePeriodId
+        set({ periods: remaining, activePeriodId: newActive })
       },
 
       setActivePeriod(id) {
