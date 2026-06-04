@@ -222,7 +222,7 @@ export default function DashboardPage() {
       {/* Charts section */}
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold text-text-primary">Gráficos</h2>
-        <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <BudgetPieChart summary={summary} />
           <BudgetBarChart periods={periods} expenses={allExpenses} />
           {activePeriod && allExpenses.some((e) => e.periodId === activePeriod.id) && (
