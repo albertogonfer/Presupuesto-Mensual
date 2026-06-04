@@ -89,7 +89,7 @@ export function Layout({ children }: LayoutProps) {
     // Wait for all stores to load before rendering
     if (anyLoading) return <PageSpinner />
     // Guard: redirect to onboarding if profile says it's not completed
-    if (profile && !profile.onboardingCompleted) {
+    if (profile && !profile.onboardingCompleted && location.pathname !== '/onboarding') {
       return <Navigate to="/onboarding" replace />
     }
     return <Outlet />
