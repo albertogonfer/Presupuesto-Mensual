@@ -30,15 +30,19 @@ type PeriodFormProps = {
   onCancel: () => void
   initialValues?: Pick<BudgetPeriod, 'month' | 'year' | 'netSalary' | 'savingsGoal'>
   editMode?: boolean
+  prefillHint?: boolean
 }
 
-export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false }: PeriodFormProps) {
+export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false, prefillHint = false }: PeriodFormProps) {
   const now = new Date()
   const [month, setMonth] = useState(initialValues?.month ?? now.getMonth() + 1)
   const [year, setYear] = useState(initialValues?.year ?? now.getFullYear())
   const [netSalary, setNetSalary] = useState(initialValues?.netSalary?.toString() ?? '')
   const [hasSavingsGoal, setHasSavingsGoal] = useState(initialValues?.savingsGoal !== undefined)
   const [savingsGoal, setSavingsGoal] = useState(initialValues?.savingsGoal?.toString() ?? '')
+  const [salaryEdited, setSalaryEdited] = useState(false)
+
+  const showHint = prefillHint && !salaryEdited && netSalary !== ''
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -88,11 +92,14 @@ export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false
         label="Sueldo neto"
         type="number"
         value={netSalary}
-        onChange={(e) => setNetSalary(e.target.value)}
+        onChange={(e) => { setNetSalary(e.target.value); setSalaryEdited(true) }}
         placeholder="Ej: 2.500"
         min={1}
         required
       />
+      {showHint && (
+        <p className="text-xs text-text-secondary">Igual que el período anterior. Puedes modificarlo.</p>
+      )}
 
       <div className="flex flex-col gap-3">
         <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-text-secondary">

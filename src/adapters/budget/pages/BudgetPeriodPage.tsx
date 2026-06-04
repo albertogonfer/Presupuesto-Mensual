@@ -9,9 +9,22 @@ import { EmptyState } from '../../shared/components/EmptyState'
 type ModalMode = 'create' | 'edit' | null
 
 export default function BudgetPeriodPage() {
-  const { activePeriod, createPeriod, updatePeriod } = usePeriods()
+  const { periods, activePeriod, createPeriod, updatePeriod } = usePeriods()
   const [modal, setModal] = useState<ModalMode>(null)
   const [formError, setFormError] = useState<string | null>(null)
+
+  const mostRecentPeriod = periods.length > 0
+    ? [...periods].sort((a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month)[0]
+    : null
+
+  const prefillValues = mostRecentPeriod
+    ? {
+        netSalary: mostRecentPeriod.netSalary,
+        savingsGoal: mostRecentPeriod.savingsGoal,
+        month: mostRecentPeriod.month === 12 ? 1 : mostRecentPeriod.month + 1,
+        year: mostRecentPeriod.month === 12 ? mostRecentPeriod.year + 1 : mostRecentPeriod.year,
+      }
+    : undefined
 
   function handleCreate(values: { month: number; year: number; netSalary: number; savingsGoal?: number }) {
     setFormError(null)
@@ -87,6 +100,8 @@ export default function BudgetPeriodPage() {
           <PeriodForm
             onSubmit={handleCreate}
             onCancel={() => setModal(null)}
+            initialValues={prefillValues}
+            prefillHint={!!prefillValues}
           />
         )}
       </Modal>

@@ -2,10 +2,12 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { usePeriodsStore } from '../store/periodsStore'
+import { useExpensesStore } from '../store/expensesStore'
 import BudgetPeriodPage from '../pages/BudgetPeriodPage'
 
 beforeEach(() => {
   usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
+  useExpensesStore.setState({ expenses: [], hasHydrated: true })
 })
 
 describe('BudgetPeriodPage — empty state', () => {
@@ -81,5 +83,61 @@ describe('BudgetPeriodPage — create period flow', () => {
     await userEvent.click(screen.getByRole('button', { name: /guardar/i }))
 
     expect(screen.getByText(/junio 2026/i)).toBeInTheDocument()
+  })
+})
+
+describe('BudgetPeriodPage — period form prefill', () => {
+  it('opens empty salary when no prior periods exist', async () => {
+    render(<BudgetPeriodPage />)
+    await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
+    const salaryInput = screen.getByRole('spinbutton', { name: /sueldo neto/i })
+    expect(salaryInput).toHaveValue(null)
+  })
+
+  it('pre-fills netSalary from the most recent period', async () => {
+    usePeriodsStore.setState({
+      periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, createdAt: '2026-05-01T00:00:00Z' }],
+      activePeriodId: 'p1',
+      hasHydrated: true,
+    })
+    render(<BudgetPeriodPage />)
+    await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
+    expect(screen.getByRole('spinbutton', { name: /sueldo neto/i })).toHaveValue(2500)
+  })
+
+  it('pre-fills savingsGoal when most recent period has one', async () => {
+    usePeriodsStore.setState({
+      periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, savingsGoal: 400, createdAt: '2026-05-01T00:00:00Z' }],
+      activePeriodId: 'p1',
+      hasHydrated: true,
+    })
+    render(<BudgetPeriodPage />)
+    await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
+    expect(screen.getByRole('checkbox', { name: /establecer objetivo de ahorro/i })).toBeChecked()
+    expect(screen.getByRole('spinbutton', { name: /^objetivo de ahorro$/i })).toHaveValue(400)
+  })
+
+  it('pre-fills month/year as next month after most recent period', async () => {
+    usePeriodsStore.setState({
+      periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, createdAt: '2026-05-01T00:00:00Z' }],
+      activePeriodId: 'p1',
+      hasHydrated: true,
+    })
+    render(<BudgetPeriodPage />)
+    await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
+    expect(screen.getByLabelText(/mes/i)).toHaveValue('6')
+    expect(screen.getByRole('spinbutton', { name: /año/i })).toHaveValue(2026)
+  })
+
+  it('pre-fills January of next year when most recent period is December', async () => {
+    usePeriodsStore.setState({
+      periods: [{ id: 'p1', month: 12, year: 2026, netSalary: 3000, createdAt: '2026-12-01T00:00:00Z' }],
+      activePeriodId: 'p1',
+      hasHydrated: true,
+    })
+    render(<BudgetPeriodPage />)
+    await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
+    expect(screen.getByLabelText(/mes/i)).toHaveValue('1')
+    expect(screen.getByRole('spinbutton', { name: /año/i })).toHaveValue(2027)
   })
 })
