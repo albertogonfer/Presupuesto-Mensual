@@ -11,6 +11,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [confirmationSent, setConfirmationSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -28,6 +29,11 @@ export function LoginPage() {
       return
     }
 
+    if (mode === 'register') {
+      setConfirmationSent(true)
+      return
+    }
+
     navigate('/', { replace: true })
   }
 
@@ -38,6 +44,25 @@ export function LoginPage() {
           Presupuesto Mensual
         </h1>
 
+        {confirmationSent ? (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <span className="text-4xl">📧</span>
+            <p className="font-medium text-text-primary">Revisa tu correo</p>
+            <p className="text-sm text-text-secondary">
+              Te hemos enviado un enlace de confirmación a{' '}
+              <span className="font-medium text-text-primary">{email}</span>.
+              Haz clic en él para activar tu cuenta.
+            </p>
+            <button
+              type="button"
+              onClick={() => { setConfirmationSent(false); setMode('login') }}
+              className="mt-2 text-sm text-accent hover:underline"
+            >
+              Volver a iniciar sesión
+            </button>
+          </div>
+        ) : (
+        <>
         {/* Tab toggle */}
         <div className="relative mb-6 flex rounded-lg bg-bg-primary p-1">
           {/* sliding indicator */}
@@ -114,6 +139,8 @@ export function LoginPage() {
               : mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
           </button>
         </form>
+        </>
+        )}
       </div>
     </div>
   )
