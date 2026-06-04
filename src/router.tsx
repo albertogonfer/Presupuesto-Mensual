@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from './adapters/budget/components/Layout'
+import { LoginPage } from './adapters/auth/LoginPage'
+import { ProtectedRoute } from './adapters/auth/ProtectedRoute'
 
 const DashboardPage = lazy(() => import('./adapters/budget/pages/DashboardPage'))
 const ExpensesPage = lazy(() => import('./adapters/budget/pages/ExpensesPage'))
@@ -34,11 +36,12 @@ function wrap(Component: React.ComponentType) {
 }
 
 export const router = createBrowserRouter([
-  { path: '/onboarding', element: wrap(OnboardingPage) },
+  { path: '/login', element: <LoginPage /> },
   {
-    element: <Layout />,
+    element: <ProtectedRoute><Layout /></ProtectedRoute>,
     children: [
       { path: '/', element: wrap(DashboardPage) },
+      { path: '/onboarding', element: wrap(OnboardingPage) },
       { path: '/expenses', element: wrap(ExpensesPage) },
       { path: '/categories', element: wrap(CategoriesPage) },
       { path: '/history', element: wrap(HistoryPage) },
