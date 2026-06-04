@@ -34,7 +34,8 @@ beforeEach(resetStores)
 describe('DashboardPage', () => {
   it('shows period header with month, year and net salary', () => {
     render(<DashboardPage />)
-    expect(screen.getByText(/junio 2026/i)).toBeInTheDocument()
+    // h1 heading shows month and year
+    expect(screen.getByRole('heading', { name: /junio 2026/i })).toBeInTheDocument()
     expect(screen.getAllByText(/2500,00\s*€/).length).toBeGreaterThanOrEqual(1)
   })
 
