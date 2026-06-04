@@ -222,16 +222,18 @@ export default function DashboardPage() {
       {/* Charts section */}
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold text-text-primary">Gráficos</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <BudgetPieChart summary={summary} />
-          <BudgetBarChart periods={periods} expenses={allExpenses} />
+        <div className="flex flex-wrap gap-4">
+          <div className="min-w-[300px] flex-1"><BudgetPieChart summary={summary} /></div>
+          <div className="min-w-[300px] flex-1"><BudgetBarChart periods={periods} expenses={allExpenses} /></div>
           {activePeriod && allExpenses.some((e) => e.periodId === activePeriod.id) && (
-            <DailyCumulativeChart
-              data={buildDailyCumulativeData(
-                allExpenses.filter((e) => e.periodId === activePeriod.id),
-                activePeriod,
-              )}
-            />
+            <div className="min-w-[300px] flex-1">
+              <DailyCumulativeChart
+                data={buildDailyCumulativeData(
+                  allExpenses.filter((e) => e.periodId === activePeriod.id),
+                  activePeriod,
+                )}
+              />
+            </div>
           )}
         </div>
       </div>{/* end charts section */}
