@@ -38,6 +38,7 @@ export interface RecurringExpense {
   occurrenceCount: number
   createdAt: string
   active: boolean
+  finalPaymentAmount?: number  // balloon payment amount on the last occurrence
 }
 
 export type BudgetSummary = {
@@ -51,4 +52,11 @@ export type BudgetSummary = {
   }>
   savingsGoal?: number
   savingsProgress?: number  // remaining - savingsGoal (can be negative)
+  mandatoryReserves: Array<{
+    recurringId: string
+    description: string
+    monthlyReserve: number
+  }>
+  totalMandatoryReserves: number
+  adjustedRemaining: number
 }
