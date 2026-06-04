@@ -5,10 +5,12 @@ import { useExpensesStore } from '../store/expensesStore'
 import { CategoryCard } from '../components/CategoryCard'
 import { CategoryForm } from '../components/CategoryForm'
 import { Modal } from '../../shared/components/Modal'
+import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Button } from '../../shared/components/Button'
 import { EmptyState } from '../../shared/components/EmptyState'
 
 type ModalMode = { type: 'add' } | { type: 'edit'; category: Category } | null
+type ConfirmDeleteState = { id: string; name: string } | null
 
 export default function CategoriesPage() {
   const { categories, addCategory, updateCategory, removeCategory } = useCategories()
@@ -16,10 +18,19 @@ export default function CategoriesPage() {
   const expenseCategoryIds = allExpenses.map((e) => e.categoryId)
   const [modal, setModal] = useState<ModalMode>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<ConfirmDeleteState>(null)
 
-  function handleDelete(id: string) {
+  function handleDeleteRequest(id: string) {
+    const category = categories.find((c) => c.id === id)
+    if (!category) return
     setDeleteError(null)
-    const result = removeCategory(id, expenseCategoryIds)
+    setConfirmDelete({ id, name: category.name })
+  }
+
+  function handleConfirmDelete() {
+    if (!confirmDelete) return
+    const result = removeCategory(confirmDelete.id, expenseCategoryIds)
+    setConfirmDelete(null)
     if (!result.success) {
       setDeleteError(result.error ?? 'No se puede eliminar esta categoría.')
     }
@@ -62,7 +73,7 @@ export default function CategoriesPage() {
               key={cat.id}
               category={cat}
               onEdit={(c) => setModal({ type: 'edit', category: c })}
-              onDelete={handleDelete}
+              onDelete={handleDeleteRequest}
             />
           ))}
         </div>
@@ -83,6 +94,14 @@ export default function CategoriesPage() {
           }
         />
       </Modal>
+
+      <ConfirmDialog
+        open={confirmDelete !== null}
+        title="¿Eliminar categoría?"
+        message={confirmDelete ? `Se eliminará «${confirmDelete.name}» de forma permanente.` : ''}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   )
 }
