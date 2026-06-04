@@ -83,8 +83,8 @@ export function Layout({ children }: LayoutProps) {
     if (children) return children
     // Wait for all stores to load before rendering
     if (anyLoading) return <PageSpinner />
-    // Guard: redirect to onboarding if no data yet (new user)
-    if (categories.length === 0 && periods.length === 0) {
+    // Guard: redirect to onboarding if no periods yet (new user)
+    if (periods.length === 0) {
       return <Navigate to="/onboarding" replace />
     }
     return <Outlet />

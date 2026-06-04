@@ -3,6 +3,8 @@ import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from './adapters/budget/components/Layout'
 import { LoginPage } from './adapters/auth/LoginPage'
 import { ProtectedRoute } from './adapters/auth/ProtectedRoute'
+import { ForgotPasswordPage } from './adapters/auth/ForgotPasswordPage'
+import { ResetPasswordPage } from './adapters/auth/ResetPasswordPage'
 
 const DashboardPage = lazy(() => import('./adapters/budget/pages/DashboardPage'))
 const ExpensesPage = lazy(() => import('./adapters/budget/pages/ExpensesPage'))
@@ -37,6 +39,8 @@ function wrap(Component: React.ComponentType) {
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
+  { path: '/forgot-password', element: <ForgotPasswordPage /> },
+  { path: '/reset-password', element: <ResetPasswordPage /> },
   {
     element: <ProtectedRoute><Layout /></ProtectedRoute>,
     children: [
