@@ -103,7 +103,6 @@ export function RecurringExpensesSummary() {
                     </p>
                   </div>
                 </div>
-                </div>
               </div>
             )
           })}
