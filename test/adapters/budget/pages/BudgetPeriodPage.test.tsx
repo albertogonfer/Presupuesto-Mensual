@@ -1,13 +1,42 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { usePeriodsStore } from '@/adapters/budget/store/periodsStore'
 import { useExpensesStore } from '@/adapters/budget/store/expensesStore'
 import BudgetPeriodPage from '@/adapters/budget/pages/BudgetPeriodPage'
 
+vi.mock('@/infrastructure/storage/periodsRepository', () => ({
+  periodsRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (p: unknown) => p),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
+vi.mock('@/infrastructure/storage/expensesRepository', () => ({
+  expensesRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (e: unknown) => e),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+    deleteByPeriod: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
+vi.mock('@/infrastructure/storage/recurringExpensesRepository', () => ({
+  recurringExpensesRepository: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation(async (r: unknown) => r),
+    update: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+
 beforeEach(() => {
-  usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
-  useExpensesStore.setState({ expenses: [], hasHydrated: true })
+  vi.clearAllMocks()
+  usePeriodsStore.setState({ periods: [], activePeriodId: null })
+  useExpensesStore.setState({ expenses: [] })
 })
 
 describe('BudgetPeriodPage — empty state', () => {
@@ -35,7 +64,6 @@ describe('BudgetPeriodPage — with active period', () => {
         },
       ],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
   })
 
@@ -98,7 +126,6 @@ describe('BudgetPeriodPage — period form prefill', () => {
     usePeriodsStore.setState({
       periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, createdAt: '2026-05-01T00:00:00Z' }],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
     render(<BudgetPeriodPage />)
     await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
@@ -109,7 +136,6 @@ describe('BudgetPeriodPage — period form prefill', () => {
     usePeriodsStore.setState({
       periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, savingsGoal: 400, createdAt: '2026-05-01T00:00:00Z' }],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
     render(<BudgetPeriodPage />)
     await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
@@ -121,7 +147,6 @@ describe('BudgetPeriodPage — period form prefill', () => {
     usePeriodsStore.setState({
       periods: [{ id: 'p1', month: 5, year: 2026, netSalary: 2500, createdAt: '2026-05-01T00:00:00Z' }],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
     render(<BudgetPeriodPage />)
     await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))
@@ -133,7 +158,6 @@ describe('BudgetPeriodPage — period form prefill', () => {
     usePeriodsStore.setState({
       periods: [{ id: 'p1', month: 12, year: 2026, netSalary: 3000, createdAt: '2026-12-01T00:00:00Z' }],
       activePeriodId: 'p1',
-      hasHydrated: true,
     })
     render(<BudgetPeriodPage />)
     await userEvent.click(screen.getByRole('button', { name: /nuevo período/i }))

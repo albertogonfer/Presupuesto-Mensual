@@ -1,17 +1,26 @@
 import { useState } from 'react'
 import { usePeriods } from '../hooks/usePeriods'
+import { usePeriodsStore } from '../store/periodsStore'
 import { PeriodHeader } from '../components/PeriodHeader'
 import { PeriodForm } from '../components/PeriodForm'
 import { Modal } from '../../shared/components/Modal'
 import { Button } from '../../shared/components/Button'
 import { EmptyState } from '../../shared/components/EmptyState'
+import { PageSpinner } from '../../shared/components/PageSpinner'
+import { StoreError } from '../../shared/components/StoreError'
 
 type ModalMode = 'create' | 'edit' | null
 
 export default function BudgetPeriodPage() {
   const { periods, activePeriod, createPeriod, updatePeriod } = usePeriods()
+  const loading = usePeriodsStore((s) => s.loading)
+  const error = usePeriodsStore((s) => s.error)
+  const fetchPeriods = usePeriodsStore((s) => s.fetchAll)
   const [modal, setModal] = useState<ModalMode>(null)
   const [formError, setFormError] = useState<string | null>(null)
+
+  if (loading) return <PageSpinner />
+  if (error) return <StoreError onRetry={fetchPeriods} />
 
   const mostRecentPeriod = periods.length > 0
     ? [...periods].sort((a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month)[0]
@@ -26,9 +35,9 @@ export default function BudgetPeriodPage() {
       }
     : undefined
 
-  function handleCreate(values: { month: number; year: number; netSalary: number; savingsGoal?: number }) {
+  async function handleCreate(values: { month: number; year: number; netSalary: number; savingsGoal?: number }) {
     setFormError(null)
-    const result = createPeriod(values)
+    const result = await createPeriod(values)
     if (!result.success) {
       setFormError(result.error ?? 'No se pudo crear el período.')
       return

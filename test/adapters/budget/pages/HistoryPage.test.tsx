@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { usePeriodsStore } from '@/adapters/budget/store/periodsStore'
 import { useExpensesStore } from '@/adapters/budget/store/expensesStore'
 import HistoryPage from '@/adapters/budget/pages/HistoryPage'
+import type { BudgetPeriod } from '@/domain/budget/model/types'
 
 // Mock useNavigate
 const mockNavigate = vi.fn()
@@ -24,9 +24,13 @@ vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="responsive-container">{children}</div>,
 }))
 
+function makePeriod(id: string, month: number, year: number, netSalary: number): BudgetPeriod {
+  return { id, month, year, netSalary, createdAt: `${year}-${String(month).padStart(2, '0')}-01T00:00:00Z` }
+}
+
 beforeEach(() => {
-  usePeriodsStore.setState({ periods: [], activePeriodId: null, hasHydrated: true })
-  useExpensesStore.setState({ expenses: [], hasHydrated: true })
+  usePeriodsStore.setState({ periods: [], activePeriodId: null })
+  useExpensesStore.setState({ expenses: [] })
   mockNavigate.mockClear()
 })
 
@@ -45,10 +49,13 @@ describe('HistoryPage', () => {
   })
 
   it('lists periods sorted newest first', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 100000 })
-      usePeriodsStore.getState().createPeriod({ month: 3, year: 2026, netSalary: 120000 })
-      usePeriodsStore.getState().createPeriod({ month: 2, year: 2026, netSalary: 110000 })
+    usePeriodsStore.setState({
+      periods: [
+        makePeriod('jan', 1, 2026, 100000),
+        makePeriod('mar', 3, 2026, 120000),
+        makePeriod('feb', 2, 2026, 110000),
+      ],
+      activePeriodId: 'mar',
     })
     renderPage()
     const rows = screen.getAllByRole('row')
@@ -58,8 +65,9 @@ describe('HistoryPage', () => {
   })
 
   it('shows net salary formatted in euros', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 6, year: 2026, netSalary: 2500 })
+    usePeriodsStore.setState({
+      periods: [makePeriod('jun', 6, 2026, 2500)],
+      activePeriodId: 'jun',
     })
     renderPage()
     // netSalary column cell — at least one match (salary and remaining may both be 2500)
@@ -67,42 +75,40 @@ describe('HistoryPage', () => {
   })
 
   it('clicking a row sets that period as active and navigates to dashboard', () => {
-    act(() => {
-      usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 100000 })
-      usePeriodsStore.getState().createPeriod({ month: 2, year: 2026, netSalary: 110000 })
-    })
-    const periods = usePeriodsStore.getState().periods
-    const januaryId = periods.find((p) => p.month === 1)!.id
+    const jan = makePeriod('jan-2026', 1, 2026, 100000)
+    const feb = makePeriod('feb-2026', 2, 2026, 110000)
+    usePeriodsStore.setState({ periods: [jan, feb], activePeriodId: 'feb-2026' })
     renderPage()
     const rows = screen.getAllByRole('row')
     // Sorted newest-first: header | Feb | Jan — click the last data row (Enero)
     fireEvent.click(rows[rows.length - 1])
-    expect(usePeriodsStore.getState().activePeriodId).toBe(januaryId)
+    expect(usePeriodsStore.getState().activePeriodId).toBe('jan-2026')
     expect(mockNavigate).toHaveBeenCalledWith('/')
   })
 
   describe('comparison section', () => {
     it('does not show comparison section with only 1 period', () => {
-      act(() => {
-        usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 2000 })
+      usePeriodsStore.setState({
+        periods: [makePeriod('jan', 1, 2026, 2000)],
+        activePeriodId: 'jan',
       })
       renderPage()
       expect(screen.queryByText('Comparación mensual')).toBeNull()
     })
 
     it('shows comparison section with 2 or more periods', () => {
-      act(() => {
-        usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 2000 })
-        usePeriodsStore.getState().createPeriod({ month: 2, year: 2026, netSalary: 2100 })
+      usePeriodsStore.setState({
+        periods: [makePeriod('jan', 1, 2026, 2000), makePeriod('feb', 2, 2026, 2100)],
+        activePeriodId: 'feb',
       })
       renderPage()
       expect(screen.getByText('Comparación mensual')).toBeInTheDocument()
     })
 
     it('"Ver resumen" button is present and enabled', () => {
-      act(() => {
-        usePeriodsStore.getState().createPeriod({ month: 1, year: 2026, netSalary: 2000 })
-        usePeriodsStore.getState().createPeriod({ month: 2, year: 2026, netSalary: 2100 })
+      usePeriodsStore.setState({
+        periods: [makePeriod('jan', 1, 2026, 2000), makePeriod('feb', 2, 2026, 2100)],
+        activePeriodId: 'feb',
       })
       renderPage()
       const buttons = screen.getAllByRole('button', { name: /ver resumen/i })

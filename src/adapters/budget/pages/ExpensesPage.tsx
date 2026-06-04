@@ -3,6 +3,7 @@ import type { Expense } from '../../../domain/budget/model/types'
 import { useExpenses } from '../hooks/useExpenses'
 import { useCategories } from '../hooks/useCategories'
 import { usePeriodsStore } from '../store/periodsStore'
+import { useExpensesStore } from '../store/expensesStore'
 import { ExpenseRow } from '../components/ExpenseRow'
 import { ExpenseForm } from '../components/ExpenseForm'
 import { RecurringExpiryBanner } from '../components/RecurringExpiryBanner'
@@ -10,6 +11,8 @@ import { Modal } from '../../shared/components/Modal'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Button } from '../../shared/components/Button'
 import { EmptyState } from '../../shared/components/EmptyState'
+import { PageSpinner } from '../../shared/components/PageSpinner'
+import { StoreError } from '../../shared/components/StoreError'
 
 type ModalMode = { type: 'add' } | { type: 'edit'; expense: Expense } | null
 type ConfirmDeleteState = { id: string; description: string } | null
@@ -20,12 +23,16 @@ export default function ExpensesPage() {
   const activePeriodId = usePeriodsStore((s) => s.activePeriodId)
   const { expenses, addExpense, updateExpense, removeExpense } = useExpenses()
   const { categories } = useCategories()
+  const loading = useExpensesStore((s) => s.loading)
+  const error = useExpensesStore((s) => s.error)
+  const fetchExpenses = useExpensesStore((s) => s.fetchAll)
   const [modal, setModal] = useState<ModalMode>(null)
   const [confirmDelete, setConfirmDelete] = useState<ConfirmDeleteState>(null)
   const [filterCategoryId, setFilterCategoryId] = useState<string>('')
   const [searchText, setSearchText] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<SortOrder>('date-desc')
 
+  // useMemo must be declared before any early returns (Rules of Hooks)
   const filteredExpenses = useMemo(() => {
     let result = [...expenses]
 
@@ -63,6 +70,9 @@ export default function ExpensesPage() {
   }, [expenses, filterCategoryId, searchText, sortOrder])
 
   const hasActiveFilters = filterCategoryId !== '' || searchText.trim() !== ''
+
+  if (loading) return <PageSpinner />
+  if (error) return <StoreError onRetry={fetchExpenses} />
 
   if (!activePeriodId) {
     return (

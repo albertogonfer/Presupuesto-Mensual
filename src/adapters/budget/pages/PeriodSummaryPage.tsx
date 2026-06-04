@@ -6,6 +6,8 @@ import { useCategoriesStore } from '../store/categoriesStore'
 import { buildPeriodSummary } from '../../../domain/budget/services/buildPeriodSummary'
 import type { DayBreakdown } from '../../../domain/budget/services/buildPeriodSummary'
 import type { Category } from '../../../domain/budget/model/types'
+import { PageSpinner } from '../../shared/components/PageSpinner'
+import { StoreError } from '../../shared/components/StoreError'
 
 const MONTH_NAMES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -85,6 +87,21 @@ export default function PeriodSummaryPage() {
   const periods = usePeriodsStore((s) => s.periods)
   const allExpenses = useExpensesStore((s) => s.expenses)
   const categories = useCategoriesStore((s) => s.categories)
+  const periodsLoading = usePeriodsStore((s) => s.loading)
+  const expensesLoading = useExpensesStore((s) => s.loading)
+  const categoriesLoading = useCategoriesStore((s) => s.loading)
+  const periodsError = usePeriodsStore((s) => s.error)
+  const expensesError = useExpensesStore((s) => s.error)
+  const categoriesError = useCategoriesStore((s) => s.error)
+  const fetchPeriods = usePeriodsStore((s) => s.fetchAll)
+  const fetchExpenses = useExpensesStore((s) => s.fetchAll)
+  const fetchCategories = useCategoriesStore((s) => s.fetchAll)
+
+  const loading = periodsLoading || expensesLoading || categoriesLoading
+  const error = periodsError || expensesError || categoriesError
+
+  if (loading) return <PageSpinner />
+  if (error) return <StoreError onRetry={() => { fetchPeriods(); fetchExpenses(); fetchCategories() }} />
 
   const period = periods.find((p) => p.id === periodId)
 
