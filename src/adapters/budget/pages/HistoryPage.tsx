@@ -130,7 +130,7 @@ export default function HistoryPage() {
                                 row.percentUsed > 100
                                   ? 'bg-danger/20 text-danger'
                                   : row.percentUsed > 80
-                                    ? 'bg-yellow-500/20 text-yellow-400'
+                                    ? 'bg-warning/15 text-warning'
                                     : 'bg-success/20 text-success'
                               }`}
                             >
@@ -206,7 +206,7 @@ export default function HistoryPage() {
                             percentUsed > 100
                               ? 'bg-danger/20 text-danger'
                               : percentUsed > 80
-                                ? 'bg-yellow-500/20 text-yellow-400'
+                                ? 'bg-warning/15 text-warning'
                                 : 'bg-success/20 text-success'
                           }`}
                         >

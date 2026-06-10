@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Input } from '../../shared/components/Input'
 import { Button } from '../../shared/components/Button'
+import { CATEGORY_ICON_OPTIONS } from './categoryIcons'
+import { CategoryIcon } from './CategoryIcon'
 
 export const PRESET_COLORS = [
   '#8B5CF6', // violet
@@ -28,7 +30,7 @@ type CategoryFormProps = {
 
 export function CategoryForm({ onSubmit, onCancel, initialValues }: CategoryFormProps) {
   const [name, setName] = useState(initialValues?.name ?? '')
-  const [icon, setIcon] = useState(initialValues?.icon ?? '📦')
+  const [icon, setIcon] = useState(initialValues?.icon ?? 'package')
   const [color, setColor] = useState(initialValues?.color ?? PRESET_COLORS[0])
   const [limit, setLimit] = useState<string>(
     initialValues?.limit !== undefined ? String(initialValues.limit) : ''
@@ -50,15 +52,46 @@ export function CategoryForm({ onSubmit, onCancel, initialValues }: CategoryForm
         placeholder="Ej: Transporte"
         required
       />
-      <Input
-        id="category-icon"
-        label="Ícono"
-        value={icon}
-        onChange={(e) => setIcon(e.target.value)}
-        placeholder="Emoji"
-        maxLength={4}
-        required
-      />
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium text-text-secondary">Ícono</span>
+        <div role="radiogroup" aria-label="Ícono" className="grid grid-cols-6 gap-1.5 sm:grid-cols-8">
+          {CATEGORY_ICON_OPTIONS.map(({ name: iconName, label, Icon }) => (
+            <button
+              key={iconName}
+              type="button"
+              role="radio"
+              aria-checked={icon === iconName}
+              aria-label={label}
+              title={label}
+              onClick={() => setIcon(iconName)}
+              className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-all ${
+                icon === iconName
+                  ? 'border-accent bg-accent/15 text-accent-hover shadow-[0_0_12px_rgba(99,102,241,0.45)]'
+                  : 'border-border bg-bg-input text-text-secondary hover:text-text-primary'
+              }`}
+            >
+              <Icon aria-hidden className="h-5 w-5" />
+            </button>
+          ))}
+          {/* Legacy emoji icon stays selectable while editing an old category */}
+          {initialValues && !CATEGORY_ICON_OPTIONS.some((o) => o.name === initialValues.icon) && (
+            <button
+              type="button"
+              role="radio"
+              aria-checked={icon === initialValues.icon}
+              aria-label={`Ícono actual ${initialValues.icon}`}
+              onClick={() => setIcon(initialValues.icon)}
+              className={`flex h-10 w-10 items-center justify-center rounded-lg border text-lg transition-all ${
+                icon === initialValues.icon
+                  ? 'border-accent bg-accent/15 shadow-[0_0_12px_rgba(99,102,241,0.45)]'
+                  : 'border-border bg-bg-input'
+              }`}
+            >
+              <CategoryIcon icon={initialValues.icon} />
+            </button>
+          )}
+        </div>
+      </div>
       <Input
         id="category-limit"
         label="Límite mensual (€)"

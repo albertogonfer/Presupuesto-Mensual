@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react'
+
 type SummaryCardProps = {
   label: string
   value: string
   sublabel?: string
   variant?: 'default' | 'success' | 'danger'
-  icon?: string
+  icon?: ReactNode
   className?: string
 }
 
@@ -19,7 +21,7 @@ export function SummaryCard({ label, value, sublabel, variant = 'default', icon,
     <div className={`flex flex-col gap-1.5 rounded-card bg-bg-card p-4 shadow-card sm:gap-2 sm:p-6 ${className}`}>
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-text-secondary sm:text-sm">{label}</span>
-        {icon && <span className="text-lg">{icon}</span>}
+        {icon && <span className="text-lg text-text-secondary">{icon}</span>}
       </div>
       <span className={`text-xl font-bold sm:text-2xl ${valueColor}`}>{value}</span>
       {sublabel && <span className="text-xs text-text-secondary">{sublabel}</span>}

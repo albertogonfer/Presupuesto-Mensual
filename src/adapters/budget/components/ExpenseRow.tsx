@@ -1,5 +1,6 @@
 import type { Expense } from '../../../domain/budget/model/types'
 import type { Category } from '../../../domain/budget/model/types'
+import { CategoryIcon } from './CategoryIcon'
 
 type ExpenseRowProps = {
   expense: Expense
@@ -32,7 +33,7 @@ export function ExpenseRow({ expense, category, onEdit, onDelete, alternate }: E
               className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
               style={{ backgroundColor: category.color + '33', color: category.color }}
             >
-              <span>{category.icon}</span>
+              <CategoryIcon icon={category.icon} className="h-3.5 w-3.5" />
               <span>{category.name}</span>
             </span>
           )}

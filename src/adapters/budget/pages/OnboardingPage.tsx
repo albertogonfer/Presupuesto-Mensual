@@ -5,6 +5,8 @@ import { useCategoriesStore } from '../store/categoriesStore'
 import { useProfileStore } from '../store/profileStore'
 import { PeriodForm } from '../components/PeriodForm'
 import { Button } from '../../shared/components/Button'
+import { CATEGORY_ICON_OPTIONS } from '../components/categoryIcons'
+import { CategoryIcon } from '../components/CategoryIcon'
 import { Input } from '../../shared/components/Input'
 
 import { PRESET_COLORS } from '../components/CategoryForm'
@@ -24,7 +26,7 @@ export default function OnboardingPage() {
   // Step 3 inline form state
   const [showAddForm, setShowAddForm] = useState(false)
   const [newCatName, setNewCatName] = useState('')
-  const [newCatIcon, setNewCatIcon] = useState('📦')
+  const [newCatIcon, setNewCatIcon] = useState('package')
   const [newCatColor, setNewCatColor] = useState(PRESET_COLORS[0])
 
   async function handleSkip() {
@@ -152,7 +154,7 @@ export default function OnboardingPage() {
                   className="flex items-center justify-between rounded-md bg-bg-input px-3 py-2"
                 >
                   <div className="flex items-center gap-2">
-                    <span>{cat.icon}</span>
+                    <span style={{ color: cat.color }}><CategoryIcon icon={cat.icon} className="h-4 w-4" /></span>
                     <span className="text-sm font-medium text-text-primary">{cat.name}</span>
                     <span
                       className="h-3 w-3 rounded-full"
@@ -182,15 +184,29 @@ export default function OnboardingPage() {
                   placeholder="Ej: Transporte"
                   required
                 />
-                <Input
-                  id="onboarding-cat-icon"
-                  label="Ícono"
-                  value={newCatIcon}
-                  onChange={(e) => setNewCatIcon(e.target.value)}
-                  placeholder="Emoji"
-                  maxLength={4}
-                  required
-                />
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-text-secondary">Ícono</span>
+                  <div role="radiogroup" aria-label="Ícono" className="grid grid-cols-8 gap-1.5">
+                    {CATEGORY_ICON_OPTIONS.map(({ name: iconName, label, Icon }) => (
+                      <button
+                        key={iconName}
+                        type="button"
+                        role="radio"
+                        aria-checked={newCatIcon === iconName}
+                        aria-label={label}
+                        title={label}
+                        onClick={() => setNewCatIcon(iconName)}
+                        className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-all ${
+                          newCatIcon === iconName
+                            ? 'border-accent bg-accent/15 text-accent-hover shadow-[0_0_12px_rgba(99,102,241,0.45)]'
+                            : 'border-border bg-bg-card text-text-secondary hover:text-text-primary'
+                        }`}
+                      >
+                        <Icon aria-hidden className="h-4 w-4" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-medium text-text-secondary">Color</span>
                   <div className="flex gap-2">

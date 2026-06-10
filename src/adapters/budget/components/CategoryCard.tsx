@@ -1,4 +1,5 @@
 import type { Category } from '../../../domain/budget/model/types'
+import { CategoryIcon } from './CategoryIcon'
 
 type CategoryCardProps = {
   category: Category
@@ -12,9 +13,9 @@ export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) 
       <div className="flex items-center gap-3">
         <span
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xl"
-          style={{ backgroundColor: category.color + '33' }}
+          style={{ backgroundColor: category.color + '33', color: category.color }}
         >
-          {category.icon}
+          <CategoryIcon icon={category.icon} className="h-5 w-5" />
         </span>
         <div className="min-w-0">
           <p className="truncate font-medium text-text-primary">{category.name}</p>

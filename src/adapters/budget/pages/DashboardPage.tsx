@@ -14,6 +14,8 @@ import { PeriodSelector } from '../components/PeriodSelector'
 import { ExpenseForm, type ExpenseFormValues } from '../components/ExpenseForm'
 import { useRecurringExpensesStore } from '../store/recurringExpensesStore'
 import { RecurringExpensesSummary } from '../components/RecurringExpensesSummary'
+import { CategoryIcon } from '../components/CategoryIcon'
+import { CheckCircle2, AlertTriangle, Banknote, PieChart as PieChartIcon, Target } from 'lucide-react'
 import { Modal } from '../../shared/components/Modal'
 import { EmptyState } from '../../shared/components/EmptyState'
 import { PageSpinner } from '../../shared/components/PageSpinner'
@@ -133,15 +135,15 @@ export default function DashboardPage() {
               : undefined
           }
           variant={remainingVariant}
-          icon={displayRemaining >= 0 ? '✅' : '⚠️'}
+          icon={displayRemaining >= 0 ? <CheckCircle2 aria-hidden className="h-5 w-5 text-success" /> : <AlertTriangle aria-hidden className="h-5 w-5 text-danger" />}
           className="col-span-2 sm:order-2 sm:col-span-1"
         />
-        <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} icon="💸" className="sm:order-1" />
+        <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} icon={<Banknote aria-hidden className="h-5 w-5" />} className="sm:order-1" />
         <SummaryCard
           label="Porcentaje utilizado"
           value={`${summary.percentUsed.toFixed(1)} %`}
           variant={summary.percentUsed > 100 ? 'danger' : 'default'}
-          icon="📊"
+          icon={<PieChartIcon aria-hidden className="h-5 w-5" />}
           className="sm:order-3"
         />
       </div>
@@ -151,7 +153,7 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-3 rounded-card bg-bg-card p-6 shadow-card">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-text-secondary">Objetivo de ahorro</span>
-            <span className="text-lg">🎯</span>
+            <Target aria-hidden className="h-5 w-5 text-accent-hover" />
           </div>
           <span className="text-2xl font-bold text-text-primary">
             {formatEur(summary.savingsGoal)} objetivo
@@ -225,7 +227,7 @@ export default function DashboardPage() {
             const barColorClass = isOverLimit
               ? 'bg-danger'
               : isNearLimit
-              ? 'bg-yellow-500'
+              ? 'bg-warning'
               : ''
             const barStyle = barColorClass === '' ? { backgroundColor: category.color } : {}
 
@@ -238,9 +240,9 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-2">
                     <span
                       className="flex h-7 w-7 items-center justify-center rounded-full text-sm"
-                      style={{ backgroundColor: category.color + '33' }}
+                      style={{ backgroundColor: category.color + '33', color: category.color }}
                     >
-                      {category.icon}
+                      <CategoryIcon icon={category.icon} className="h-4 w-4" />
                     </span>
                     <div className="flex flex-col">
                       <span

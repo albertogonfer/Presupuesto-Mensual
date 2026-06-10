@@ -5,6 +5,7 @@ import { useCategories } from '../hooks/useCategories'
 import { usePeriodsStore } from '../store/periodsStore'
 import { getRemainingLabel, getMonthlyBalloonReserve } from '../../../domain/budget/services/recurringExpenseService'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
+import { CategoryIcon } from './CategoryIcon'
 import type { RecurringExpense } from '../../../domain/budget/model/types'
 
 const FREQUENCY_LABELS: Record<RecurringExpense['frequency'], string> = {
@@ -66,7 +67,7 @@ export function RecurringExpensesSummary() {
                         className="rounded px-2 py-0.5 text-xs font-medium text-white shrink-0"
                         style={{ backgroundColor: category.color }}
                       >
-                        {category.icon}
+                        <CategoryIcon icon={category.icon} className="h-3.5 w-3.5" />
                       </span>
                     )}
                     <span className="text-sm font-medium text-text-primary truncate">{r.description}</span>

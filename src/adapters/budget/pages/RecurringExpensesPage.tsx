@@ -7,6 +7,7 @@ import { getRemainingLabel, buildExpensesForPeriod } from '../../../domain/budge
 import type { RecurringExpense } from '../../../domain/budget/model/types'
 import { Button } from '../../shared/components/Button'
 import { Modal } from '../../shared/components/Modal'
+import { CategoryIcon } from '../components/CategoryIcon'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { EmptyState } from '../../shared/components/EmptyState'
 import { PageSpinner } from '../../shared/components/PageSpinner'
@@ -162,7 +163,7 @@ export default function RecurringExpensesPage() {
                         className="rounded px-2 py-0.5 text-xs font-medium text-white"
                         style={{ backgroundColor: category.color }}
                       >
-                        {category.icon} {category.name}
+                        <CategoryIcon icon={category.icon} className="mr-1 inline h-3.5 w-3.5" />{category.name}
                       </span>
                     )}
                     <span className="font-medium text-text-primary">{r.description}</span>
@@ -242,7 +243,7 @@ export default function RecurringExpensesPage() {
               <option value="">Selecciona una categoría</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.icon} {c.name}
+                  {c.name}
                 </option>
               ))}
             </select>

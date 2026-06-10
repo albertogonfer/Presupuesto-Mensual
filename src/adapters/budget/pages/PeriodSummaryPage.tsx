@@ -6,6 +6,7 @@ import { useCategoriesStore } from '../store/categoriesStore'
 import { buildPeriodSummary } from '../../../domain/budget/services/buildPeriodSummary'
 import type { DayBreakdown } from '../../../domain/budget/services/buildPeriodSummary'
 import type { Category } from '../../../domain/budget/model/types'
+import { CategoryIcon } from '../components/CategoryIcon'
 import { PageSpinner } from '../../shared/components/PageSpinner'
 import { StoreError } from '../../shared/components/StoreError'
 
@@ -30,7 +31,7 @@ function CategoryBadge({ category }: { category: Category | undefined }) {
       className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium"
       style={{ backgroundColor: category.color + '33', color: category.color }}
     >
-      {category.icon} {category.name}
+      <CategoryIcon icon={category.icon} className="h-3.5 w-3.5" /> {category.name}
     </span>
   )
 }
@@ -137,7 +138,7 @@ export default function PeriodSummaryPage() {
 
       {/* In-progress notice */}
       {isLatestPeriod && (
-        <div className="rounded-card bg-yellow-500/10 px-4 py-3 text-sm text-yellow-400 border border-yellow-500/20">
+        <div className="rounded-card bg-warning/10 px-4 py-3 text-sm text-warning border border-warning/20">
           Este período aún está en curso. Los datos mostrados pueden cambiar.
         </div>
       )}
@@ -161,7 +162,7 @@ export default function PeriodSummaryPage() {
               summary.percentUsed > 100
                 ? 'text-danger'
                 : summary.percentUsed > 80
-                  ? 'text-yellow-400'
+                  ? 'text-warning'
                   : 'text-success'
             }`}
           >
@@ -263,8 +264,8 @@ export default function PeriodSummaryPage() {
               Categoría más cara
             </p>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-text-primary">
-                {summary.mostExpensiveCategory.category.icon} {summary.mostExpensiveCategory.category.name}
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-text-primary">
+                <CategoryIcon icon={summary.mostExpensiveCategory.category.icon} className="h-4 w-4" /> {summary.mostExpensiveCategory.category.name}
               </span>
               <span className="text-sm font-semibold text-text-primary">
                 {formatEur(summary.mostExpensiveCategory.total)}
