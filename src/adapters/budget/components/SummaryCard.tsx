@@ -1,11 +1,12 @@
 type SummaryCardProps = {
   label: string
   value: string
+  sublabel?: string
   variant?: 'default' | 'success' | 'danger'
   icon?: string
 }
 
-export function SummaryCard({ label, value, variant = 'default', icon }: SummaryCardProps) {
+export function SummaryCard({ label, value, sublabel, variant = 'default', icon }: SummaryCardProps) {
   const valueColor =
     variant === 'success'
       ? 'text-success'
@@ -24,6 +25,7 @@ export function SummaryCard({ label, value, variant = 'default', icon }: Summary
         )}
       </div>
       <span className={`text-2xl font-bold ${valueColor}`}>{value}</span>
+      {sublabel && <span className="text-xs text-text-secondary">{sublabel}</span>}
     </div>
   )
 }
