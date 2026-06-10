@@ -86,7 +86,8 @@ describe('Layout — logout', () => {
       </MemoryRouter>
     )
 
-    const logoutBtn = screen.getByRole('button', { name: /cerrar sesión/i })
+    // There are two logout buttons: desktop sidebar and mobile top bar
+    const [logoutBtn] = screen.getAllByRole('button', { name: /cerrar sesión/i })
     fireEvent.click(logoutBtn)
 
     await waitFor(() => {

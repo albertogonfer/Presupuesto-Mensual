@@ -138,7 +138,7 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-3 rounded-card bg-bg-card p-6 shadow-card">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-text-secondary">Objetivo de ahorro</span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-input text-base">🎯</span>
+            <span className="text-lg">🎯</span>
           </div>
           <span className="text-2xl font-bold text-text-primary">
             {formatEur(summary.savingsGoal)} objetivo
@@ -184,7 +184,7 @@ export default function DashboardPage() {
           <button
             aria-label="+ Gasto"
             onClick={() => setFabOpen(true)}
-            className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+            className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-white shadow-[0_0_16px_rgba(99,102,241,0.4)] transition-colors hover:bg-accent-hover"
           >
             + Gasto
           </button>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
             <button
               aria-label="+ Gasto"
               onClick={() => setFabOpen(true)}
-              className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+              className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white shadow-[0_0_16px_rgba(99,102,241,0.4)] transition-colors hover:bg-accent-hover"
             >
               + Gasto
             </button>
