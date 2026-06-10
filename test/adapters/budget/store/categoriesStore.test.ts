@@ -121,3 +121,37 @@ describe('categoriesStore — remove', () => {
     expect(getStore().categories[0].name).toBe('Keep')
   })
 })
+
+describe('categoriesStore — legacy emoji icon migration', () => {
+  it('migrates default emoji icons to icon-library names on fetch', async () => {
+    const { categoriesRepository } = await import(
+      '@/infrastructure/storage/categoriesRepository'
+    )
+    vi.mocked(categoriesRepository.getAll).mockResolvedValueOnce([
+      { id: '1', name: 'Comida',    color: '#F97316', icon: '🛒', createdAt: '' },
+      { id: '2', name: 'Préstamos', color: '#F59E0B', icon: '💳', createdAt: '' },
+      { id: '3', name: 'Viajes',    color: '#0EA5E9', icon: '✈️', createdAt: '' },
+    ])
+    await getStore().fetchAll()
+
+    const icons = getStore().categories.map((c) => c.icon)
+    expect(icons).toEqual(['shopping-cart', 'credit-card', '✈️'])
+    expect(categoriesRepository.update).toHaveBeenCalledWith('1', { icon: 'shopping-cart' })
+    expect(categoriesRepository.update).toHaveBeenCalledWith('2', { icon: 'credit-card' })
+    // Custom emoji categories are left untouched
+    expect(categoriesRepository.update).not.toHaveBeenCalledWith('3', expect.anything())
+  })
+
+  it('does not call update when no legacy icons exist', async () => {
+    const { categoriesRepository } = await import(
+      '@/infrastructure/storage/categoriesRepository'
+    )
+    vi.mocked(categoriesRepository.update).mockClear()
+    vi.mocked(categoriesRepository.getAll).mockResolvedValueOnce([
+      { id: '1', name: 'Comida', color: '#F97316', icon: 'shopping-cart', createdAt: '' },
+    ])
+    await getStore().fetchAll()
+    expect(getStore().categories[0].icon).toBe('shopping-cart')
+    expect(categoriesRepository.update).not.toHaveBeenCalled()
+  })
+})
