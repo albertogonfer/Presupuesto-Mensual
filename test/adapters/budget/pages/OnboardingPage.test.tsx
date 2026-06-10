@@ -170,7 +170,6 @@ describe('OnboardingPage — step 3 (categorías)', () => {
     await userEvent.click(screen.getByRole('button', { name: /todo listo/i }))
     expect(mockNavigate).toHaveBeenCalledWith('/')
   })
-})
 
   it('Eliminar removes a category from the list', async () => {
     await goToStep3()
