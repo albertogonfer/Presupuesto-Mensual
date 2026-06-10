@@ -28,7 +28,7 @@ export function BudgetBarChart({ periods, expenses }: BudgetBarChartProps) {
       </h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#262a33" />
           <XAxis dataKey="month" tick={{ fill: '#94a3b8', fontSize: 12 }} />
           <YAxis
             tick={{ fill: '#94a3b8', fontSize: 12 }}
@@ -47,7 +47,7 @@ export function BudgetBarChart({ periods, expenses }: BudgetBarChartProps) {
                 currency: 'EUR',
               }).format(value)
             }
-            contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '0.75rem' }}
+            contentStyle={{ backgroundColor: '#0e1014', border: 'none', borderRadius: '0.75rem' }}
             cursor={{ fill: 'rgba(255,255,255,0.05)' }}
           />
           <Legend />

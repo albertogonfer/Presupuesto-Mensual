@@ -95,7 +95,7 @@ export default function DashboardPage() {
       {/* Header card */}
       <div className="rounded-card bg-bg-card p-6 shadow-card">
         <div className="flex items-center justify-between gap-4">
-          <h1 className="text-2xl font-semibold text-text-primary">
+          <h1 className="text-xl font-semibold text-text-primary sm:text-2xl">
             {monthName} {activePeriod.year}
           </h1>
           <PeriodSelector
@@ -109,9 +109,8 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} icon="💸" />
+      {/* Stat cards: "Dinero restante" leads full-width on mobile */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         <SummaryCard
           label="Dinero restante"
           value={formatEur(displayRemaining)}
@@ -122,12 +121,15 @@ export default function DashboardPage() {
           }
           variant={remainingVariant}
           icon={displayRemaining >= 0 ? '✅' : '⚠️'}
+          className="col-span-2 sm:order-2 sm:col-span-1"
         />
+        <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} icon="💸" className="sm:order-1" />
         <SummaryCard
           label="Porcentaje utilizado"
           value={`${summary.percentUsed.toFixed(1)} %`}
           variant={summary.percentUsed > 100 ? 'danger' : 'default'}
           icon="📊"
+          className="sm:order-3"
         />
       </div>
 
