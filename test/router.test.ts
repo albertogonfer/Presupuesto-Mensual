@@ -8,16 +8,10 @@ describe('router', () => {
     expect(home?.label).toBe('Dashboard')
   })
 
-  it('defines a route for expenses at /expenses', () => {
+  it('defines a route for expenses (with categories) at /expenses', () => {
     const expenses = routes.find((r) => r.path === '/expenses')
     expect(expenses).toBeDefined()
-    expect(expenses?.label).toBe('Gastos')
-  })
-
-  it('defines a route for categories at /categories', () => {
-    const categories = routes.find((r) => r.path === '/categories')
-    expect(categories).toBeDefined()
-    expect(categories?.label).toBe('Categorías')
+    expect(expenses?.label).toBe('Gastos y Categorías')
   })
 
   it('defines a route for settings at /settings', () => {
@@ -26,10 +20,10 @@ describe('router', () => {
     expect(settings?.label).toBe('Configuración')
   })
 
-  it('defines a route for history at /history', () => {
+  it('defines a route for analytics/history at /history', () => {
     const history = routes.find((r) => r.path === '/history')
     expect(history).toBeDefined()
-    expect(history?.label).toBe('Historial')
+    expect(history?.label).toBe('Analítica')
   })
 
   it('defines a route for recurring expenses at /recurring', () => {
@@ -38,7 +32,7 @@ describe('router', () => {
     expect(recurring?.label).toBe('Recurrentes')
   })
 
-  it('exposes exactly 6 routes', () => {
-    expect(routes).toHaveLength(6)
+  it('exposes exactly 5 routes', () => {
+    expect(routes).toHaveLength(5)
   })
 })

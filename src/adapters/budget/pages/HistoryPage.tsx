@@ -66,7 +66,7 @@ export default function HistoryPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold text-text-primary">Historial de períodos</h1>
+      <h1 className="text-xl font-semibold text-text-primary sm:text-2xl">Analítica e Historial</h1>
 
       {sorted.length === 0 ? (
         <EmptyState

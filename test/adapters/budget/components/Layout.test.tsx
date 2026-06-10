@@ -13,12 +13,13 @@ function renderWithProviders(ui: React.ReactNode) {
 }
 
 describe('Layout', () => {
-  it('renders navigation links for Dashboard, Gastos, Categorías, Configuración', () => {
+  it('renders navigation links for Dashboard, Gastos, Recurrentes, Analítica, Configuración', () => {
     renderWithProviders(<Layout><p>Content</p></Layout>)
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeInTheDocument()
-    // Gastos/Categorías/Historial appear in both the desktop and mobile navs
+    // Gastos/Recurrentes/Analítica appear in both the desktop and mobile navs
     expect(screen.getAllByRole('link', { name: 'Gastos' }).length).toBeGreaterThanOrEqual(1)
-    expect(screen.getAllByRole('link', { name: 'Categorías' }).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByRole('link', { name: 'Recurrentes' }).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByRole('link', { name: 'Analítica' }).length).toBeGreaterThanOrEqual(1)
     expect(screen.getByRole('link', { name: 'Configuración' })).toBeInTheDocument()
   })
 

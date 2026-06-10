@@ -4,8 +4,10 @@ import { useExpenses } from '../hooks/useExpenses'
 import { useCategories } from '../hooks/useCategories'
 import { usePeriodsStore } from '../store/periodsStore'
 import { useExpensesStore } from '../store/expensesStore'
+import { useRecurringExpensesStore } from '../store/recurringExpensesStore'
 import { ExpenseRow } from '../components/ExpenseRow'
-import { ExpenseForm } from '../components/ExpenseForm'
+import { ExpenseForm, type ExpenseFormValues } from '../components/ExpenseForm'
+import { CategoriesPanel } from '../components/CategoriesPanel'
 import { RecurringExpiryBanner } from '../components/RecurringExpiryBanner'
 import { Modal } from '../../shared/components/Modal'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
@@ -95,11 +97,23 @@ export default function ExpensesPage() {
     setConfirmDelete(null)
   }
 
-  function handleSubmit(values: { description: string; amount: number; categoryId: string; date: string }) {
+  function handleSubmit(values: ExpenseFormValues) {
+    const { recurring, ...expenseValues } = values
     if (modal?.type === 'edit') {
-      updateExpense(modal.expense.id, values)
+      updateExpense(modal.expense.id, expenseValues)
     } else {
-      addExpense({ ...values, periodId: activePeriodId! })
+      addExpense({ ...expenseValues, periodId: activePeriodId! })
+      if (recurring) {
+        useRecurringExpensesStore.getState().addRecurringExpense({
+          categoryId: expenseValues.categoryId,
+          description: expenseValues.description,
+          amount: expenseValues.amount,
+          frequency: recurring.frequency,
+          every: recurring.every,
+          endsAt: recurring.endsAt,
+          finalPaymentAmount: recurring.finalPaymentAmount,
+        })
+      }
     }
     setModal(null)
   }
@@ -109,8 +123,11 @@ export default function ExpensesPage() {
   return (
     <div className="flex flex-col gap-6">
       <RecurringExpiryBanner />
+      {/* Split-pane: transactions left, categories right (stacked on mobile) */}
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_340px] lg:items-start">
+      <div className="flex min-w-0 flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-text-primary">Gastos</h1>
+        <h1 className="text-xl font-semibold text-text-primary sm:text-2xl">Gastos y Categorías</h1>
         <Button onClick={() => setModal({ type: 'add' })}>Nuevo gasto</Button>
       </div>
 
@@ -187,6 +204,10 @@ export default function ExpensesPage() {
           })}
         </div>
       )}
+
+      </div>{/* end transactions column */}
+      <CategoriesPanel />
+      </div>{/* end split-pane */}
 
       <Modal
         open={modal !== null}

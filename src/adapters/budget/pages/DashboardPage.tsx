@@ -11,7 +11,8 @@ import { BudgetBarChart } from '../components/BudgetBarChart'
 import { DailyCumulativeChart } from '../components/DailyCumulativeChart'
 import { buildDailyCumulativeData } from '../../../domain/budget/services/chartTransformers'
 import { PeriodSelector } from '../components/PeriodSelector'
-import { ExpenseForm } from '../components/ExpenseForm'
+import { ExpenseForm, type ExpenseFormValues } from '../components/ExpenseForm'
+import { useRecurringExpensesStore } from '../store/recurringExpensesStore'
 import { RecurringExpensesSummary } from '../components/RecurringExpensesSummary'
 import { Modal } from '../../shared/components/Modal'
 import { EmptyState } from '../../shared/components/EmptyState'
@@ -81,8 +82,20 @@ export default function DashboardPage() {
     ? Math.min((summary.remaining / summary.savingsGoal) * 100, 100)
     : 0
 
-  function handleFabSubmit(values: { description: string; amount: number; categoryId: string; date: string }) {
-    addExpense({ ...values, periodId: activePeriodId! })
+  function handleFabSubmit(values: ExpenseFormValues) {
+    const { recurring, ...expenseValues } = values
+    addExpense({ ...expenseValues, periodId: activePeriodId! })
+    if (recurring) {
+      useRecurringExpensesStore.getState().addRecurringExpense({
+        categoryId: expenseValues.categoryId,
+        description: expenseValues.description,
+        amount: expenseValues.amount,
+        frequency: recurring.frequency,
+        every: recurring.every,
+        endsAt: recurring.endsAt,
+        finalPaymentAmount: recurring.finalPaymentAmount,
+      })
+    }
     setFabOpen(false)
   }
 

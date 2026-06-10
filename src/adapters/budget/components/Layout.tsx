@@ -26,23 +26,22 @@ const NAV_ICONS: Record<string, string> = {
   '/settings': 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm8.4 4 1.6-2.8-2-3.4-3.1.9a8 8 0 0 0-1.9-1.1L14.3 2h-4l-.7 3.6a8 8 0 0 0-1.9 1.1l-3.1-.9-2 3.4L4.2 12l-1.6 2.8 2 3.4 3.1-.9a8 8 0 0 0 1.9 1.1l.7 3.6h4l.7-3.6a8 8 0 0 0 1.9-1.1l3.1.9 2-3.4-1.6-2.8z',
 }
 
-// Desktop sidebar: all destinations. Logout lives at the sidebar bottom.
+// Stitch information architecture: categories live inside Gastos (split-pane),
+// periods inside Configuración, charts inside Analítica.
 const navLinks = [
   { to: '/', label: 'Dashboard' },
   { to: '/expenses', label: 'Gastos' },
-  { to: '/categories', label: 'Categorías' },
-  { to: '/history', label: 'Historial' },
   { to: '/recurring', label: 'Recurrentes' },
+  { to: '/history', label: 'Analítica' },
   { to: '/settings', label: 'Configuración' },
 ]
 
-// Mobile bottom navigation: max 5 destinations for thumb reach.
-// "Recurrentes" stays reachable from the dashboard widget and desktop sidebar.
+// Mobile bottom navigation: same five destinations, thumb-sized.
 const mobileNavLinks = [
   { to: '/', label: 'Inicio' },
   { to: '/expenses', label: 'Gastos' },
-  { to: '/categories', label: 'Categorías' },
-  { to: '/history', label: 'Historial' },
+  { to: '/recurring', label: 'Recurrentes' },
+  { to: '/history', label: 'Analítica' },
   { to: '/settings', label: 'Ajustes' },
 ]
 

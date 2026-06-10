@@ -77,11 +77,12 @@ export function CategoryForm({ onSubmit, onCancel, initialValues }: CategoryForm
               type="button"
               aria-label={`Color ${c}`}
               onClick={() => setColor(c)}
-              className="h-7 w-7 rounded-full transition-transform hover:scale-110"
+              className="h-8 w-8 rounded-full transition-transform hover:scale-110"
               style={{
                 backgroundColor: c,
-                outline: c === color ? '2px solid white' : 'none',
+                outline: c === color ? '2px solid white' : '1px solid rgba(255,255,255,0.15)',
                 outlineOffset: '2px',
+                boxShadow: c === color ? `0 0 14px ${c}` : 'none',
               }}
             />
           ))}

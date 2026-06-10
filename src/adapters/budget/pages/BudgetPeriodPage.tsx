@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { usePeriods } from '../hooks/usePeriods'
 import { usePeriodsStore } from '../store/periodsStore'
+import { useExpensesStore } from '../store/expensesStore'
 import { PeriodHeader } from '../components/PeriodHeader'
 import { PeriodForm } from '../components/PeriodForm'
 import { Modal } from '../../shared/components/Modal'
@@ -13,6 +14,7 @@ type ModalMode = 'create' | 'edit' | null
 
 export default function BudgetPeriodPage() {
   const { periods, activePeriod, createPeriod, updatePeriod } = usePeriods()
+  const allExpenses = useExpensesStore((s) => s.expenses)
   const loading = usePeriodsStore((s) => s.loading)
   const error = usePeriodsStore((s) => s.error)
   const fetchPeriods = usePeriodsStore((s) => s.fetchAll)
@@ -33,6 +35,14 @@ export default function BudgetPeriodPage() {
         month: mostRecentPeriod.month === 12 ? 1 : mostRecentPeriod.month + 1,
         year: mostRecentPeriod.month === 12 ? mostRecentPeriod.year + 1 : mostRecentPeriod.year,
       }
+    : undefined
+
+  // Money left over from the most recent period (informational rollover)
+  const previousSavings = mostRecentPeriod
+    ? mostRecentPeriod.netSalary -
+      allExpenses
+        .filter((e) => e.periodId === mostRecentPeriod.id)
+        .reduce((sum, e) => sum + e.amount, 0)
     : undefined
 
   async function handleCreate(values: { month: number; year: number; netSalary: number; savingsGoal?: number }) {
@@ -56,7 +66,7 @@ export default function BudgetPeriodPage() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-text-primary">Configuración</h1>
+          <h1 className="text-xl font-semibold text-text-primary sm:text-2xl">Configuración y Períodos</h1>
           <p className="mt-1 text-sm text-text-secondary">
             Gestiona tu período presupuestario y sueldo neto mensual.
           </p>
@@ -111,6 +121,7 @@ export default function BudgetPeriodPage() {
             onCancel={() => setModal(null)}
             initialValues={prefillValues}
             prefillHint={!!prefillValues}
+            previousSavings={previousSavings}
           />
         )}
       </Modal>

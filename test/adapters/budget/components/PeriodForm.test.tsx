@@ -117,3 +117,29 @@ describe('PeriodForm — savings goal', () => {
     expect(getSavingsInput()).toHaveValue(300)
   })
 })
+
+describe('PeriodForm — rollover from previous period', () => {
+  it('shows the achieved savings banner when previousSavings > 0', () => {
+    render(<PeriodForm onSubmit={vi.fn()} onCancel={vi.fn()} previousSavings={1240.5} />)
+    expect(screen.getByText(/ahorro conseguido del periodo anterior/i)).toBeInTheDocument()
+    expect(screen.getByText(/\+1240,50\s*€/)).toBeInTheDocument()
+  })
+
+  it('hides the banner when previousSavings is zero or negative', () => {
+    render(<PeriodForm onSubmit={vi.fn()} onCancel={vi.fn()} previousSavings={-50} />)
+    expect(screen.queryByText(/ahorro conseguido/i)).not.toBeInTheDocument()
+  })
+
+  it('hides the banner in edit mode', () => {
+    render(
+      <PeriodForm
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+        previousSavings={300}
+        editMode
+        initialValues={{ month: 6, year: 2026, netSalary: 2500 }}
+      />,
+    )
+    expect(screen.queryByText(/ahorro conseguido/i)).not.toBeInTheDocument()
+  })
+})
