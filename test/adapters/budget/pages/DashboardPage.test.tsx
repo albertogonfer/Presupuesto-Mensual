@@ -188,7 +188,7 @@ describe('DashboardPage — category budget limit', () => {
     // spent=300, limit=350 → 300/350 = 85.7% → amber
     useCategoriesStore.setState({ loading: false, categories: [{ ...CAT, limit: 350 }] })
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
-    const bar = document.querySelector('.bg-yellow-500')
+    const bar = document.querySelector('.bg-warning')
     expect(bar).toBeInTheDocument()
   })
 

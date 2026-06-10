@@ -40,7 +40,7 @@ export function DailyCumulativeChart({ data }: DailyCumulativeChartProps) {
               <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#2d3449" />
           <XAxis
             dataKey="day"
             ticks={EVERY_5TH_TICKS}
@@ -57,7 +57,7 @@ export function DailyCumulativeChart({ data }: DailyCumulativeChartProps) {
             ]}
             labelFormatter={(label: number) => `Día ${label}`}
             contentStyle={{
-              backgroundColor: '#1e293b',
+              backgroundColor: '#131b2e',
               border: 'none',
               borderRadius: '0.75rem',
             }}

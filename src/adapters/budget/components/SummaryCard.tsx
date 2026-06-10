@@ -1,12 +1,15 @@
+import type { ReactNode } from 'react'
+
 type SummaryCardProps = {
   label: string
   value: string
   sublabel?: string
   variant?: 'default' | 'success' | 'danger'
-  icon?: string
+  icon?: ReactNode
+  className?: string
 }
 
-export function SummaryCard({ label, value, sublabel, variant = 'default', icon }: SummaryCardProps) {
+export function SummaryCard({ label, value, sublabel, variant = 'default', icon, className = '' }: SummaryCardProps) {
   const valueColor =
     variant === 'success'
       ? 'text-success'
@@ -15,16 +18,12 @@ export function SummaryCard({ label, value, sublabel, variant = 'default', icon 
         : 'text-text-primary'
 
   return (
-    <div className="flex flex-col gap-2 rounded-card bg-bg-card p-6 shadow-card">
+    <div className={`flex flex-col gap-1.5 rounded-card bg-bg-card p-4 shadow-card sm:gap-2 sm:p-6 ${className}`}>
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-text-secondary">{label}</span>
-        {icon && (
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-input text-base">
-            {icon}
-          </span>
-        )}
+        <span className="text-xs font-medium text-text-secondary sm:text-sm">{label}</span>
+        {icon && <span className="text-lg text-text-secondary">{icon}</span>}
       </div>
-      <span className={`text-2xl font-bold ${valueColor}`}>{value}</span>
+      <span className={`text-xl font-bold sm:text-2xl ${valueColor}`}>{value}</span>
       {sublabel && <span className="text-xs text-text-secondary">{sublabel}</span>}
     </div>
   )

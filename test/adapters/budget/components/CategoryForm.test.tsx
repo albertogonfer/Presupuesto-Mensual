@@ -4,23 +4,30 @@ import userEvent from '@testing-library/user-event'
 import { CategoryForm } from '@/adapters/budget/components/CategoryForm'
 
 describe('CategoryForm', () => {
-  it('renders name, icon, and color inputs', () => {
+  it('renders name input, icon picker, and color swatches', () => {
     render(<CategoryForm onSubmit={vi.fn()} onCancel={vi.fn()} />)
     expect(screen.getByLabelText(/nombre/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/ícono/i)).toBeInTheDocument()
+    expect(screen.getByRole('radiogroup', { name: /ícono/i })).toBeInTheDocument()
     expect(screen.getByText(/color/i)).toBeInTheDocument()
   })
 
-  it('calls onSubmit with name, icon, and color when form is submitted', async () => {
+  it('calls onSubmit with name, selected icon, and color when form is submitted', async () => {
     const onSubmit = vi.fn()
     render(<CategoryForm onSubmit={onSubmit} onCancel={vi.fn()} />)
     await userEvent.type(screen.getByLabelText(/nombre/i), 'Transporte')
-    await userEvent.clear(screen.getByLabelText(/ícono/i))
-    await userEvent.type(screen.getByLabelText(/ícono/i), '🚌')
+    await userEvent.click(screen.getByRole('radio', { name: 'Transporte' }))
     await userEvent.click(screen.getByRole('button', { name: /guardar/i }))
     expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Transporte', icon: '🚌' }),
+      expect.objectContaining({ name: 'Transporte', icon: 'bus' }),
     )
+  })
+
+  it('defaults the icon to "package"', async () => {
+    const onSubmit = vi.fn()
+    render(<CategoryForm onSubmit={onSubmit} onCancel={vi.fn()} />)
+    await userEvent.type(screen.getByLabelText(/nombre/i), 'Varios')
+    await userEvent.click(screen.getByRole('button', { name: /guardar/i }))
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ icon: 'package' }))
   })
 
   it('calls onCancel when cancel button is clicked', async () => {
@@ -30,15 +37,19 @@ describe('CategoryForm', () => {
     expect(onCancel).toHaveBeenCalledTimes(1)
   })
 
-  it('pre-fills form fields when initialValues are provided', () => {
+  it('pre-fills fields and keeps a legacy emoji icon selectable when editing', async () => {
+    const onSubmit = vi.fn()
     render(
       <CategoryForm
-        onSubmit={vi.fn()}
+        onSubmit={onSubmit}
         onCancel={vi.fn()}
         initialValues={{ name: 'Edit Me', color: '#FF0000', icon: '✏️' }}
       />,
     )
     expect(screen.getByDisplayValue('Edit Me')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('✏️')).toBeInTheDocument()
+    // The legacy emoji appears as an extra selected option in the picker
+    expect(screen.getByRole('radio', { name: /ícono actual/i })).toHaveAttribute('aria-checked', 'true')
+    await userEvent.click(screen.getByRole('button', { name: /guardar/i }))
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ icon: '✏️' }))
   })
 })

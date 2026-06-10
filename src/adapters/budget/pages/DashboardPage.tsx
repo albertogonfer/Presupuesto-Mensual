@@ -11,8 +11,11 @@ import { BudgetBarChart } from '../components/BudgetBarChart'
 import { DailyCumulativeChart } from '../components/DailyCumulativeChart'
 import { buildDailyCumulativeData } from '../../../domain/budget/services/chartTransformers'
 import { PeriodSelector } from '../components/PeriodSelector'
-import { ExpenseForm } from '../components/ExpenseForm'
+import { ExpenseForm, type ExpenseFormValues } from '../components/ExpenseForm'
+import { useRecurringExpensesStore } from '../store/recurringExpensesStore'
 import { RecurringExpensesSummary } from '../components/RecurringExpensesSummary'
+import { CategoryIcon } from '../components/CategoryIcon'
+import { CheckCircle2, AlertTriangle, Banknote, PieChart as PieChartIcon, Target } from 'lucide-react'
 import { Modal } from '../../shared/components/Modal'
 import { EmptyState } from '../../shared/components/EmptyState'
 import { PageSpinner } from '../../shared/components/PageSpinner'
@@ -81,8 +84,20 @@ export default function DashboardPage() {
     ? Math.min((summary.remaining / summary.savingsGoal) * 100, 100)
     : 0
 
-  function handleFabSubmit(values: { description: string; amount: number; categoryId: string; date: string }) {
-    addExpense({ ...values, periodId: activePeriodId! })
+  function handleFabSubmit(values: ExpenseFormValues) {
+    const { recurring, ...expenseValues } = values
+    addExpense({ ...expenseValues, periodId: activePeriodId! })
+    if (recurring) {
+      useRecurringExpensesStore.getState().addRecurringExpense({
+        categoryId: expenseValues.categoryId,
+        description: expenseValues.description,
+        amount: expenseValues.amount,
+        frequency: recurring.frequency,
+        every: recurring.every,
+        endsAt: recurring.endsAt,
+        finalPaymentAmount: recurring.finalPaymentAmount,
+      })
+    }
     setFabOpen(false)
   }
 
@@ -95,7 +110,7 @@ export default function DashboardPage() {
       {/* Header card */}
       <div className="rounded-card bg-bg-card p-6 shadow-card">
         <div className="flex items-center justify-between gap-4">
-          <h1 className="text-2xl font-semibold text-text-primary">
+          <h1 className="text-xl font-semibold text-text-primary sm:text-2xl">
             {monthName} {activePeriod.year}
           </h1>
           <PeriodSelector
@@ -109,9 +124,8 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} icon="💸" />
+      {/* Stat cards: "Dinero restante" leads full-width on mobile */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         <SummaryCard
           label="Dinero restante"
           value={formatEur(displayRemaining)}
@@ -121,13 +135,16 @@ export default function DashboardPage() {
               : undefined
           }
           variant={remainingVariant}
-          icon={displayRemaining >= 0 ? '✅' : '⚠️'}
+          icon={displayRemaining >= 0 ? <CheckCircle2 aria-hidden className="h-5 w-5 text-success" /> : <AlertTriangle aria-hidden className="h-5 w-5 text-danger" />}
+          className="col-span-2 sm:order-2 sm:col-span-1"
         />
+        <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} icon={<Banknote aria-hidden className="h-5 w-5" />} className="sm:order-1" />
         <SummaryCard
           label="Porcentaje utilizado"
           value={`${summary.percentUsed.toFixed(1)} %`}
           variant={summary.percentUsed > 100 ? 'danger' : 'default'}
-          icon="📊"
+          icon={<PieChartIcon aria-hidden className="h-5 w-5" />}
+          className="sm:order-3"
         />
       </div>
 
@@ -136,7 +153,7 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-3 rounded-card bg-bg-card p-6 shadow-card">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-text-secondary">Objetivo de ahorro</span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-input text-base">🎯</span>
+            <Target aria-hidden className="h-5 w-5 text-accent-hover" />
           </div>
           <span className="text-2xl font-bold text-text-primary">
             {formatEur(summary.savingsGoal)} objetivo
@@ -182,7 +199,7 @@ export default function DashboardPage() {
           <button
             aria-label="+ Gasto"
             onClick={() => setFabOpen(true)}
-            className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+            className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-white shadow-[0_0_16px_rgba(99,102,241,0.4)] transition-colors hover:bg-accent-hover"
           >
             + Gasto
           </button>
@@ -194,7 +211,7 @@ export default function DashboardPage() {
             <button
               aria-label="+ Gasto"
               onClick={() => setFabOpen(true)}
-              className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+              className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white shadow-[0_0_16px_rgba(99,102,241,0.4)] transition-colors hover:bg-accent-hover"
             >
               + Gasto
             </button>
@@ -210,7 +227,7 @@ export default function DashboardPage() {
             const barColorClass = isOverLimit
               ? 'bg-danger'
               : isNearLimit
-              ? 'bg-yellow-500'
+              ? 'bg-warning'
               : ''
             const barStyle = barColorClass === '' ? { backgroundColor: category.color } : {}
 
@@ -223,9 +240,9 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-2">
                     <span
                       className="flex h-7 w-7 items-center justify-center rounded-full text-sm"
-                      style={{ backgroundColor: category.color + '33' }}
+                      style={{ backgroundColor: category.color + '33', color: category.color }}
                     >
-                      {category.icon}
+                      <CategoryIcon icon={category.icon} className="h-4 w-4" />
                     </span>
                     <div className="flex flex-col">
                       <span

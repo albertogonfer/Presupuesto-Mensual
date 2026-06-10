@@ -55,13 +55,13 @@ export function MonthlyComparisonChart({ data }: MonthlyComparisonChartProps) {
     <div data-testid="monthly-comparison-chart">
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={goalChartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#2d3449" />
           <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 12 }} />
           <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} tickFormatter={formatEur} />
           <Tooltip
             formatter={(value: number) => formatEur(value)}
             contentStyle={{
-              backgroundColor: '#1e293b',
+              backgroundColor: '#131b2e',
               border: 'none',
               borderRadius: '0.75rem',
             }}

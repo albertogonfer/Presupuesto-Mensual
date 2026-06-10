@@ -1,20 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-base: #0f172a;         /* slate-900 — alias for bg-primary */
-  --color-bg-primary: #0f172a;      /* slate-900 */
-  --color-bg-card: #1e293b;         /* slate-800 */
-  --color-bg-input: #334155;        /* slate-700 */
-  --color-text-primary: #f1f5f9;    /* slate-100 */
-  --color-text-secondary: #94a3b8;  /* slate-400 */
-  --color-accent: #6366f1;          /* indigo-500 */
-  --color-accent-hover: #818cf8;    /* indigo-400 */
-  --color-danger: #ef4444;          /* red-500 */
-  --color-success: #10b981;         /* emerald-500 */
-  --color-border: #334155;          /* slate-700 */
-  --radius-card: 0.75rem;
+  /* "Negro Puro" — pure-black background with the Fiscal Precision Dark
+     design-system tokens from Stitch (blue-tinted surface containers,
+     blue-white on-surface text, indigo primary, orange tertiary). */
+  --color-bg-base: #000000;
+  --color-bg-primary: #000000;
+  --color-bg-card: #131b2e;         /* surface-container-low */
+  --color-bg-input: #222a3d;        /* surface-container-high */
+  --color-text-primary: #dae2fd;    /* on-surface */
+  --color-text-secondary: #94a3b8;  /* secondary override */
+  --color-accent: #6366f1;          /* primary override (indigo) */
+  --color-accent-hover: #8083ff;    /* primary-container */
+  --color-danger: #ef4444;          /* neon red accent */
+  --color-success: #34d399;         /* neon green accent */
+  --color-warning: #ffb783;         /* tertiary (orange) */
+  --color-warning-strong: #d97721;  /* tertiary-container */
+  --color-border: #2d3449;          /* surface-container-highest */
+  --radius-card: 1rem;
   --radius-input: 0.5rem;
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+  /* Ghost 1px outline + large ultra-soft shadow (tonal layering on pure black) */
+  --shadow-card: inset 0 0 0 1px #2d3449, 0 8px 24px 0 rgb(0 0 0 / 0.4);
   --transition-base: 150ms ease-in-out;
   --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
@@ -24,6 +30,7 @@ body {
   color: var(--color-text-primary);
   font-family: var(--font-family-sans);
   min-height: 100svh;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Page fade-in on route change */

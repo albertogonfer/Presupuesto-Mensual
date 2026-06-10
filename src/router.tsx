@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { createBrowserRouter } from 'react-router-dom'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
 import { Layout } from './adapters/budget/components/Layout'
 import { LoginPage } from './adapters/auth/LoginPage'
 import { ProtectedRoute } from './adapters/auth/ProtectedRoute'
@@ -8,7 +8,6 @@ import { ResetPasswordPage } from './adapters/auth/ResetPasswordPage'
 
 const DashboardPage = lazy(() => import('./adapters/budget/pages/DashboardPage'))
 const ExpensesPage = lazy(() => import('./adapters/budget/pages/ExpensesPage'))
-const CategoriesPage = lazy(() => import('./adapters/budget/pages/CategoriesPage'))
 const BudgetPeriodPage = lazy(() => import('./adapters/budget/pages/BudgetPeriodPage'))
 const HistoryPage = lazy(() => import('./adapters/budget/pages/HistoryPage'))
 const RecurringExpensesPage = lazy(() => import('./adapters/budget/pages/RecurringExpensesPage'))
@@ -22,9 +21,8 @@ export type AppRoute = {
 
 export const routes: AppRoute[] = [
   { path: '/', label: 'Dashboard' },
-  { path: '/expenses', label: 'Gastos' },
-  { path: '/categories', label: 'Categorías' },
-  { path: '/history', label: 'Historial' },
+  { path: '/expenses', label: 'Gastos y Categorías' },
+  { path: '/history', label: 'Analítica' },
   { path: '/recurring', label: 'Recurrentes' },
   { path: '/settings', label: 'Configuración' },
 ]
@@ -47,7 +45,8 @@ export const router = createBrowserRouter([
       { path: '/', element: wrap(DashboardPage) },
       { path: '/onboarding', element: wrap(OnboardingPage) },
       { path: '/expenses', element: wrap(ExpensesPage) },
-      { path: '/categories', element: wrap(CategoriesPage) },
+      // Categories now live inside the Gastos split-pane screen
+      { path: '/categories', element: <Navigate to="/expenses" replace /> },
       { path: '/history', element: wrap(HistoryPage) },
       { path: '/history/:periodId/summary', element: wrap(PeriodSummaryPage) },
       { path: '/recurring', element: wrap(RecurringExpensesPage) },

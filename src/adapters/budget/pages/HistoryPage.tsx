@@ -66,7 +66,7 @@ export default function HistoryPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold text-text-primary">Historial de períodos</h1>
+      <h1 className="text-xl font-semibold text-text-primary sm:text-2xl">Analítica e Historial</h1>
 
       {sorted.length === 0 ? (
         <EmptyState
@@ -130,7 +130,7 @@ export default function HistoryPage() {
                                 row.percentUsed > 100
                                   ? 'bg-danger/20 text-danger'
                                   : row.percentUsed > 80
-                                    ? 'bg-yellow-500/20 text-yellow-400'
+                                    ? 'bg-warning/15 text-warning'
                                     : 'bg-success/20 text-success'
                               }`}
                             >
@@ -206,7 +206,7 @@ export default function HistoryPage() {
                             percentUsed > 100
                               ? 'bg-danger/20 text-danger'
                               : percentUsed > 80
-                                ? 'bg-yellow-500/20 text-yellow-400'
+                                ? 'bg-warning/15 text-warning'
                                 : 'bg-success/20 text-success'
                           }`}
                         >

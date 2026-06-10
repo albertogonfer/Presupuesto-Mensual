@@ -31,9 +31,15 @@ type PeriodFormProps = {
   initialValues?: Pick<BudgetPeriod, 'month' | 'year' | 'netSalary' | 'savingsGoal'>
   editMode?: boolean
   prefillHint?: boolean
+  /** Money left over from the previous period, shown as an informational achievement */
+  previousSavings?: number
 }
 
-export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false, prefillHint = false }: PeriodFormProps) {
+function formatEur(amount: number): string {
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount)
+}
+
+export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false, prefillHint = false, previousSavings }: PeriodFormProps) {
   const now = new Date()
   const [month, setMonth] = useState(initialValues?.month ?? now.getMonth() + 1)
   const [year, setYear] = useState(initialValues?.year ?? now.getFullYear())
@@ -56,6 +62,28 @@ export function PeriodForm({ onSubmit, onCancel, initialValues, editMode = false
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {!editMode && previousSavings !== undefined && previousSavings > 0 && (
+        <div className="flex items-center justify-between gap-3 rounded-card border border-success/25 bg-success/5 p-4">
+          <div className="flex items-center gap-3">
+            <svg aria-hidden className="h-6 w-6 shrink-0 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5" />
+              <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+            </svg>
+            <div className="flex flex-col">
+              <span className="text-xs font-medium text-text-secondary">
+                Ahorro conseguido del periodo anterior
+              </span>
+              <span className="text-lg font-bold text-success drop-shadow-[0_0_10px_rgba(52,211,153,0.45)]">
+                +{formatEur(previousSavings)}
+              </span>
+            </div>
+          </div>
+          <span className="shrink-0 rounded-full border border-border bg-bg-input/60 px-2.5 py-1 text-xs font-medium text-text-secondary backdrop-blur-sm">
+            🏆 Logro
+          </span>
+        </div>
+      )}
+
       <div className="flex flex-col gap-1">
         <label htmlFor="period-month" className="text-sm font-medium text-text-secondary">
           Mes
