@@ -71,7 +71,11 @@ export default function DashboardPage() {
   }
 
   const monthName = MONTH_NAMES[activePeriod.month - 1]
-  const remainingVariant = summary.remaining >= 0 ? 'success' : 'danger'
+  // Con objetivo de ahorro, "Dinero restante" es lo que queda por encima del objetivo:
+  // si quedan 700 € y el objetivo es 600 €, se muestran 100 €.
+  const hasSavingsGoal = summary.savingsGoal !== undefined
+  const displayRemaining = hasSavingsGoal ? summary.savingsProgress ?? summary.remaining : summary.remaining
+  const remainingVariant = displayRemaining >= 0 ? 'success' : 'danger'
   const savingsProgressVariant = (summary.savingsProgress ?? 0) >= 0 ? 'success' : 'danger'
   const savingsProgressPercent = summary.savingsGoal
     ? Math.min((summary.remaining / summary.savingsGoal) * 100, 100)
@@ -110,9 +114,14 @@ export default function DashboardPage() {
         <SummaryCard label="Total gastado" value={formatEur(summary.totalSpent)} icon="💸" />
         <SummaryCard
           label="Dinero restante"
-          value={formatEur(summary.remaining)}
+          value={formatEur(displayRemaining)}
+          sublabel={
+            hasSavingsGoal
+              ? `${formatEur(summary.remaining)} disponibles − ${formatEur(summary.savingsGoal!)} de ahorro`
+              : undefined
+          }
           variant={remainingVariant}
-          icon={summary.remaining >= 0 ? '✅' : '⚠️'}
+          icon={displayRemaining >= 0 ? '✅' : '⚠️'}
         />
         <SummaryCard
           label="Porcentaje utilizado"

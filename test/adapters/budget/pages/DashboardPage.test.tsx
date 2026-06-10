@@ -114,6 +114,37 @@ describe('DashboardPage', () => {
     expect(screen.getByText(/te quedan/i)).toBeInTheDocument()
   })
 
+  it('shows remaining money relative to savings goal when goal is set', () => {
+    usePeriodsStore.setState({
+      periods: [{ ...PERIOD, savingsGoal: 600 }],
+      activePeriodId: 'period-1',
+    })
+    useExpensesStore.setState({
+      expenses: [
+        { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 1800, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
+      ],
+    })
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    // remaining in bank = 2500 - 1800 = 700; goal = 600 → card shows 100
+    expect(screen.getByText(/^100,00\s*€$/)).toBeInTheDocument()
+    expect(screen.getByText(/700,00\s*€\s*disponibles/i)).toBeInTheDocument()
+  })
+
+  it('shows negative remaining when bank money is below the savings goal', () => {
+    usePeriodsStore.setState({
+      periods: [{ ...PERIOD, savingsGoal: 600 }],
+      activePeriodId: 'period-1',
+    })
+    useExpensesStore.setState({
+      expenses: [
+        { id: 'e1', periodId: 'period-1', categoryId: 'cat-1', description: 'Mercadona', amount: 2100, date: '2026-06-01', createdAt: '2026-06-01T00:00:00Z' },
+      ],
+    })
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+    // remaining = 400; goal = 600 → card shows -200
+    expect(screen.getByText(/-200,00\s*€/)).toBeInTheDocument()
+  })
+
   it('shows negative savings progress message when remaining < savingsGoal', () => {
     usePeriodsStore.setState({
       periods: [{ ...PERIOD, savingsGoal: 2000 }],
