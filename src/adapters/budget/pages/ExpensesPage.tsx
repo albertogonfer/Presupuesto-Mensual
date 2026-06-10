@@ -33,6 +33,8 @@ export default function ExpensesPage() {
   const [filterCategoryId, setFilterCategoryId] = useState<string>('')
   const [searchText, setSearchText] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<SortOrder>('date-desc')
+  // Mobile-only tab: the split-pane shows both columns at once on lg+
+  const [mobileTab, setMobileTab] = useState<'gastos' | 'categorias'>('gastos')
 
   // useMemo must be declared before any early returns (Rules of Hooks)
   const filteredExpenses = useMemo(() => {
@@ -131,6 +133,27 @@ export default function ExpensesPage() {
         <Button onClick={() => setModal({ type: 'add' })}>Nuevo gasto</Button>
       </div>
 
+      {/* Mobile tab switcher (hidden on lg, where both panes show side by side) */}
+      <div role="tablist" aria-label="Vista" className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-bg-input p-1 lg:hidden">
+        {([['gastos', 'Gastos'], ['categorias', 'Categorías']] as const).map(([tab, label]) => (
+          <button
+            key={tab}
+            role="tab"
+            aria-selected={mobileTab === tab}
+            onClick={() => setMobileTab(tab)}
+            className={`rounded-md px-3 py-2 text-sm font-medium transition-all ${
+              mobileTab === tab
+                ? 'bg-accent text-white shadow-[0_0_12px_rgba(99,102,241,0.4)]'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className={mobileTab === 'gastos' ? 'contents' : 'hidden lg:contents'}>
+
       {expenses.length > 0 && (
         <div className="flex flex-wrap gap-3">
           <label className="sr-only" htmlFor="filter-category">Categoría</label>
@@ -205,8 +228,11 @@ export default function ExpensesPage() {
         </div>
       )}
 
+      </div>{/* end gastos tab wrapper */}
       </div>{/* end transactions column */}
-      <CategoriesPanel />
+      <div className={mobileTab === 'categorias' ? 'contents' : 'hidden lg:contents'}>
+        <CategoriesPanel />
+      </div>
       </div>{/* end split-pane */}
 
       <Modal

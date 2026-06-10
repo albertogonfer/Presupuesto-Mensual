@@ -84,16 +84,17 @@ export default function HistoryPage() {
                 <MonthlyComparisonChart data={chartSlice} />
               </div>
 
-              <div className="overflow-x-auto rounded-card bg-bg-card shadow-card">
+              {/* Desktop table */}
+              <div className="hidden overflow-x-auto rounded-card bg-bg-card shadow-card md:block">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-bg-input text-left text-text-secondary">
-                      <th className="p-4 font-medium">Período</th>
-                      <th className="p-4 font-medium">Gastado</th>
-                      <th className="p-4 font-medium">vs mes anterior</th>
-                      <th className="p-4 font-medium">% usado</th>
-                      <th className="p-4 font-medium">Ahorro real</th>
-                      <th className="p-4 font-medium"></th>
+                      <th className="whitespace-nowrap p-4 font-medium">Período</th>
+                      <th className="whitespace-nowrap p-4 font-medium">Gastado</th>
+                      <th className="whitespace-nowrap p-4 font-medium">vs mes anterior</th>
+                      <th className="whitespace-nowrap p-4 font-medium">% usado</th>
+                      <th className="whitespace-nowrap p-4 font-medium">Ahorro real</th>
+                      <th className="whitespace-nowrap p-4 font-medium"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -126,7 +127,7 @@ export default function HistoryPage() {
                           </td>
                           <td className="p-4">
                             <span
-                              className={`rounded px-2 py-0.5 text-xs font-medium ${
+                              className={`inline-block whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${
                                 row.percentUsed > 100
                                   ? 'bg-danger/20 text-danger'
                                   : row.percentUsed > 80
@@ -154,21 +155,74 @@ export default function HistoryPage() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Mobile cards */}
+              <div className="flex flex-col gap-3 md:hidden">
+                {[...chartSlice].reverse().map((row) => (
+                  <div key={row.periodId} className="flex flex-col gap-3 rounded-card bg-bg-card p-4 shadow-card">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-text-primary">{row.label}</span>
+                      <span
+                        className={`inline-block whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${
+                          row.percentUsed > 100
+                            ? 'bg-danger/20 text-danger'
+                            : row.percentUsed > 80
+                              ? 'bg-warning/15 text-warning'
+                              : 'bg-success/20 text-success'
+                        }`}
+                      >
+                        {row.percentUsed.toFixed(1)} % usado
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-text-secondary">Gastado</span>
+                        <span className="font-medium text-text-primary">{formatEur(row.totalSpent)}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-text-secondary">Ahorro real</span>
+                        <span className={`font-medium ${row.remaining < 0 ? 'text-danger' : 'text-success'}`}>
+                          {formatEur(row.remaining)}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-text-secondary">vs mes anterior</span>
+                        {row.vsLastMonth === undefined ? (
+                          <span className="text-text-secondary">—</span>
+                        ) : row.vsLastMonth > 0 ? (
+                          <span className="font-medium text-danger">↑ {formatEur(row.vsLastMonth)}</span>
+                        ) : row.vsLastMonth < 0 ? (
+                          <span className="font-medium text-success">↓ {formatEur(Math.abs(row.vsLastMonth))}</span>
+                        ) : (
+                          <span className="text-text-secondary">= {formatEur(0)}</span>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => navigate(`/history/${row.periodId}/summary`)}
+                      className="mt-1 w-full rounded-lg border border-border py-2 text-sm text-text-secondary transition-colors hover:border-text-secondary hover:text-text-primary"
+                    >
+                      Ver resumen
+                    </button>
+                  </div>
+                ))}
+              </div>
             </section>
           )}
 
           <div className="h-px bg-bg-input" />
 
-          <div className="overflow-x-auto rounded-card bg-bg-card shadow-card">
+          {/* Desktop table */}
+          <div className="hidden overflow-x-auto rounded-card bg-bg-card shadow-card md:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-bg-input text-left text-text-secondary">
-                  <th className="p-4 font-medium">Período</th>
-                  <th className="p-4 font-medium">Sueldo neto</th>
-                  <th className="p-4 font-medium">Total gastado</th>
-                  <th className="p-4 font-medium">Restante</th>
-                  <th className="p-4 font-medium">% usado</th>
-                  <th className="p-4 font-medium"></th>
+                  <th className="whitespace-nowrap p-4 font-medium">Período</th>
+                  <th className="whitespace-nowrap p-4 font-medium">Sueldo neto</th>
+                  <th className="whitespace-nowrap p-4 font-medium">Total gastado</th>
+                  <th className="whitespace-nowrap p-4 font-medium">Restante</th>
+                  <th className="whitespace-nowrap p-4 font-medium">% usado</th>
+                  <th className="whitespace-nowrap p-4 font-medium"></th>
                 </tr>
               </thead>
               <tbody>
@@ -202,7 +256,7 @@ export default function HistoryPage() {
                       </td>
                       <td className="p-4">
                         <span
-                          className={`rounded px-2 py-0.5 text-xs font-medium ${
+                          className={`inline-block whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${
                             percentUsed > 100
                               ? 'bg-danger/20 text-danger'
                               : percentUsed > 80
@@ -227,6 +281,64 @@ export default function HistoryPage() {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {sorted.map((period) => {
+              const expenses = allExpenses.filter((e) => e.periodId === period.id)
+              const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0)
+              const remaining = period.netSalary - totalSpent
+              const percentUsed = period.netSalary > 0 ? (totalSpent / period.netSalary) * 100 : 0
+              const isOver = remaining < 0
+
+              return (
+                <div key={period.id} className="flex flex-col gap-3 rounded-card bg-bg-card p-4 shadow-card">
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => handleSelectPeriod(period.id)}
+                      className="font-semibold text-text-primary hover:text-accent-hover"
+                    >
+                      {MONTH_NAMES[period.month - 1]} {period.year}
+                    </button>
+                    <span
+                      className={`inline-block whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${
+                        percentUsed > 100
+                          ? 'bg-danger/20 text-danger'
+                          : percentUsed > 80
+                            ? 'bg-warning/15 text-warning'
+                            : 'bg-success/20 text-success'
+                      }`}
+                    >
+                      {percentUsed.toFixed(1)} % usado
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-x-3 gap-y-2 text-sm">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-text-secondary">Sueldo</span>
+                      <span className="font-medium text-text-primary">{formatEur(period.netSalary)}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs text-text-secondary">Gastado</span>
+                      <span className="font-medium text-text-primary">{formatEur(totalSpent)}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs text-text-secondary">Restante</span>
+                      <span className={`font-medium ${isOver ? 'text-danger' : 'text-success'}`}>
+                        {formatEur(remaining)}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setConfirmId(period.id)}
+                    className="mt-1 w-full rounded-lg border border-danger/40 py-2 text-sm text-danger transition-colors hover:bg-danger/10"
+                    aria-label={`Eliminar período ${MONTH_NAMES[period.month - 1]} ${period.year}`}
+                  >
+                    Eliminar período
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </>
       )}

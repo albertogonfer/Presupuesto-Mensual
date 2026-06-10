@@ -29,6 +29,14 @@ function formatEur(value: number): string {
   }).format(value)
 }
 
+// Compact axis labels so the Y axis stays narrow on phones (e.g. "1,5 k €").
+function formatEurCompact(value: number): string {
+  if (Math.abs(value) >= 1000) {
+    return `${new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 }).format(value / 1000)} k €`
+  }
+  return `${value} €`
+}
+
 export function MonthlyComparisonChart({ data }: MonthlyComparisonChartProps) {
   if (data.length < 2) return null
 
@@ -54,10 +62,14 @@ export function MonthlyComparisonChart({ data }: MonthlyComparisonChartProps) {
   return (
     <div data-testid="monthly-comparison-chart">
       <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={goalChartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+        <BarChart data={goalChartData} margin={{ top: 5, right: 8, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#2d3449" />
           <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} tickFormatter={formatEur} />
+          <YAxis
+            width={56}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
+            tickFormatter={formatEurCompact}
+          />
           <Tooltip
             formatter={(value: number) => formatEur(value)}
             contentStyle={{
@@ -67,7 +79,7 @@ export function MonthlyComparisonChart({ data }: MonthlyComparisonChartProps) {
             }}
             cursor={{ fill: 'rgba(255,255,255,0.05)' }}
           />
-          <Legend />
+          <Legend wrapperStyle={{ fontSize: 12 }} />
           <Bar dataKey="netSalary" name="Sueldo neto" fill="#6366f1" />
           <Bar dataKey="totalSpent" name="Total gastado" fill="#ef4444" />
           {hasSavingsGoal && (
