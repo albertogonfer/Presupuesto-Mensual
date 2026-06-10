@@ -49,7 +49,7 @@ export default function OnboardingPage() {
     if (!newCatName.trim()) return
     addCategory({ name: newCatName.trim(), icon: newCatIcon, color: newCatColor })
     setNewCatName('')
-    setNewCatIcon('📦')
+    setNewCatIcon('package')
     setNewCatColor(PRESET_COLORS[0])
     setShowAddForm(false)
   }
